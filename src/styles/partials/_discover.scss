@@ -1,0 +1,13 @@
+.discover {
+  width: 100%;
+  position: relative;
+  min-height: 100vh;
+
+  @include elem("slogan-wrapper") {
+    display: flex;
+    justify-content: center;
+  }
+
+  @include elem("slogan") {
+  }
+}

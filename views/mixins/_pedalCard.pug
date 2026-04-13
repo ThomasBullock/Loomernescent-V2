@@ -1,0 +1,19 @@
+mixin pedalCard(pedal = {})
+	.pedal
+		.pedal__hero
+			.pedal__actions
+				if user
+					.pedal__action.pedal__action--heart
+						form.heart(method="POST" action=`/api/v1/pedals/${pedal.id}/loves`)
+							- const heartStrings = user.favourites ? user.favourites.map(obj => obj.pedalId) : []
+							- const heartClass = heartStrings.includes(pedal.id) ? 'heart__button--hearted' : ''
+							button.heart__button(type="submit" name="heart" class=heartClass)
+								!= h.icon('heart')
+				if user && user.admin
+					.pedal__action.pedal__action--edit
+						a(href=`/pedals/${pedal.id}/edit`)
+							!= h.icon('pencil')
+			img(src=`/uploads/pedals/${pedal.image || 'Pedal.jpg'}` alt=`A photo of a ${pedal.brand} ${pedal.name}`)
+			h2.title.title--pedals
+				a(href=`/pedal/${pedal.slug}`) #{pedal.name}
+		.pedal__details

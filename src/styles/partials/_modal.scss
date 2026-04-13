@@ -1,0 +1,59 @@
+.modal {
+  display: none; /* Hidden by default */
+
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: $ebony; /* Fallback color */
+  background-color: transparentize($ebony, 0.2); /* Black w/ opacity */
+
+  @include elem("container") {
+    z-index: 99999;
+    display: table;
+    margin: 100px auto;
+    padding: $base-spacing;
+    border: 1px solid $ebony;
+    width: auto; /* Could be more or less, depending on screen size */
+    overflow-y: auto;
+    overflow-x: auto;
+    width: auto;
+    background: $verticalGrad;
+  }
+
+  @include elem("title") {
+    color: $jet;
+    text-align: center;
+    margin: 0;
+  }
+
+  @include elem("header") {
+    position: relative;
+  }
+
+  @include elem("body") {
+    width: auto;
+    padding: $base-spacing;
+
+    img {
+      border: solid 1px $black;
+    }
+  }
+
+  @include elem("close") {
+    cursor: pointer;
+    line-height: 20px;
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+}

@@ -1,0 +1,83 @@
+.hide {
+  text-indent: -999999px;
+  font-size: 0;
+}
+
+.button {
+  border: 0;
+  background: $yellow;
+  color: $black;
+  font-family: "Panama";
+  font-weight: 600;
+}
+
+.avatar {
+  min-width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  align-self: center;
+}
+
+.card {
+  background: $white;
+  padding: 5rem;
+  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.15);
+}
+
+pre.error {
+  padding: 5rem;
+  background: $white;
+  line-height: 3;
+  white-space: pre-line;
+}
+
+@mixin img-responsive() {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.ribbon {
+  background-color: $oil;
+  box-shadow: 0 0 3px rgba(#000, 0.3);
+  color: $white;
+  font-size: 0.8em;
+  left: 9px;
+  line-height: 1.5em;
+  padding: 2px 7px;
+  position: relative;
+  text-align: center;
+  top: 25px;
+  transform: rotate(45deg);
+  width: 120px;
+  z-index: 999;
+
+  @include elem("wrapper") {
+    $action-color: #477dca !default;
+    $ribbon-background: $action-color;
+    $ribbon-size: 105px;
+
+    @include size($ribbon-size);
+    overflow: hidden;
+    position: absolute;
+    right: -1px;
+    top: -1px;
+  }
+
+  @include mod("long") {
+    width: 230px;
+    left: -18px;
+    top: 40px;
+  }
+}
+
+.ribbon__wrapper--long {
+  $action-color: #477dca !default;
+  $ribbon-background: $action-color;
+  $ribbon-size: 165px;
+  @include size($ribbon-size);
+  overflow: hidden;
+  position: absolute;
+  right: -1px;
+  top: -1px;
+}

@@ -1,0 +1,141 @@
+.pedals {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: $base-spacing;
+}
+
+.pedal {
+  flex: 0 1 50%;
+  margin: $base-spacing / 2 0;
+
+  @media all and (min-width: 768px) and (max-width: 1024px) {
+    flex: 0 1 30%;
+  }
+
+  @media all and (min-width: 1025px) {
+    flex: 0 1 30%;
+  }
+
+  @include elem("actions") {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    color: $white;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  @include elem("action") {
+    font-size: 10px;
+    svg {
+      width: 25px;
+      fill: $white;
+    }
+
+    @include mod("edit") {
+      svg {
+        width: 25px;
+        fill: $iron;
+      }
+
+      &:hover {
+        svg {
+          fill: $base;
+        }
+      }
+    }
+  }
+
+  .heart__button {
+    svg {
+      width: 25px;
+      fill: $iron;
+    }
+  }
+
+  @include elem("hero") {
+    position: relative;
+    padding: 0 10px 0 10px;
+    text-align: right;
+    min-height: 200px;
+    @media all and (max-width: 650px) {
+      min-height: 240px;
+    }
+    &:before {
+      display: block;
+      content: "";
+      position: absolute;
+      height: 105%;
+      width: 100%;
+      top: 0;
+      right: 0;
+      opacity: 0.6;
+      z-index: 1;
+    }
+
+    img {
+      height: 105%; // look into this value
+      width: 100%;
+      top: 0;
+      right: 0;
+      position: absolute;
+      left: 0;
+      object-fit: cover;
+    }
+  }
+
+  /* ================================= 
+    DESKTOP
+  ==================================== */
+  @media all and (min-width: 1025px) {
+  }
+} // End of pedal
+
+/// PEDAL INFO ////
+
+.pedal-info {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 800px;
+
+  @include elem("image") {
+    flex: 1 1 100%;
+    margin: 0 auto;
+    border: solid 1px $base;
+
+    @media all and (min-width: 1025px) {
+      flex: 1 1 70%;
+    }
+
+    img {
+      @include img-responsive();
+    }
+  }
+
+  @include elem("content") {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 30%;
+
+    @media all and (min-width: 1025px) {
+      margin-left: $base-spacing;
+    }
+  }
+
+  @include elem("detail") {
+    margin-right: $base-spacing;
+    span.pedal-info__user ~ span.pedal-info__user {
+      margin-left: $base-spacing / 2;
+    }
+  }
+
+  @include elem("title") {
+    font-size: modular-scale(2);
+    width: 100%;
+
+    @media all and (min-width: 1025px) {
+      margin-top: 0;
+    }
+  }
+}

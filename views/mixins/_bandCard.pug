@@ -1,0 +1,20 @@
+mixin bandCard(band = {})
+	.band
+		.band__hero
+			.band__actions
+				if user
+					.band__action.band__action--heart
+						form.heart(method="POST" action=`/api/v1/bands/${band.id}/loves`)
+							- const heartStrings = user.favourites ? user.favourites.map(obj => obj.bandId) : []
+							- const heartClass = heartStrings.includes(band.id) ? 'heart__button--hearted' : ''
+							button.heart__button(type="submit" name="heart" class=heartClass)
+								!= h.icon('heart')
+				if user && user.admin
+					.band__action.band__action--edit
+						a(href=`/bands/${band.id}/edit`)
+							!= h.icon('pencil')
+			img(src=`/uploads/${band.photoSquareSm || 'band.jpg'}` alt=`A photo of ${band.name}`)
+			h2.title
+				a(href=`/band/${band.slug}`) #{band.name}
+		.band__details
+			p= band.description ? band.description.split(' ').slice(0, 25).join(' ') : ''

@@ -1,0 +1,20 @@
+extends layout 
+
+block meta 
+	meta(name="description" content="Loomernescent is a curated depository of guitar orientated music thats on the effected side of indie. Discover bands, albums and fx pedals from subgenres such as shoegaze, dreampop and noise rock.")
+	meta(name="keywords" content="shoegaze, guitar, fx, pedals, effects, noise, distortion, dreampop, loomer, loomernescent, indie, rock, reverb")
+	meta(property="og:url" content="http://loomernescent.com/map")
+	meta(property="og:title" content="Music on the effected side of indie")
+	meta(property="og:description" content="Loomernescent is a curated depository of guitar orientated music thats on the effected side of indie. Discover bands, albums and fx pedals from subgenres such as shoegaze, dreampop and noise rock.")
+	meta(property="og:image" content="http://loomernescent.com/images/loomernescent_site.jpeg")
+
+block content
+	.fullwidth
+
+		.map
+			.autocomplete
+				input.autocomplete__input(type="text" placeholder="Search cities for bands" name="geolocate")
+			#map
+				p Loading Map...
+
+				

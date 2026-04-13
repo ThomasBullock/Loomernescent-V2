@@ -1,0 +1,133 @@
+.tags {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  justify-content: center;
+  // margin-bottom: $base-spacing;
+  // flex-wrap: wrap;
+  @include mod("list") {
+    flex-wrap: wrap;
+    margin-top: $base-spacing;
+
+    @media all and (min-width: 768px) and (max-width: 1024px) {
+      flex-wrap: nowrap;
+    }
+
+    @media all and (min-width: 1025px) {
+      flex-wrap: nowrap;
+    }
+  }
+}
+
+.tag {
+  flex: 1 1 16.666%;
+  // display: block;
+  // margin-right: 1rem;
+  // flex: 0 1 20px;
+  // width: 20%;
+  @include elem("choice") {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    input {
+      width: auto;
+      right: -1.5rem;
+      margin-right: -1rem;
+      position: relative;
+      z-index: 2;
+      & + label {
+        background: $grey;
+        padding: 1rem 1rem 1rem 4rem;
+      }
+      &:checked + label {
+        background: $yellow;
+      }
+    }
+  }
+  @include elem("link") {
+    // background:$yellow;
+    width: 100%;
+    height: 100px;
+    color: $black;
+    display: flex;
+    padding-left: 10px;
+
+    &:hover {
+      fill: green;
+
+      .tag__body {
+        transition: all $base-duration * 2 $base-timing;
+        fill: pink;
+      }
+    }
+
+    @include mod("active") {
+      // background: lighten($purple, 40%);
+      .tag__text {
+        color: $white;
+      }
+
+      .tag__body {
+        fill: purple;
+      }
+    }
+
+    svg {
+      stroke: #363171;
+      fill: #363171;
+    }
+  }
+
+  @include elem("body") {
+    fill: $pink;
+  }
+
+  @include elem("pick") {
+    // width: 120px;
+    // height: 60px;
+    width: 80%;
+    height: auto;
+    max-width: 150px;
+
+    svg text {
+      fill: purple;
+    }
+  }
+
+  @include elem("text") {
+    padding: 1rem 1rem;
+    display: block;
+  }
+  @include elem("count") {
+    padding: 1rem 1rem;
+    background: $white;
+    border-left: 3px solid rgba(0, 0, 0, 0.1);
+    margin-right: -1px; /* ugh */
+    background-clip: padding-box;
+  }
+
+  /* ================================= 
+    MOBILE
+  ==================================== */
+  @media all and (max-width: 767px) {
+  }
+
+  /* ================================= 
+    TABLET
+  ==================================== */
+  @media all and (min-width: 768px) and (max-width: 1024px) {
+  }
+
+  /* ================================= 
+    DESKTOP
+  ==================================== */
+  @media all and (min-width: 1025px) {
+  }
+}
+
+.pick {
+  @include elem("link") {
+  }
+}

@@ -1,0 +1,24 @@
+extends layout
+
+include mixins/_bandCard
+include icons/_pick
+
+block meta 
+	meta(name="description" content=`Browse shoegaze bands ${tag ? 'tagged with ' + tag : 'by tags'}`)
+	meta(name="keywords" content=`${tag ? tag : tags.map(v => v._id).join(", ")}, shoegaze, guitar, fx, pedals, effects, noise, distortion, dreampop, loomer, loomernescent, indie, rock, reverb`)
+	meta(property="og:url" content="http://loomernescent.com/tags")
+	meta(property="og:title" content="Music on the effected side of indie")
+	meta(property="og:description" content="Loomernescent is a curated depository of guitar orientated music thats on the effected side of indie. Discover bands, albums and fx pedals from subgenres such as shoegaze, dreampop and noise rock.")
+	meta(property="og:image" content="http://loomernescent.com/images/loomernescent_site.jpeg")
+
+block content
+	.inner
+		h2.title--tags.nexa-rust Bands tagged with #{tag || 'Tags'}
+		ul.tags.tags--list
+			each t in tags
+				li.tag
+					a.tag__link(href=`/tags/${t._id}` class=(t._id === tag ? 'tag__link--active' : ''))
+						+pick(t._id, t.count)
+		.bands
+			each band in bands
+				+bandCard(band)

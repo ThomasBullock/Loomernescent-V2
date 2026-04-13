@@ -1,0 +1,17 @@
+extends layout
+
+include mixins/_pedalCard
+include mixins/_pagination
+
+block meta 
+	meta(name="description" content=`Browse guitar pedals used by shoegaze bands on Loomernescent`)
+	meta(name="keywords" content=`${pedals.map(v => v.brand).join(", ")}, shoegaze, guitar, fx, effects, pedals, loomernescent`)
+	meta(property="og:url" content="http://loomernescent.com/pedals")
+
+block content
+	.inner
+		h2.title--albums.nexa-rust= title
+		.pedals
+			each pedal in pedals
+				+pedalCard(pedal)
+		+pagination(page, pages, count, 'pedals')

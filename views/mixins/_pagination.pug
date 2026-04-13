@@ -1,0 +1,11 @@
+mixin pagination(page, pages, count, link)
+	.pagination
+		.pagination__prev
+			if page > 1
+				a(href=`/${link}/page/${page - 1}`) Prev
+		.pagination__text
+			p Page #{page} of #{pages} - #{count} total results 
+		.pagination__next
+			if page < pages
+				a(href=`/${link}/page/${parseFloat(page) + 1}`) Next
+				

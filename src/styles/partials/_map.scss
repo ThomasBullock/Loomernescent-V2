@@ -1,0 +1,15 @@
+.map {
+  background: $white;
+  box-shadow: $shad;
+}
+#map {
+  height: 600px;
+}
+
+.popup {
+  width: 200px;
+  text-align: center;
+  img {
+    width: 100%;
+  }
+}

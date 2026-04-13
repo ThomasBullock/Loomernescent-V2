@@ -1,0 +1,16 @@
+mixin albumCard(album = {})
+	.album
+		.album__actions
+			if user
+				.album__action.album__action--heart
+					form.heart(method="POST" action=`/api/v1/albums/${album.id}/loves`)
+						- const heartStrings = user.favourites ? user.favourites.map(obj => obj.albumId) : []
+						- const heartClass = heartStrings.includes(album.id) ? 'heart__button--hearted' : ''
+						button.heart__button(type="submit" name="heart" class=heartClass)
+							!= h.icon('heart')
+			if user && user.admin
+				.album__action.album__action--edit
+					a(href=`/album/${album.id}/edit`)
+						!= h.icon('pencil')
+		a(href=`/album/${album.slug}`)
+			img.album__cover(src=`/uploads/covers/${album.cover || 'band.jpg'}` alt=`cover artwork for ${album.title} by ${album.artist}`)

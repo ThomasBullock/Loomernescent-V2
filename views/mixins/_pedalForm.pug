@@ -1,0 +1,33 @@
+mixin pedalForm(pedal = {})
+	- const effectTypes = ['Chorus', 'Delay', 'Distortion', 'Fuzz', 'Flanger','Phaser', 'Reverb', 'Tremelo']
+	- const effectTypes2 = ['None'].concat(effectTypes)
+	form.add-band(action=`/addpedal/${pedal._id || ''}` method="post" class="card" enctype="multipart/form-data")
+		label(for="brand") Brand
+		input(type="text" id="brand" name="brand" value=(pedal.brand))
+		label(for="name") Pedal Name
+		input(type="text" id="name" name="name" value=(pedal.name))
+		.effects
+			.effect-select
+				label.half(for="type") Effect Type
+				select(type="select" id="type" name="type" value=(pedal.type))
+					each effect in effectTypes
+						option(value=effect) #{effect}			
+			.effect-select
+				label.half(for="type2") Secondary Effect Type				
+				select(type="select" id="type2" name="type2" defvalue=(pedal.type2))
+					each effect in effectTypes2
+						option(value=effect) #{effect}													
+		label(for="associatedArtists") Associated Artists
+		input(type="text" id="associatedArtists" name="associatedArtists" value=(pedal.associatedArtists))
+		label(for="yearsManufactured") Years Manufactured 
+		input(type="text" id="yearsManufactured" name="yearsManufactured" value=(pedal.yearsManufactured && pedal.yearsManufactured.join(',')))
+		label(for="image") Image
+		input(type="file" id="image" name="image" accept="image/png, image/jpeg")
+		label(for="comments") Comments
+		textarea(rows="3" id="comments" name="comments") #{pedal.comments}
+		label(for="youtube") Youtube Video
+		input(type="url" id="youtube" name="youtube" value=pedal.youtube)
+		input(type="submit" value="Save -<" class="button")
+
+
+				

@@ -1,0 +1,8 @@
+extends layout
+
+include mixins/_pedalForm
+
+block content
+	.inner
+		h2 #{title}		
+		+pedalForm(pedal)

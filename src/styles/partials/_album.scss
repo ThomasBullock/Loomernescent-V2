@@ -1,0 +1,181 @@
+.albums {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.album {
+  width: 50%;
+  position: relative;
+
+  @include elem("edit") {
+    width: 100%;
+  }
+
+  @include elem("actions") {
+    position: absolute;
+  }
+
+  @include elem("action") {
+    fill: $vapor;
+  }
+
+  @include elem("cover") {
+    @include img-responsive();
+  }
+
+  @include elem("title") {
+    font-size: 40px;
+  }
+
+  @media all and (min-width: 768px) and (max-width: 1024px) {
+    width: 33.3%;
+  }
+
+  @media all and (min-width: 1025px) {
+    width: 25%;
+  }
+} // End of album
+
+/// ALBUM INFO ////
+
+.album-info {
+  display: flex;
+  flex-direction: column;
+
+  @media all and (min-width: 768px) and (max-width: 1024px) {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  @media all and (min-width: 1025px) {
+    flex-direction: row;
+  }
+
+  @include elem("cover") {
+    flex: 1 1 100%;
+
+    @media all and (min-width: 1025px) {
+      flex: 1 1 60%;
+    }
+
+    img {
+      @include img-responsive();
+    }
+  }
+
+  @include elem("content") {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    flex-direction: row;
+    flex: 1 1 40%;
+
+    @media all and (min-width: 1025px) {
+      margin-left: $base-spacing;
+    }
+  }
+
+  @include elem("title") {
+    flex: 0 1 45%;
+    font-size: 36px;
+    font-size: modular-scale(1);
+    margin-right: $base-spacing;
+
+    @media all and (min-width: 1025px) {
+      // flex: 1 1 100%;
+      margin: 0;
+    }
+  }
+
+  @include elem("artist-link") {
+    display: flex;
+    justify-content: flex-end;
+    flex: 0 1 45%;
+
+    @media all and (min-width: 1025px) {
+      // flex: 1 1 100%;
+    }
+  }
+
+  @include elem("before") {
+    margin-top: $base-spacing;
+    margin-right: $base-spacing / 2;
+
+    @media all and (min-width: 1025px) {
+      margin-top: 0;
+    }
+  }
+
+  @include elem("artist") {
+    // &:before {
+    //   position: absolute;
+    //   left: -27px;
+    //   // top: 15px;
+    //   content: 'by';
+    //   font-size: 20px;
+    //   color: $oil;
+    //   margin-right: 10px;
+    // }
+    font-size: modular-scale(1);
+    @media all and (min-width: 1025px) {
+      margin: 0;
+    }
+  }
+
+  @include elem("hr") {
+    width: 100%;
+    color: $base;
+    margin-bottom: $base-spacing;
+
+    @media all and (min-width: 1025px) {
+      margin-top: ($base-spacing * -1);
+    }
+  }
+
+  @include elem("tracklist") {
+    flex: 1 1 100%;
+    margin-top: 0;
+    margin-right: $base-spacing;
+    // padding-left: $base-spacing / 2;
+
+    @media all and (min-width: 768px) and (max-width: 1024px) {
+      flex: 1 1 45%;
+    }
+  }
+
+  @include elem("credits") {
+    display: flex;
+    flex: 1 1 35%;
+    flex-wrap: wrap;
+  }
+
+  @include elem("date") {
+    flex: 1 1 100%;
+  }
+
+  @include elem("label") {
+    flex: 1 1 100%;
+    // text-align: right;
+  }
+
+  @include elem("credit") {
+    flex: 1 1 100%;
+  }
+
+  @include elem("link") {
+    display: flex;
+    align-items: center;
+    margin-top: $base-spacing / 2;
+    a {
+      margin-left: $base-spacing / 2;
+      margin-right: $base-spacing / 2;
+    }
+  }
+
+  @include elem("comments") {
+    margin-top: $base-spacing;
+    flex: 1 1 100%;
+  }
+}

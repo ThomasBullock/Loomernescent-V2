@@ -1,0 +1,8 @@
+extends layout
+
+include mixins/_albumForm
+
+block content
+	.inner
+		h2 #{title}
+		+albumForm(album)

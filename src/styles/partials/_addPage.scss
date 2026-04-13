@@ -1,0 +1,17 @@
+.addPage {
+	
+	
+	@include elem('title') {
+		text-align: center;
+	}
+	
+	@include elem('links') {
+		display: flex;
+		justify-content: center;
+	}
+	
+	
+	@include elem('link') {
+		margin: $base-spacing;
+	}
+}

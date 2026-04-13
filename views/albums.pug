@@ -1,0 +1,18 @@
+extends layout
+
+include mixins/_albumCard
+include mixins/_pagination
+
+block meta 
+	meta(name="description" content=`Browse albums by shoegaze bands on Loomernescent`)
+	meta(name="keywords" content=`${albums.map(v => v.title).join(", ")}, shoegaze, guitar, dreampop, loomernescent, indie`)
+	meta(property="og:url" content="http://loomernescent.com/albums")
+	
+block content
+	.outer
+		h2.title--albums.nexa-rust=title
+		.albums
+			each album in albums
+				+albumCard(album)
+		+pagination(page, pages, count, 'albums')
+
