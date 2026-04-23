@@ -1,0 +1,41 @@
+---
+description: Pug SSR template conventions
+globs: views/**/*.pug
+alwaysApply: false
+---
+
+# Pug Templates
+
+## Structure
+
+```
+views/
+  layout.pug        ← base layout; all pages extend this
+  partials/         ← reusable fragments (nav, footer, pagination)
+  mixins/           ← Pug mixins for repeated markup patterns
+  *.pug             ← one file per route/page
+```
+
+## Extending Layout
+
+```pug
+extends layout
+
+block content
+  h1 Page Title
+```
+
+## Locals
+
+All template locals come from the controller handler's return object — never set locals directly on `res`. Keep template logic minimal; move any real logic to the service.
+
+## Mixins
+
+Prefer mixins in `views/mixins/` over duplicating markup across templates.
+
+## Conventions
+
+- 2-space indent.
+- Use `- const` for in-template variables only when unavoidable.
+- Link hrefs and form actions must match NestJS route paths exactly.
+- Images served from `public/` — reference as `/images/...`.

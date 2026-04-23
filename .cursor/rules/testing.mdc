@@ -1,0 +1,45 @@
+---
+description: Jest unit and e2e testing conventions
+globs: **/*.spec.ts,test/**/*.ts
+alwaysApply: false
+---
+
+# Testing
+
+## Commands
+
+```bash
+npm run test          # unit tests
+npm run test:watch    # watch mode
+npm run test:cov      # coverage
+npm run test:e2e      # e2e (supertest)
+```
+
+Run a single file:
+- Unit: `npx jest <pattern>`
+- E2E: `npx jest --config ./test/jest-e2e.json <file>`
+
+## Unit Tests (`*.spec.ts`)
+
+- Colocate with source: `bands.service.spec.ts` next to `bands.service.ts`.
+- Use `Test.createTestingModule()` for NestJS DI setup.
+- Mock repositories with `{ provide: getRepositoryToken(Entity), useValue: mockRepo }`.
+- Test one public method per `describe` block; use `it` not `test`.
+
+```typescript
+describe('BandsService', () => {
+  describe('findAll', () => {
+    it('returns paginated bands', async () => { ... });
+  });
+});
+```
+
+## E2E Tests (`*.e2e-spec.ts`)
+
+- Live in `test/`; use supertest against a real NestJS app instance.
+- Config: `test/jest-e2e.json`.
+
+## Coverage
+
+- Focus coverage on services (business logic), not controllers or modules.
+- `no-explicit-any` is OFF — acceptable in test mocks.

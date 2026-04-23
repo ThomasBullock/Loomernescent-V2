@@ -1,0 +1,33 @@
+---
+description: SCSS authoring and build conventions
+globs: src/styles/**/*.scss
+alwaysApply: false
+---
+
+# Styling
+
+## Stack
+
+SCSS compiled to `public/dist/style.css`. Entry point: `src/styles/style.scss`.
+
+Build: `npm run sass:build` (or `npm run build` which includes it).
+Watch: `npm run sass:watch` (runs alongside NestJS via `npm run start:dev`).
+
+## File Organisation
+
+```
+src/styles/
+  style.scss        ← entry; @use or @forward partials only
+  partials/         ← feature partials (_bands.scss, _albums.scss, etc.)
+  plugins/          ← third-party overrides
+```
+
+- Prefix partial filenames with `_`.
+- Use `@use` / `@forward` (not deprecated `@import`).
+
+## Authoring
+
+- BEM naming where it aids clarity; no deep nesting (max 3 levels).
+- Variables and mixins defined in dedicated partials, not inline.
+- Avoid inline styles in Pug templates; add a class instead.
+- This project uses legacy SCSS ported from the original site — match existing conventions before introducing new patterns.

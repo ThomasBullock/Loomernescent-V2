@@ -1,0 +1,42 @@
+---
+description: TypeORM entity and migration conventions
+globs: src/entities/**/*.ts,src/migrations/**/*.ts,src/data-source.ts
+alwaysApply: false
+---
+
+# TypeORM Conventions
+
+## Entities
+
+- One file per entity: `src/entities/*.entity.ts`; all exported from `src/entities/index.ts`.
+- Table name explicitly set via `@Entity('table_name')` — lowercase plural snake_case.
+- Column names: camelCase property, explicit `name: 'snake_case'` option for multi-word columns.
+- Use `@PrimaryGeneratedColumn('uuid')` for all primary keys.
+- Always include `@CreateDateColumn` and `@UpdateDateColumn` with explicit snake_case names.
+- Nullable columns must declare `nullable: true`; never rely on implicit nullability.
+
+```typescript
+@Column({ name: 'reset_password_token', nullable: true })
+resetPasswordToken: string;
+```
+
+## Relations
+
+- Declare both sides of relations; use arrow-function form for circular-safe references.
+- Eager loading only when always required — default to lazy/explicit `relations:[]`.
+
+```typescript
+@OneToMany(() => Favourite, (fav) => fav.user)
+favourites: Favourite[];
+```
+
+## Migrations
+
+- Generate: `npm run migration:generate`
+- Run: `npm run migration:run`
+- Never hand-edit a generated migration; write a new one instead.
+- Data-source config: `src/data-source.ts`.
+
+## Repository Usage
+
+Inject via `@InjectRepository(Entity)` in services. No raw SQL unless TypeORM query builder is insufficient.

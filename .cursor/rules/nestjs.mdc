@@ -1,0 +1,53 @@
+---
+description: NestJS module, controller, service conventions for this project
+globs: src/**/*.ts
+alwaysApply: false
+---
+
+# NestJS Conventions
+
+## File Naming
+
+| Type | Pattern |
+|------|---------|
+| Module | `*.module.ts` |
+| Controller | `*.controller.ts` |
+| Service | `*.service.ts` |
+| Unit test | `*.spec.ts` |
+| E2E test | `*.e2e-spec.ts` |
+
+Each domain lives in its own folder: `src/bands/`, `src/albums/`, etc.
+
+## Module Structure
+
+```typescript
+@Module({
+  imports: [TypeOrmModule.forFeature([Band])],
+  controllers: [BandsController],
+  providers: [BandsService],
+})
+export class BandsModule {}
+```
+
+## Dependency Injection
+
+Always use constructor injection with `private readonly`:
+
+```typescript
+constructor(private readonly bandsService: BandsService) {}
+```
+
+## Controllers
+
+- Use `@Render('template-name')` for SSR Pug views — no manual `res.render()`.
+- Return a plain object from the handler; NestJS passes it to the template as locals.
+- Route params via `@Param()`, query via `@Query()`, body via `@Body()`.
+
+## Services
+
+- All DB interactions live in the service, never in the controller.
+- Return domain objects or typed DTOs — no raw query results leaked to the controller.
+
+## Cross-cutting Concerns
+
+Shared logic (guards, pipes, interceptors, decorators) goes in `src/common/`.

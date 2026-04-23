@@ -1,0 +1,32 @@
+---
+description: Core development standards — communication, DRY, no speculative code, build validation
+alwaysApply: true
+---
+
+# Development
+
+## Communication Style
+
+Be extremely concise. Sacrifice grammar for brevity. No flattery. Commit messages: imperative, lowercase, terse.
+
+## Development Style
+
+- Follow DRY; extract reused logic to services or shared utilities, not components.
+- Constructor injection with `private readonly` throughout.
+- Interfaces in `src/common/interfaces/`; derive from constants where possible.
+- Follow existing project patterns exactly — no new patterns without consultation.
+
+## No Speculative Code
+
+- Do NOT add code that is not immediately called or referenced.
+- Do NOT add re-exports or abstractions "for convenience" unless asked.
+- Do NOT anticipate future needs. Write only what the current task requires.
+- Consult before adding helper functions or utility wrappers.
+
+If you write it, something must call it. If nothing calls it, don't write it.
+
+## Build & Validation
+
+After every code change run `npm run build` (compiles SCSS then NestJS) before considering the task complete.
+
+Lint: `npm run lint` — ESLint with Prettier enforced.
