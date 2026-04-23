@@ -8,8 +8,9 @@ export class TemplateLocalsMiddleware implements NestMiddleware {
     res.locals.h = helpers;
     res.locals.currentPath = req.path;
     res.locals.path = req.path;
-    res.locals.user = null;
-    res.locals.flashes = {};
+    res.locals.user = req.user ?? null;
+    res.locals.flashes = req.session['flash'] ?? null;
+    delete req.session['flash'];
     next();
   }
 }

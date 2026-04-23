@@ -87,7 +87,6 @@ async function seed() {
         email: lu.email,
         name: lu.name,
         passwordHash: lu.hash,
-        passwordSalt: lu.salt,
         admin: lu.admin === 'true' || lu.admin === true,
       })
       .execute();

@@ -23,9 +23,6 @@ export class User {
   @Column({ name: 'password_hash', nullable: true })
   passwordHash: string;
 
-  @Column({ name: 'password_salt', nullable: true })
-  passwordSalt: string;
-
   @Column({ name: 'reset_password_token', nullable: true })
   resetPasswordToken: string;
 

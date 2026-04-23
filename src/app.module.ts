@@ -8,6 +8,7 @@ import { BandsModule } from './bands/bands.module';
 import { AlbumsModule } from './albums/albums.module';
 import { PedalsModule } from './pedals/pedals.module';
 import { TemplateLocalsMiddleware } from './common/middleware/template-locals.middleware';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { TemplateLocalsMiddleware } from './common/middleware/template-locals.mi
     BandsModule,
     AlbumsModule,
     PedalsModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
