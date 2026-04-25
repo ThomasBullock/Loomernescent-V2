@@ -7,9 +7,14 @@ import {
   Render,
   Req,
   Res,
+  UseFilters,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import type { Request, Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
+import { LoginExceptionFilter } from './filters/auth-exception.filter';
+import { LocalAuthGuard } from './guards/local-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -21,30 +26,17 @@ export class AuthController {
     return { title: 'Login' };
   }
 
+  @UseGuards(LocalAuthGuard)
+  @UseFilters(LoginExceptionFilter)
   @Post('/login')
-  async login(
-    @Body() body: { email: string; password: string },
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
-    const { email, password } = body;
-    const user = await this.authService.validateUser(email, password);
-    if (!user) {
-      return res.render('login', {
-        title: 'Login',
-        error: 'Invalid email or password',
-        email: body.email, // preserve input
-      });
-    }
-
-    req.login(user, (err) => {
-      if (err) {
-        return res.render('login', { title: 'Login', error: 'Login failed' });
-      }
+  login(@Req() req: Request, @Res() res: Response) {
+    console.log('[login] req.user:', req.user);
+    console.log('[login] req.session.passport:', (req.session as any).passport);
+    req.session.save((err) => {
+      if (err) return res.redirect('/auth/login');
       res.redirect('/');
     });
   }
-
   //  if you want a paranoid-level logout that invalidates the session entirely
   // (so even the cookie becomes useless), you combine it with req.session.destroy():
   @Post('/logout')
@@ -52,7 +44,7 @@ export class AuthController {
     req.logout((err) => {
       if (err) throw err;
       req.session['flash'] = { success: ['You have been logged out'] };
-      res.redirect('/auth/login');
+      req.session.save(() => res.redirect('/auth/login'));
     });
   }
 
