@@ -9,6 +9,7 @@ import { AlbumsModule } from './albums/albums.module';
 import { PedalsModule } from './pedals/pedals.module';
 import { TemplateLocalsMiddleware } from './common/middleware/template-locals.middleware';
 import { AuthModule } from './auth/auth.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { AuthModule } from './auth/auth.module';
     AlbumsModule,
     PedalsModule,
     AuthModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

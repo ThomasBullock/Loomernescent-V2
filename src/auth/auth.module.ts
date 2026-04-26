@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../entities/user.entity';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
+import { AccountController } from './account.controller';
 import { LocalStrategy } from './local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { SessionSerializer } from './session.serializer';
@@ -20,7 +21,7 @@ import { SessionSerializer } from './session.serializer';
     // Without this, sessions don't persist between requests.
     PassportModule.register({ session: true }),
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, AccountController],
   providers: [AuthService, LocalStrategy, SessionSerializer],
 })
 export class AuthModule {}

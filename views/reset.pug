@@ -2,11 +2,15 @@ extends layout
 
 block content
 	.inner
-		//- when we leave action off the form will post defaults to current url and post to itself
+		//- form omits action so it posts to the current URL (/auth/reset/:token)
 		form.form(method="POST")
 			h2 Reset Your Password
+			if errors
+				ul.errors
+					each err in errors
+						li.error= err
 			label(for="password") Password
 			input(type="password" name="password")
 			label(for="password-confirm") Confirm Password
 			input(type="password" name="password-confirm")
-			input(type="submit" value="Reset Password ->")
+			input.button(type="submit" value="Reset Password ->")

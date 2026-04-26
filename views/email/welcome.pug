@@ -1,0 +1,6 @@
+extends email-layout
+
+block content
+  h2 Thanks for joining!
+  p Hello #{user.name}! Thank you for joining Loomernescent.com. Be sure to check in regularly to discover new and old bands on the loomernescent side of pop :)
+  +button(appUrl, 'Visit Loomernescent.com →')

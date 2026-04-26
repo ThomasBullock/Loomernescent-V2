@@ -3,8 +3,11 @@ extends layout
 block content
 	.inner
 		h2 Edit Your Account
-		//- pre= h.dump(user)
-		form(action="/account" method="POST")
+		if errors
+			ul.errors
+				each err in errors
+					li.error= err
+		form.form(action="/account" method="POST")
 			label(for="name") Name
 			input(type="text" name="name" value=user.name)
 			label(for="email") Email Address
