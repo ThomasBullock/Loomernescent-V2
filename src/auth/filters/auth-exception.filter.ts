@@ -1,4 +1,3 @@
-// src/auth/filters/auth-exception.filter.ts
 import {
   ArgumentsHost,
   Catch,
@@ -14,6 +13,6 @@ export class LoginExceptionFilter implements ExceptionFilter {
     const req = ctx.getRequest<Request>();
     const res = ctx.getResponse<Response>();
     req.session['flash'] = { error: ['Invalid email or password'] };
-    res.redirect('/auth/login');
+    req.session.save(() => res.redirect('/auth/login'));
   }
 }
