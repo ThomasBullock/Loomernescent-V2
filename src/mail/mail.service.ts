@@ -27,13 +27,13 @@ export class MailService {
     this.appUrl =
       this.config.get<string>('APP_URL') ?? 'http://localhost:3000';
 
+    const smtpUser = this.config.get<string>('MAILGUN_SMTP_LOGIN');
+    const smtpPass = this.config.get<string>('MAILGUN_SMTP_PASSWORD');
+
     this.transporter = nodemailer.createTransport({
       host: this.config.get<string>('MAILGUN_SMTP_HOST') ?? 'smtp.mailgun.org',
       port: Number(this.config.get<string>('MAILGUN_SMTP_PORT') ?? 587),
-      auth: {
-        user: this.config.get<string>('MAILGUN_SMTP_LOGIN'),
-        pass: this.config.get<string>('MAILGUN_SMTP_PASSWORD'),
-      },
+      ...(smtpUser && smtpPass ? { auth: { user: smtpUser, pass: smtpPass } } : {}),
     });
   }
 

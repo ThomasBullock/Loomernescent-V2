@@ -44,6 +44,53 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Local development
+
+### Environment variables
+
+Copy `.env.example` to `.env` and fill in your local values. The `.env` file is
+gitignored; production secrets are injected by the host, not committed.
+
+### Email (Mailpit)
+
+For local development, point SMTP at [Mailpit](https://mailpit.axllent.org/) —
+a lightweight catcher that captures every outgoing email and shows it in a web
+UI. Nothing leaves your machine.
+
+**Install and run:**
+
+```bash
+brew install mailpit
+mailpit                          # foreground, ^C to stop
+# or run in the background:
+brew services start mailpit
+```
+
+This starts:
+
+- SMTP server on `localhost:1025`
+- Web UI at http://localhost:8025
+
+**Configure `.env`:**
+
+```
+MAIL_FROM="Loomernescent <dev@localhost>"
+MAILGUN_SMTP_HOST=localhost
+MAILGUN_SMTP_PORT=1025
+MAILGUN_SMTP_LOGIN=
+MAILGUN_SMTP_PASSWORD=
+```
+
+Leave `MAILGUN_SMTP_LOGIN` / `MAILGUN_SMTP_PASSWORD` blank — Mailpit does not
+require auth, and `MailService` skips the `auth` block when both are empty.
+
+**Test it:** trigger an email (e.g. forgot-password flow) and open
+http://localhost:8025 to inspect the rendered message.
+
+To test the real Mailgun send path locally, swap in the commented Mailgun block
+in `.env`. Note that Mailgun's sandbox domain only delivers to
+addresses listed as Authorized Recipients in the Mailgun dashboard.
+
 ## Run tests
 
 ```bash
