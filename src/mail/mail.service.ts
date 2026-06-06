@@ -24,8 +24,7 @@ export class MailService {
     this.from =
       this.config.get<string>('MAIL_FROM') ??
       'Loomernescent <talk@tbullock.net>';
-    this.appUrl =
-      this.config.get<string>('APP_URL') ?? 'http://localhost:3000';
+    this.appUrl = this.config.get<string>('APP_URL') ?? 'http://localhost:3000';
 
     const smtpUser = this.config.get<string>('MAILGUN_SMTP_LOGIN');
     const smtpPass = this.config.get<string>('MAILGUN_SMTP_PASSWORD');
@@ -33,7 +32,9 @@ export class MailService {
     this.transporter = nodemailer.createTransport({
       host: this.config.get<string>('MAILGUN_SMTP_HOST') ?? 'smtp.mailgun.org',
       port: Number(this.config.get<string>('MAILGUN_SMTP_PORT') ?? 587),
-      ...(smtpUser && smtpPass ? { auth: { user: smtpUser, pass: smtpPass } } : {}),
+      ...(smtpUser && smtpPass
+        ? { auth: { user: smtpUser, pass: smtpPass } }
+        : {}),
     });
   }
 

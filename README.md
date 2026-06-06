@@ -97,11 +97,33 @@ addresses listed as Authorized Recipients in the Mailgun dashboard.
 # unit tests
 $ npm run test
 
-# e2e tests
+# e2e tests (requires TEST_DATABASE_URL — see below)
 $ npm run test:e2e
 
 # test coverage
 $ npm run test:cov
+```
+
+### E2E test database
+
+E2E tests boot the real Nest app against a dedicated Neon branch. Set
+`TEST_DATABASE_URL` in `.env`. The harness refuses to run if
+`TEST_DATABASE_URL === DATABASE_URL` (safety rail).
+
+In the Neon console, create a branch off `main` (e.g. named `test`), then copy
+its pooled connection string into `TEST_DATABASE_URL`. Branches are isolated
+and instant to create; re-create the branch any time for a clean slate.
+
+```bash
+# .env
+TEST_DATABASE_URL=postgresql://neondb_owner:pwd@ep-<branch-id>-pooler.<region>.aws.neon.tech/neondb?sslmode=require
+```
+
+`npm run test:e2e` runs migrations against the test branch automatically on
+first run. To reset the test branch to a clean state without re-creating it:
+
+```bash
+npm run test:e2e:setup
 ```
 
 ## Deployment

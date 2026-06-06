@@ -1,29 +1,21 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
-import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { createTestApp, TestAppHandle } from './helpers/test-app';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+describe('App smoke (e2e)', () => {
+  let handle: TestAppHandle;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      imports: [AppModule],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+  beforeAll(async () => {
+    handle = await createTestApp();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/')
-      .expect(200)
-      .expect('Hello World!');
+  afterAll(async () => {
+    await handle.app.close();
   });
 
-  afterEach(async () => {
-    await app.close();
+  it('renders the login page', async () => {
+    const res = await request(handle.app.getHttpServer())
+      .get('/auth/login')
+      .expect(200);
+    expect(res.text).toContain('<form');
   });
 });

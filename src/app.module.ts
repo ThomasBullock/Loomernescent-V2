@@ -10,6 +10,7 @@ import { PedalsModule } from './pedals/pedals.module';
 import { TemplateLocalsMiddleware } from './common/middleware/template-locals.middleware';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
+import { shouldUseSsl } from './configure-app';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { MailModule } from './mail/mail.module';
       useFactory: (config: ConfigService) => ({
         type: 'postgres' as const,
         url: config.get('DATABASE_URL'),
-        ssl: { rejectUnauthorized: false },
+        ssl: shouldUseSsl() ? { rejectUnauthorized: false } : false,
         entities: [User, Band, Album, Pedal, Favourite],
         synchronize: false,
       }),

@@ -9,7 +9,7 @@ import { User } from '../../entities/user.entity';
 
 @Injectable()
 export class AdminGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const req = context.switchToHttp().getRequest<Request>();
     const res = context.switchToHttp().getResponse<Response>();
 
@@ -17,7 +17,10 @@ export class AdminGuard implements CanActivate {
       req.session['flash'] = {
         error: ['You must be logged in to access that page'],
       };
-      req.session.save(() => res.redirect('/auth/login'));
+      await new Promise<void>((resolve, reject) => {
+        req.session.save((err) => (err ? reject(err) : resolve()));
+      });
+      res.redirect('/auth/login');
       return false;
     }
 

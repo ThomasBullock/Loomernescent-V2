@@ -11,6 +11,9 @@ block meta
 block content
 	.inner
 		h2.title--albums.nexa-rust= title
+		if user && user.admin
+			p.admin-actions
+				a.button(href="/pedals/new") Add pedal
 		.pedals
 			each pedal in pedals
 				+pedalCard(pedal)

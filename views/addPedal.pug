@@ -10,6 +10,3 @@ block content
 				each err in errors
 					li= err
 		+pedalForm(pedal)
-		if pedal.id
-			form.delete-pedal(action=`/pedals/${pedal.id}/delete` method="post")
-				input.button.button--danger(type="submit" value="Delete pedal")
