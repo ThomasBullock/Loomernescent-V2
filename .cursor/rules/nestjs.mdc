@@ -6,18 +6,6 @@ alwaysApply: false
 
 # NestJS Conventions
 
-## File Naming
-
-| Type | Pattern |
-|------|---------|
-| Module | `*.module.ts` |
-| Controller | `*.controller.ts` |
-| Service | `*.service.ts` |
-| Unit test | `*.spec.ts` |
-| E2E test | `*.e2e-spec.ts` |
-
-Each domain lives in its own folder: `src/bands/`, `src/albums/`, etc.
-
 ## Module Structure
 
 ```typescript
@@ -27,14 +15,6 @@ Each domain lives in its own folder: `src/bands/`, `src/albums/`, etc.
   providers: [BandsService],
 })
 export class BandsModule {}
-```
-
-## Dependency Injection
-
-Always use constructor injection with `private readonly`:
-
-```typescript
-constructor(private readonly bandsService: BandsService) {}
 ```
 
 ## Controllers

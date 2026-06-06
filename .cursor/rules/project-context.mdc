@@ -28,41 +28,22 @@ The original app lives at `/Users/thomasbullock/Sites/Loomer-Redux/loomernescent
 - **Templates:** Pug (SSR via `@Render()` decorator, not REST API)
 - **ORM:** TypeORM (no Mongoose)
 - **DB:** PostgreSQL on Neon (SSL required, branches for dev/prod)
+- **Sessions:** `express-session` + `connect-pg-simple` (Postgres store)
+- **Auth:** Passport local strategy (`src/auth/`)
+- **Mail:** Nodemailer — Mailgun in prod, Mailpit locally
 - **Styles:** SCSS via Dart `sass` CLI (no Webpack); Tailwind migration is a later phase
 - **Slug generation:** `slugify` package (not legacy `slugs`)
 - **Config:** `@nestjs/config` with `.env`
 
-## Phase 1 — Complete
-
-Foundation for rendering styled pages backed by a real DB. Delivered:
-
-- `src/main.ts` — Pug engine, views dir, static assets mount (`public/`)
-- `src/app.module.ts` — `ConfigModule`, `TypeOrmModule.forRootAsync`, domain modules, `TemplateLocalsMiddleware` on all routes
-- `src/entities/` — `User`, `Band`, `Album`, `Pedal`, `Favourite` (UUID PKs, snake_case DB columns, typed relations)
-- `src/bands/`, `src/albums/`, `src/pedals/` — module + controller + service per domain
-- `src/common/helpers/template-helpers.ts` — `siteName`, `menu`, `icon()` (cached SVG read), `buildDatesString()`, `dump()`, `staticMap()`
-- `src/common/middleware/template-locals.middleware.ts` — injects `h`, `currentPath`, `path`, `user`, `flashes` into `res.locals`
-- `src/styles/` — all legacy SCSS partials + vendored Bourbon; compiles to `public/dist/style.css`
-- `views/` — all legacy Pug templates (some for future phases not yet wired to routes)
-- `src/data-source.ts` + `src/migrations/` — TypeORM CLI wiring
-- `src/seeds/seed.ts` — reads `/loomernescent/data/` JSON fixtures, maps ObjectIds→UUIDs, resolves image filenames
-
-**Phase 1 routes (read-only):** `/`, `/bands`, `/bands/page/:page`, `/band/:slug`, `/albums`, `/album/:slug`, `/pedals`, `/pedal/:slug`.
-
-Phase 1 plan (full detail): `/Users/thomasbullock/.claude/plans/unified-doodling-origami.md`
-
 ## Not Yet Built (future phases)
 
-Templates for these exist in `views/` but have no routes or services yet:
+Check the legacy codebase first, then design the Nest/TypeORM equivalent.
 
-- **Auth** — login, register, password reset with token flow, guards (legacy uses Passport — port to Nest-native or `@nestjs/passport`)
-- **File upload + image resizing** — band/album/pedal photos (legacy uses `multer` + `jimp`)
+- **File upload + image resizing** — band/album/pedal photos (`multer` + `sharp`)
 - **Spotify integration** — fetch album/artist data
 - **Favourites (loves)** — toggle, favourites page
-- **Geospatial / map** — band locations; deferred PostGIS + map page
+- **Geospatial / map** — band locations; PostGIS + map page
 - **Full-text search** — tsvector/GIN; typeahead
 - **Admin forms** — add/edit band, album, pedal
-- **Client-side JS** — typeahead, modals, lazy loading, map interactions (Vite may be introduced when needed)
+- **Client-side JS** — typeahead, modals, lazy loading, map interactions (Vite when needed)
 - **Tailwind migration** — after feature parity is reached
-
-When building these, check the legacy codebase for the intended behaviour first, then design the Nest/TypeORM equivalent.
