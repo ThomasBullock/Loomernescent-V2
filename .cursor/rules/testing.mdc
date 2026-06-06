@@ -1,5 +1,5 @@
 ---
-description: Jest unit and e2e testing conventions
+description: Jest unit and integration testing conventions
 globs: **/*.spec.ts,test/**/*.ts
 alwaysApply: false
 ---
@@ -12,12 +12,12 @@ alwaysApply: false
 npm run test          # unit tests
 npm run test:watch    # watch mode
 npm run test:cov      # coverage
-npm run test:e2e      # e2e (supertest)
+npm run test:integration  # integration (supertest)
 ```
 
 Run a single file:
 - Unit: `npx jest <pattern>`
-- E2E: `npx jest --config ./test/jest-e2e.json <file>`
+- Integration: `npx jest --config ./test/jest-integration.json <file>`
 
 ## Unit Tests (`*.spec.ts`)
 
@@ -34,10 +34,10 @@ describe('BandsService', () => {
 });
 ```
 
-## E2E Tests (`*.e2e-spec.ts`)
+## Integration Tests (`*.integration-spec.ts`)
 
 - Live in `test/`; use supertest against a real NestJS app instance.
-- Config: `test/jest-e2e.json`.
+- Config: `test/jest-integration.json`.
 
 ## Coverage
 
