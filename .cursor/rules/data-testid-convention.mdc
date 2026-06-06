@@ -1,0 +1,184 @@
+---
+description: data-testid naming convention for all interactive elements
+globs: ["views/**/*.pug", "test/**/*.ts"]
+alwaysApply: true
+---
+
+# data-testid Convention
+
+## Pattern
+
+```
+data-testid="domain.component.element-type"
+```
+
+All three segments are **required**. Use kebab-case within each segment. Separate segments with `.`.
+
+| Segment | Description | Examples |
+|---|---|---|
+| `domain` | Feature area or route domain | `auth`, `nav`, `bands`, `albums`, `pedals`, `account` |
+| `component` | The specific view or form within that domain | `login-form`, `header`, `list`, `detail`, `add-form`, `edit-form` |
+| `element-type` | What the element is and/or does | `email-input`, `submit-btn`, `table`, `error-message`, `back-link` |
+
+## Rules
+
+- **Stable**: never derived from dynamic content (no IDs, slugs, indices, user-generated strings)
+- **Unique**: the full three-part string must be unique within the domain
+- **Consistent element suffixes**: use `‑btn` for buttons, `‑input` for text/number/date inputs, `‑select` for dropdowns, `‑table` for tables, `‑link` for navigation anchors, `‑message` for inline feedback, `‑dialog` for modals
+- **Pug syntax**: write as an attribute in parentheses — `input(data-testid="auth.login-form.email-input")`
+- **No dynamic values**: never interpolate server-side variables into a testid — the rendered DOM value must be a static string
+
+## Examples (Pug syntax)
+
+```pug
+//- Auth
+input(data-testid="auth.login-form.email-input")
+button(data-testid="auth.login-form.sign-in-btn")
+span(data-testid="auth.login-form.error-message")
+
+//- Navigation
+a(data-testid="nav.header.bands-link") Bands
+a(data-testid="nav.header.logout-btn") Logout
+
+//- Pedals list
+table(data-testid="pedals.list.table")
+a(data-testid="pedals.list.add-link") Add Pedal
+
+//- Pedal admin form
+input(data-testid="pedals.add-form.name-input")
+button(data-testid="pedals.add-form.submit-btn")
+```
+
+## In Page Object Models (Playwright)
+
+Reference test IDs using the full dot-notation string:
+
+```ts
+this.emailInput = page.getByTestId('auth.login-form.email-input')
+this.submitButton = page.getByTestId('auth.login-form.sign-in-btn')
+```
+
+## Do Not
+
+- Use the old flat kebab-case format: ~~`data-testid="email-input"`~~
+- Embed dynamic values: ~~`data-testid="pedal-#{pedal.id}-delete-btn"`~~
+- Interpolate server variables: ~~`data-testid="band-#{band.slug}"`~~
+- Omit any of the three segments: ~~`data-testid="login.email-input"`~~
+- Use underscores or camelCase: ~~`data-testid="auth.loginForm.emailInput"`~~
+
+---
+
+## Registered Test IDs (by view)
+
+Keep this section up to date whenever a new `data-testid` is added or removed.
+
+### Navigation — `views/layout.pug`
+
+| Test ID | Element |
+|---|---|
+| `nav.header.home-link` | Home nav link |
+| `nav.header.bands-link` | Bands nav link |
+| `nav.header.albums-link` | Albums nav link |
+| `nav.header.pedals-link` | Pedals nav link |
+| `nav.header.map-link` | Map nav link |
+| `nav.header.tags-link` | Tags nav link |
+| `nav.header.favourites-link` | Favourites nav link |
+| `nav.header.login-link` | Login nav link |
+| `nav.header.account-link` | Account nav link |
+| `nav.header.logout-btn` | Logout button |
+
+### Auth — `views/mixins/_loginForm.pug`
+
+| Test ID | Element |
+|---|---|
+| `auth.login-form.email-input` | Email input |
+| `auth.login-form.password-input` | Password input |
+| `auth.login-form.sign-in-btn` | Sign in submit button |
+| `auth.login-form.forgot-link` | Forgot password link |
+| `auth.login-form.error-message` | Inline flash error message |
+
+### Auth — `views/register.pug`
+
+| Test ID | Element |
+|---|---|
+| `auth.register-form.name-input` | Name input |
+| `auth.register-form.email-input` | Email input |
+| `auth.register-form.password-input` | Password input |
+| `auth.register-form.submit-btn` | Register submit button |
+| `auth.register-form.error-message` | Inline error message |
+
+### Auth — `views/mixins/_forgotForm.pug`
+
+| Test ID | Element |
+|---|---|
+| `auth.forgot-form.email-input` | Email input |
+| `auth.forgot-form.submit-btn` | Submit button |
+
+### Auth — `views/reset.pug`
+
+| Test ID | Element |
+|---|---|
+| `auth.reset-form.password-input` | New password input |
+| `auth.reset-form.submit-btn` | Reset password submit button |
+| `auth.reset-form.error-message` | Inline error message |
+
+### Account — `views/account.pug`
+
+| Test ID | Element |
+|---|---|
+| `account.edit-form.name-input` | Name input |
+| `account.edit-form.email-input` | Email input |
+| `account.edit-form.password-input` | New password input |
+| `account.edit-form.submit-btn` | Save changes button |
+| `account.edit-form.error-message` | Inline error message |
+
+### Bands — `views/bands.pug`
+
+| Test ID | Element |
+|---|---|
+| `bands.list.table` | Bands list container |
+
+### Bands — `views/band.pug`
+
+| Test ID | Element |
+|---|---|
+| `bands.detail.name` | Band name heading |
+
+### Albums — `views/albums.pug`
+
+| Test ID | Element |
+|---|---|
+| `albums.list.table` | Albums list container |
+
+### Albums — `views/album.pug`
+
+| Test ID | Element |
+|---|---|
+| `albums.detail.title` | Album title heading |
+
+### Pedals — `views/pedals.pug`
+
+| Test ID | Element |
+|---|---|
+| `pedals.list.table` | Pedals list container |
+| `pedals.list.add-link` | Add pedal link (admin only) |
+
+### Pedals — `views/pedal.pug`
+
+| Test ID | Element |
+|---|---|
+| `pedals.detail.name` | Pedal name heading |
+| `pedals.detail.edit-link` | Edit pedal link (admin only) |
+| `pedals.detail.delete-btn` | Delete pedal button (admin only) |
+
+### Pedals — `views/mixins/_pedalForm.pug`
+
+| Test ID | Element |
+|---|---|
+| `pedals.add-form.name-input` | Name input |
+| `pedals.add-form.brand-input` | Brand input |
+| `pedals.add-form.submit-btn` | Submit button |
+| `pedals.edit-form.name-input` | Name input |
+| `pedals.edit-form.brand-input` | Brand input |
+| `pedals.edit-form.submit-btn` | Save changes button |
+| `pedals.edit-form.delete-btn` | Delete button |
