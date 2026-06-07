@@ -6,7 +6,7 @@ block content
 	.inner
 		h2= title
 		if errors
-			ul.errors
+			ul.errors(data-testid="pedals.add-form.error-message")
 				each err in errors
 					li= err
-		+pedalForm(pedal)
+		+pedalForm(pedal, 'add')

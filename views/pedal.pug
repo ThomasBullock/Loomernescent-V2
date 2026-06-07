@@ -9,7 +9,7 @@ block content
 	.single
 		.single__hero
 			img.single__image(src=`/images/Pedals_Sm2.jpeg` srcset='/images/Pedals_Sm.jpeg 767w, /images/Pedals_Lg.jpeg 1000w' alt='A wall of guitar pedals in a japanese music shop')
-			h2.title.title--single #{pedal.brand} #{pedal.name}
+			h2.title.title--single(data-testid="pedals.detail.name") #{pedal.brand} #{pedal.name}
 	.single__details.single__details--margin
 		if pedal.imagePath
 			.pedal-info__image

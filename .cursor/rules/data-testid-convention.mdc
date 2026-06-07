@@ -27,6 +27,7 @@ All three segments are **required**. Use kebab-case within each segment. Separat
 - **Consistent element suffixes**: use `‑btn` for buttons, `‑input` for text/number/date inputs, `‑select` for dropdowns, `‑table` for tables, `‑link` for navigation anchors, `‑message` for inline feedback, `‑dialog` for modals
 - **Pug syntax**: write as an attribute in parentheses — `input(data-testid="auth.login-form.email-input")`
 - **No dynamic values**: never interpolate server-side variables into a testid — the rendered DOM value must be a static string
+- **Exception — structural mode discrimination**: a shared mixin may use Pug interpolation to switch between two fixed testid prefixes (e.g. `pedals.add-form` vs `pedals.edit-form`) when the mode is passed as a literal string by the caller and never derived from user data. Document the intent with an inline comment.
 
 ## Examples (Pug syntax)
 
@@ -41,7 +42,7 @@ a(data-testid="nav.header.bands-link") Bands
 a(data-testid="nav.header.logout-btn") Logout
 
 //- Pedals list
-table(data-testid="pedals.list.table")
+.pedals(data-testid="pedals.list.container")
 a(data-testid="pedals.list.add-link") Add Pedal
 
 //- Pedal admin form
@@ -156,29 +157,53 @@ Keep this section up to date whenever a new `data-testid` is added or removed.
 |---|---|
 | `albums.detail.title` | Album title heading |
 
+### Add hub — `views/add.pug`
+
+| Test ID | Element |
+|---|---|
+| `add.hub.pedals-link` | "Add Pedal" anchor |
+
 ### Pedals — `views/pedals.pug`
 
 | Test ID | Element |
 |---|---|
-| `pedals.list.table` | Pedals list container |
+| `pedals.list.container` | Pedals grid div (`.pedals`) |
 | `pedals.list.add-link` | Add pedal link (admin only) |
+
+### Pedals — `views/mixins/_pedalCard.pug`
+
+| Test ID | Element |
+|---|---|
+| `pedals.list.edit-link` | Edit icon anchor (admin only) |
 
 ### Pedals — `views/pedal.pug`
 
 | Test ID | Element |
 |---|---|
 | `pedals.detail.name` | Pedal name heading |
-| `pedals.detail.edit-link` | Edit pedal link (admin only) |
-| `pedals.detail.delete-btn` | Delete pedal button (admin only) |
 
-### Pedals — `views/mixins/_pedalForm.pug`
+### Pedals — `views/addPedal.pug`
 
 | Test ID | Element |
 |---|---|
-| `pedals.add-form.name-input` | Name input |
-| `pedals.add-form.brand-input` | Brand input |
-| `pedals.add-form.submit-btn` | Submit button |
-| `pedals.edit-form.name-input` | Name input |
-| `pedals.edit-form.brand-input` | Brand input |
-| `pedals.edit-form.submit-btn` | Save changes button |
-| `pedals.edit-form.delete-btn` | Delete button |
+| `pedals.add-form.error-message` | Error list `<ul>` |
+
+### Pedals — `views/editPedal.pug`
+
+| Test ID | Element |
+|---|---|
+| `pedals.edit-form.error-message` | Error list `<ul>` |
+| `pedals.edit-form.delete-btn` | Delete pedal submit button |
+
+### Pedals — `views/mixins/_pedalForm.pug`
+
+Testids use Pug interpolation with a `mode` param (`'add'` or `'edit'`). Caller always passes a literal — see exception rule above.
+
+| Test ID | Element |
+|---|---|
+| `pedals.add-form.brand-input` | Brand input (add form) |
+| `pedals.add-form.name-input` | Name input (add form) |
+| `pedals.add-form.submit-btn` | Submit button (add form) |
+| `pedals.edit-form.brand-input` | Brand input (edit form) |
+| `pedals.edit-form.name-input` | Name input (edit form) |
+| `pedals.edit-form.submit-btn` | Save changes button (edit form) |

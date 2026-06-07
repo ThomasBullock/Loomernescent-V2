@@ -53,7 +53,39 @@ export interface CreatedUser {
   password: string;
 }
 
+export interface CreatePedalOptions {
+  brand?: string;
+  name?: string;
+  slug?: string;
+}
+
+export interface CreatedPedal {
+  id: string;
+  brand: string;
+  name: string;
+  slug: string;
+}
+
 let counter = 0;
+
+export async function createPedal(
+  ds: DataSource,
+  opts: CreatePedalOptions = {},
+): Promise<CreatedPedal> {
+  counter += 1;
+  const brand = opts.brand ?? `E2E Brand ${counter}`;
+  const name = opts.name ?? `E2E Pedal ${counter}`;
+  const slug = opts.slug ?? `e2e-brand-${counter}-e2e-pedal-${counter}`;
+
+  const rows = await ds.query<CreatedPedal[]>(
+    `INSERT INTO "pedals" (brand, name, slug)
+     VALUES ($1, $2, $3)
+     RETURNING id, brand, name, slug`,
+    [brand, name, slug],
+  );
+
+  return rows[0];
+}
 
 export async function createUser(
   ds: DataSource,
