@@ -40,3 +40,22 @@ favourites: Favourite[];
 ## Repository Usage
 
 Inject via `@InjectRepository(Entity)` in services. No raw SQL unless TypeORM query builder is insufficient.
+
+## Creating Records — use `repo.create()` + `repo.save()`
+
+Always use `repo.create(data)` when constructing new entities. It accepts `DeepPartial<Entity>` natively — no `Partial<Entity>` workaround and no `as Entity` cast required.
+
+```typescript
+// correct
+const entity = this.repo.create({ brand, name, slug });
+return this.repo.save(entity);
+
+// avoid — Partial + cast lies to the compiler
+const data: Partial<Entity> = { brand, name, slug };
+return this.repo.save(data as Entity);
+```
+
+## `undefined` vs `null` in services
+
+- **INSERT (`create`)** — use `undefined` for omitted optional fields. TypeORM excludes `undefined` columns from the statement; the DB applies its own nullable default.
+- **UPDATE** — use `null` to explicitly clear a nullable field on an existing row. `undefined` would leave the column unchanged.

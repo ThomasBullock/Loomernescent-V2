@@ -77,10 +77,20 @@ export class PedalsService {
       lower: true,
       strict: true,
     });
+    // TODO: replace Partial<Pedal> + `as Pedal` cast with repo.create(data) which
+    // accepts DeepPartial<Pedal> natively — no cast needed, types stay honest.
+    // `Partial<Pedal>` is used here because the object literal can't satisfy all
+    // required entity fields (id, createdAt, etc.) before save. The `as Pedal`
+    // cast then forces TypeScript to accept it — a targeted workaround, not `any`,
+    // but still lying to the compiler about completeness.
     const data: Partial<Pedal> = {
       brand: input.brand,
       name: input.name,
       slug,
+      // undefined (not null) for optional fields on INSERT: TypeORM omits columns
+      // with undefined from the statement, letting the DB apply its nullable default.
+      // Contrast with update() below, where null is passed explicitly to clear a
+      // field on an existing row.
       pedalType: input.pedalType || undefined,
       pedalType2:
         input.pedalType2 && input.pedalType2 !== 'None'
