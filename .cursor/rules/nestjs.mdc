@@ -31,3 +31,13 @@ export class BandsModule {}
 ## Cross-cutting Concerns
 
 Shared logic (guards, pipes, interceptors, decorators) goes in `src/common/`.
+
+## TypeScript Style
+
+- Never use `any`. Declare explicit types; create named interfaces/types where needed.
+- Prefer RO-RO (receive-object / return-object): pass multiple params as a single typed object and return a typed object (see `CreatePedalInput` and the `getPedals` return shape).
+- Boolean names use a verb prefix: `isX`, `hasX`, `canX` (e.g. `isUniqueViolation`).
+- Functions start with a verb (`getPedals`, `validatePedalBody`, `parseYears`).
+- Add JSDoc to public classes and methods.
+
+Note: this is an SSR app, not a REST API. Inputs are typed interfaces validated by plain functions (e.g. `validatePedalBody`) that re-render the Pug form with an `errors` array — do NOT introduce `class-validator`/`ValidationPipe` DTOs. Persistence is TypeORM, not MikroORM.

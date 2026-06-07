@@ -30,3 +30,11 @@ If you write it, something must call it. If nothing calls it, don't write it.
 After every code change run `npm run build` (compiles SCSS then NestJS) before considering the task complete.
 
 Lint: `npm run lint` — ESLint with Prettier enforced.
+
+After any changes that come from a plan, run the full test suite before considering the task complete:
+
+```bash
+npm run test
+npm run test:integration
+npm run test:e2e
+```
