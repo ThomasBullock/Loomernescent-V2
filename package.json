@@ -25,7 +25,10 @@
     "seed:accounts": "ts-node src/seeds/seed-accounts.ts",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migration:generate": "npm run typeorm -- migration:generate src/migrations/Init -d src/data-source.ts",
-    "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts"
+    "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -57,6 +60,7 @@
     "@nestjs/cli": "^11.0.0",
     "@nestjs/schematics": "^11.0.0",
     "@nestjs/testing": "^11.0.1",
+    "@playwright/test": "^1.60.0",
     "@types/bcrypt": "^6.0.0",
     "@types/connect-pg-simple": "^7.0.3",
     "@types/express": "^5.0.0",

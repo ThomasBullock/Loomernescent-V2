@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Body,
+  ConflictException,
   Controller,
   Get,
   Param,
@@ -97,11 +98,21 @@ export class AuthController {
       return res.render('register', { title: 'Sign up', errors, body });
     }
 
-    const user = await this.authService.register(
-      body.name,
-      body.email,
-      body.password,
-    );
+    const user = await this.authService
+      .register(body.name, body.email, body.password)
+      .catch((err: unknown) => {
+        if (err instanceof ConflictException) {
+          res.render('register', {
+            title: 'Sign up',
+            errors: [err.message],
+            body,
+          });
+          return null;
+        }
+        throw err;
+      });
+
+    if (!user) return;
 
     this.mailService
       .send({
