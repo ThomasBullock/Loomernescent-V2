@@ -13,7 +13,7 @@ mixin pedalCard(pedal = {})
 					.pedal__action.pedal__action--edit
 						a(href=`/pedals/${pedal.id}/edit`)
 							!= h.icon('pencil')
-			img(src=`/uploads/pedals/${pedal.image || 'Pedal.jpg'}` alt=`A photo of a ${pedal.brand} ${pedal.name}`)
+			img(src=pedal.imagePath ? imageUrl(pedal.imagePath) : imageUrl('/pedals/Pedal.jpg') alt=`A photo of a ${pedal.brand} ${pedal.name}`)
 			h2.title.title--pedals
 				a(href=`/pedal/${pedal.slug}`) #{pedal.name}
 		.pedal__details
