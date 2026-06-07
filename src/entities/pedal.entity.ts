@@ -30,7 +30,7 @@ export class Pedal {
   @Column({ name: 'pedal_type2', nullable: true })
   pedalType2: string;
 
-  @Column({ type: 'jsonb', name: 'used_by', nullable: true })
+  @Column({ type: 'jsonb', name: 'used_by', nullable: true, default: () => "'[]'" })
   usedBy: { artist: string; band: string; slug: string }[];
 
   @ManyToOne(() => Band, (band) => band.pedals, { nullable: true })
@@ -47,8 +47,11 @@ export class Pedal {
   })
   yearsManufactured: Date[];
 
-  @Column({ nullable: true })
-  image: string;
+  @Column({ name: 'image_file_id', type: 'text', nullable: true })
+  imageFileId: string | null;
+
+  @Column({ name: 'image_path', type: 'text', nullable: true })
+  imagePath: string | null;
 
   @Column({ type: 'text', nullable: true })
   comments: string;

@@ -8,6 +8,7 @@ import { BandsModule } from './bands/bands.module';
 import { AlbumsModule } from './albums/albums.module';
 import { PedalsModule } from './pedals/pedals.module';
 import { TemplateLocalsMiddleware } from './common/middleware/template-locals.middleware';
+import { ImagesModule } from './common/images/images.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 import { shouldUseSsl } from './configure-app';
@@ -26,6 +27,7 @@ import { shouldUseSsl } from './configure-app';
         synchronize: false,
       }),
     }),
+    ImagesModule,
     BandsModule,
     AlbumsModule,
     PedalsModule,

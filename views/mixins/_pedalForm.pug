@@ -2,7 +2,7 @@ mixin pedalForm(pedal = {})
 	- const effectTypes = ['Chorus', 'Delay', 'Distortion', 'Fuzz', 'Flanger','Phaser', 'Reverb', 'Tremelo']
 	- const effectTypes2 = ['None'].concat(effectTypes)
 	- const action = pedal.id ? '/pedals/' + pedal.id : '/pedals'
-	form.add-band(action=action method="post" class="card")
+	form.add-band(action=action method="post" enctype="multipart/form-data" class="card")
 		label(for="brand") Brand
 		input(type="text" id="brand" name="brand" value=(pedal.brand))
 		label(for="name") Pedal Name
@@ -24,4 +24,8 @@ mixin pedalForm(pedal = {})
 		textarea(rows="3" id="comments" name="comments")= pedal.comments
 		label(for="youtube") Youtube Video
 		input(type="url" id="youtube" name="youtube" value=pedal.youtube)
+		label(for="image") Pedal Image
+		if pedal.imagePath
+			img.pedal-form__preview(src=imageUrl(pedal.imagePath, { w: 200, h: 200, fo: 'auto' }) alt=`${pedal.brand} ${pedal.name}`)
+		input(type="file" id="image" name="image" accept="image/*")
 		input(type="submit" value="Save -<" class="button")

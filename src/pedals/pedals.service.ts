@@ -12,6 +12,8 @@ export interface CreatePedalInput {
   yearsManufactured?: string;
   comments?: string;
   youtube?: string;
+  imageFileId?: string | null;
+  imagePath?: string | null;
 }
 
 @Injectable()
@@ -68,6 +70,10 @@ export class PedalsService {
     pedal.yearsManufactured = parseYears(input.yearsManufactured);
     pedal.comments = (input.comments || null) as string;
     pedal.youtube = (input.youtube || null) as string;
+    // Only touch image columns when a new value is supplied; an edit without a
+    // file upload must preserve the existing image.
+    if (input.imageFileId !== undefined) pedal.imageFileId = input.imageFileId;
+    if (input.imagePath !== undefined) pedal.imagePath = input.imagePath;
 
     return this.pedalRepo.save(pedal);
   }
@@ -99,6 +105,8 @@ export class PedalsService {
       yearsManufactured: parseYears(input.yearsManufactured),
       comments: input.comments || undefined,
       youtube: input.youtube || undefined,
+      imageFileId: input.imageFileId ?? undefined,
+      imagePath: input.imagePath ?? undefined,
     };
     return this.pedalRepo.save(data as Pedal);
   }

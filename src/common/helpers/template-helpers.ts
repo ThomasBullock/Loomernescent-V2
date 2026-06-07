@@ -28,10 +28,30 @@ try {
 export const siteName = 'Music on the effected side of indie';
 
 export const menu = [
-  { slug: '/bands', title: 'Bands', icon: 'bands', testid: 'nav.header.bands-link' },
-  { slug: '/albums/', title: 'Albums', icon: 'cassette', testid: 'nav.header.albums-link' },
-  { slug: '/pedals', title: 'Pedals', icon: 'pedal', testid: 'nav.header.pedals-link' },
-  { slug: '/tags', title: 'Tags', icon: 'pick', testid: 'nav.header.tags-link' },
+  {
+    slug: '/bands',
+    title: 'Bands',
+    icon: 'bands',
+    testid: 'nav.header.bands-link',
+  },
+  {
+    slug: '/albums/',
+    title: 'Albums',
+    icon: 'cassette',
+    testid: 'nav.header.albums-link',
+  },
+  {
+    slug: '/pedals',
+    title: 'Pedals',
+    icon: 'pedal',
+    testid: 'nav.header.pedals-link',
+  },
+  {
+    slug: '/tags',
+    title: 'Tags',
+    icon: 'pick',
+    testid: 'nav.header.tags-link',
+  },
   { slug: '/map', title: 'Map', icon: 'map', testid: 'nav.header.map-link' },
 ];
 

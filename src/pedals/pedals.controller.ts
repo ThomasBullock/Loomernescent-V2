@@ -1,7 +1,9 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
+  Logger,
   NotFoundException,
   Param,
   Post,
@@ -9,12 +11,33 @@ import {
   Render,
   Req,
   Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorage } from 'multer';
 import type { Request, Response } from 'express';
 import { PedalsService, CreatePedalInput } from './pedals.service';
 import { Pedal } from '../entities/pedal.entity';
 import { AdminGuard } from '../auth/guards/admin.guard';
+import { ImageKitService } from '../common/images/image-kit.service';
+import { processImage } from '../common/images/process-image';
+
+const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+
+const pedalImageMulterOptions = {
+  storage: memoryStorage(),
+  limits: { fileSize: MAX_UPLOAD_BYTES },
+  fileFilter: (
+    _req: Request,
+    file: Express.Multer.File,
+    cb: (error: Error | null, accept: boolean) => void,
+  ) => {
+    if (file.mimetype.startsWith('image/')) cb(null, true);
+    else cb(new BadRequestException('Only image uploads are allowed'), false);
+  },
+};
 
 interface PedalFormBody {
   brand?: string;
@@ -28,7 +51,12 @@ interface PedalFormBody {
 
 @Controller()
 export class PedalsController {
-  constructor(private readonly pedalsService: PedalsService) {}
+  private readonly logger = new Logger(PedalsController.name);
+
+  constructor(
+    private readonly pedalsService: PedalsService,
+    private readonly imageKit: ImageKitService,
+  ) {}
 
   @Get('/pedals')
   @Render('pedals')
@@ -55,8 +83,10 @@ export class PedalsController {
 
   @Post('/pedals')
   @UseGuards(AdminGuard)
+  @UseInterceptors(FileInterceptor('image', pedalImageMulterOptions))
   async create(
     @Body() body: PedalFormBody,
+    @UploadedFile() file: Express.Multer.File | undefined,
     @Req() req: Request,
     @Res() res: Response,
   ) {
@@ -69,8 +99,15 @@ export class PedalsController {
       });
     }
 
+    const image = file
+      ? await this.uploadPedalImage(file, body.brand!, body.name!)
+      : {};
+
     try {
-      const pedal = await this.pedalsService.create(body as CreatePedalInput);
+      const pedal = await this.pedalsService.create({
+        ...(body as CreatePedalInput),
+        ...image,
+      });
       req.session['flash'] = {
         success: [`${pedal.brand} ${pedal.name} added`],
       };
@@ -101,9 +138,11 @@ export class PedalsController {
 
   @Post('/pedals/:id')
   @UseGuards(AdminGuard)
+  @UseInterceptors(FileInterceptor('image', pedalImageMulterOptions))
   async update(
     @Param('id') id: string,
     @Body() body: PedalFormBody,
+    @UploadedFile() file: Express.Multer.File | undefined,
     @Req() req: Request,
     @Res() res: Response,
   ) {
@@ -119,12 +158,20 @@ export class PedalsController {
       });
     }
 
+    const oldFileId = existing.imageFileId;
+    const image = file
+      ? await this.uploadPedalImage(file, body.brand!, body.name!)
+      : {};
+
     try {
-      const pedal = await this.pedalsService.update(
-        id,
-        body as CreatePedalInput,
-      );
+      const pedal = await this.pedalsService.update(id, {
+        ...(body as CreatePedalInput),
+        ...image,
+      });
       if (!pedal) throw new NotFoundException('Pedal not found');
+      if (file && oldFileId) {
+        void this.deleteImage(oldFileId);
+      }
       req.session['flash'] = {
         success: [`${pedal.brand} ${pedal.name} updated`],
       };
@@ -152,10 +199,41 @@ export class PedalsController {
     if (!existing) throw new NotFoundException('Pedal not found');
 
     await this.pedalsService.delete(id);
+    if (existing.imageFileId) {
+      void this.deleteImage(existing.imageFileId);
+    }
     req.session['flash'] = {
       success: [`${existing.brand} ${existing.name} deleted`],
     };
     req.session.save(() => res.redirect('/pedals'));
+  }
+
+  private async uploadPedalImage(
+    file: Express.Multer.File,
+    brand: string,
+    name: string,
+  ): Promise<{ imageFileId: string; imagePath: string }> {
+    const processed = await processImage(file.buffer, {
+      maxDimension: 2000,
+      aspectRatio: { w: 1, h: 1 },
+      format: 'jpeg',
+      quality: 85,
+    });
+    const { fileId, filePath } = await this.imageKit.upload({
+      buffer: processed.buffer,
+      filenameHint: `${brand}-${name}`,
+      folder: 'pedals',
+    });
+    return { imageFileId: fileId, imagePath: filePath };
+  }
+
+  // Best-effort cleanup; an orphaned ImageKit asset must never fail the request.
+  private async deleteImage(fileId: string): Promise<void> {
+    try {
+      await this.imageKit.delete(fileId);
+    } catch (err) {
+      this.logger.error(`Failed to delete ImageKit file ${fileId}`, err);
+    }
   }
 
   @Get('/pedal/:slug')

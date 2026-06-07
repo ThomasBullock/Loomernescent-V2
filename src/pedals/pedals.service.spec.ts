@@ -73,6 +73,27 @@ describe('PedalsService', () => {
       const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;
       expect(arg.yearsManufactured).toEqual([]);
     });
+
+    it('persists imageFileId and imagePath when supplied', async () => {
+      repo.save.mockImplementation(async (entity) => entity as Pedal);
+      await service.create({
+        brand: 'X',
+        name: 'Y',
+        imageFileId: 'fid-1',
+        imagePath: '/pedals/x-y.jpg',
+      });
+      const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;
+      expect(arg.imageFileId).toBe('fid-1');
+      expect(arg.imagePath).toBe('/pedals/x-y.jpg');
+    });
+
+    it('omits image columns when not supplied', async () => {
+      repo.save.mockImplementation(async (entity) => entity as Pedal);
+      await service.create({ brand: 'X', name: 'Y' });
+      const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;
+      expect(arg.imageFileId).toBeUndefined();
+      expect(arg.imagePath).toBeUndefined();
+    });
   });
 
   describe('getPedalById', () => {
@@ -140,6 +161,41 @@ describe('PedalsService', () => {
       await service.update('pedal-1', { brand: 'Big Muff', name: 'Deluxe' });
       const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;
       expect(arg.slug).toBe('big-muff-deluxe');
+    });
+
+    it('overwrites imageFileId and imagePath when supplied', async () => {
+      repo.findOne.mockResolvedValue({
+        ...existing,
+        imageFileId: 'old-fid',
+        imagePath: '/pedals/old.jpg',
+      } as Pedal);
+      repo.save.mockImplementation(async (e) => e as Pedal);
+      await service.update('pedal-1', {
+        brand: 'Big Muff',
+        name: 'Pi',
+        imageFileId: 'new-fid',
+        imagePath: '/pedals/new.jpg',
+      });
+      const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;
+      expect(arg.imageFileId).toBe('new-fid');
+      expect(arg.imagePath).toBe('/pedals/new.jpg');
+    });
+
+    it('leaves imageFileId and imagePath untouched when not supplied', async () => {
+      repo.findOne.mockResolvedValue({
+        ...existing,
+        imageFileId: 'old-fid',
+        imagePath: '/pedals/old.jpg',
+      } as Pedal);
+      repo.save.mockImplementation(async (e) => e as Pedal);
+      await service.update('pedal-1', {
+        brand: 'Big Muff',
+        name: 'Pi',
+        comments: 'updated',
+      });
+      const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;
+      expect(arg.imageFileId).toBe('old-fid');
+      expect(arg.imagePath).toBe('/pedals/old.jpg');
     });
   });
 

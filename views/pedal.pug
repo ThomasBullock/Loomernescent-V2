@@ -2,7 +2,7 @@ extends layout
 
 block meta 
 	meta(name="description" content=`Browse guitar pedals used by shoegaze bands on Loomernescent`)
-	meta(name="keywords" content=`${pedal.brand} - ${pedal.name}  ${pedal.usedBy.map(v => v.artist).join(", ")}, ${pedal.type}, guitar, fx, effects, pedals, loomernescent`)
+	meta(name="keywords" content=`${pedal.brand} - ${pedal.name}  ${(pedal.usedBy || []).map(v => v.artist).join(", ")}, ${pedal.type}, guitar, fx, effects, pedals, loomernescent`)
 	meta(property="og:url" content=`http://loomernescent.com/pedal/${pedal.slug}`)
 
 block content
@@ -11,8 +11,9 @@ block content
 			img.single__image(src=`/images/Pedals_Sm2.jpeg` srcset='/images/Pedals_Sm.jpeg 767w, /images/Pedals_Lg.jpeg 1000w' alt='A wall of guitar pedals in a japanese music shop')
 			h2.title.title--single #{pedal.brand} #{pedal.name}
 	.single__details.single__details--margin
-		.pedal-info__image
-			img(src=`/uploads/pedals/${pedal.image}` alt=`A photo of a ${pedal.brand} ${pedal.name}`)
+		if pedal.imagePath
+			.pedal-info__image
+				img(src=imageUrl(pedal.imagePath, { w: 800, h: 800, fo: 'auto' }) alt=`A photo of a ${pedal.brand} ${pedal.name}`)
 		.pedal-info__content
 			h3.pedal-info__title #{pedal.brand} #{pedal.name}			
 			.pedal-info
@@ -21,7 +22,7 @@ block content
 					p.pedal-info__detail
 						strong Manufactured: 
 						!= h.buildDatesString(pedal.yearsManufactured)
-				if pedal.usedBy.length
+				if pedal.usedBy && pedal.usedBy.length
 					p.pedal-info__detail
 						strong Notable Users: 
 						each user, i in pedal.usedBy
