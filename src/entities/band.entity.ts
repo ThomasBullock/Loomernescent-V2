@@ -65,6 +65,12 @@ export class Band {
   @Column('text', { array: true, default: '{}', name: 'photo_gallery_thumbs' })
   photoGalleryThumbs: string[];
 
+  @Column({ name: 'image_file_id', type: 'text', nullable: true })
+  imageFileId: string | null;
+
+  @Column({ name: 'image_path', type: 'text', nullable: true })
+  imagePath: string | null;
+
   @Column({ name: 'youtube_pl', nullable: true })
   youtubePl: string;
 

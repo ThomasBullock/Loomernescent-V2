@@ -1,8 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import slugify from 'slugify';
 import { Band } from '../entities/band.entity';
 import { Album } from '../entities/album.entity';
+
+export interface CreateBandInput {
+  name: string;
+  description?: string;
+  personnel?: string;
+  pastPersonnel?: string;
+  labels?: string;
+  yearsActive?: string;
+  tags?: string | string[];
+  locationAddress?: string;
+  locationLng?: string;
+  locationLat?: string;
+  youtubePl?: string;
+  vimeoPl?: string;
+  authorId: string;
+  imageFileId?: string | null;
+  imagePath?: string | null;
+}
 
 @Injectable()
 export class BandsService {
@@ -12,6 +31,29 @@ export class BandsService {
     @InjectRepository(Album)
     private readonly albumRepo: Repository<Album>,
   ) {}
+
+  async create(input: CreateBandInput): Promise<Band> {
+    const slug = slugify(input.name, { lower: true, strict: true });
+    const band = this.bandRepo.create({
+      name: input.name,
+      slug,
+      description: input.description || undefined,
+      labels: parseList(input.labels),
+      personnel: parseList(input.personnel),
+      pastPersonnel: parseList(input.pastPersonnel),
+      tags: normalizeTags(input.tags),
+      yearsActive: parseYears(input.yearsActive),
+      locationAddress: input.locationAddress || undefined,
+      locationLng: parseCoord(input.locationLng),
+      locationLat: parseCoord(input.locationLat),
+      youtubePl: input.youtubePl || undefined,
+      vimeoPl: input.vimeoPl || undefined,
+      authorId: input.authorId,
+      imageFileId: input.imageFileId ?? undefined,
+      imagePath: input.imagePath ?? undefined,
+    });
+    return this.bandRepo.save(band);
+  }
 
   async getHeroTiles(): Promise<any[]> {
     const bands = await this.bandRepo.find({
@@ -71,4 +113,27 @@ export class BandsService {
       : [];
     return { band, albums };
   }
+}
+
+function parseList(csv?: string): string[] {
+  if (!csv) return [];
+  return csv
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function parseYears(csv?: string): Date[] {
+  return parseList(csv).map((s) => new Date(s));
+}
+
+function normalizeTags(tags?: string | string[]): string[] {
+  if (!tags) return [];
+  return Array.isArray(tags) ? tags : [tags];
+}
+
+function parseCoord(value?: string): number | undefined {
+  if (!value?.trim()) return undefined;
+  const num = parseFloat(value);
+  return Number.isNaN(num) ? undefined : num;
 }

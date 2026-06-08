@@ -5,4 +5,9 @@ include mixins/_bandForm
 block content
 	.inner
 		h2 #{title}
-		+bandForm(band)
+		- const mode = band && band.id ? 'edit' : 'add'
+		if errors
+			ul.errors(data-testid=`bands.${mode}-form.error-message`)
+				each err in errors
+					li= err
+		+bandForm(band, mode)

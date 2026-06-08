@@ -87,6 +87,42 @@ export async function createPedal(
   return rows[0];
 }
 
+export interface CreateBandOptions {
+  name?: string;
+  slug?: string;
+  authorId?: string;
+}
+
+export interface CreatedBand {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export async function createBand(
+  ds: DataSource,
+  opts: CreateBandOptions = {},
+): Promise<CreatedBand> {
+  counter += 1;
+  const name = opts.name ?? `E2E Band ${counter}`;
+  const slug = opts.slug ?? `e2e-band-${counter}`;
+
+  let authorId = opts.authorId;
+  if (!authorId) {
+    const { user } = await createUser(ds);
+    authorId = user.id;
+  }
+
+  const rows = await ds.query<CreatedBand[]>(
+    `INSERT INTO "bands" (name, slug, author_id)
+     VALUES ($1, $2, $3)
+     RETURNING id, name, slug`,
+    [name, slug, authorId],
+  );
+
+  return rows[0];
+}
+
 export async function createUser(
   ds: DataSource,
   opts: CreateUserOptions = {},

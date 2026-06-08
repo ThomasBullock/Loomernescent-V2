@@ -12,8 +12,8 @@ block meta
 block content
 	.single
 		.single__hero
-			img.single__image(src=`/uploads/${band.photoGalleryThumbs[0] || 'Band.jpg' }` srcset=`/uploads/${band.photoGalleryThumbs[0]} 767w, /uploads/${band.photoGallery[0]} 1000w` alt=`A photo of ${band.name}`)
-			h2.title.title--single #{band.name}
+			img.single__image(src=band.imagePath ? imageUrl(band.imagePath, { w: 1000, h: 1000, fo: 'auto' }) : imageUrl('/bands/Band.jpg') alt=`A photo of ${band.name}`)
+			h2.title.title--single(data-testid="bands.detail.name") #{band.name}
 	.single__details
 		- if (band.locationAddress)
 			- if (band.locationAddress.length > 30)
@@ -24,7 +24,7 @@ block content
 					.ribbon!= band.locationAddress
 		.band-info
 			.band-info__photo
-				img(src=`/uploads/${band.photoSquareLg || 'Band.jpg' }` alt=`A photo of ${band.name}`)
+				img(src=band.imagePath ? imageUrl(band.imagePath, { w: 600, h: 600, fo: 'auto' }) : imageUrl('/bands/Band.jpg') alt=`A photo of ${band.name}`)
 			.band-info__facts
 				p.single__detail
 					strong Years Active:

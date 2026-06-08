@@ -11,9 +11,9 @@ mixin bandCard(band = {})
 								!= h.icon('heart')
 				if user && user.admin
 					.band__action.band__action--edit
-						a(href=`/bands/${band.id}/edit`)
+						a(href=`/bands/${band.id}/edit` data-testid="bands.list.edit-link")
 							!= h.icon('pencil')
-			img(src=`/uploads/${band.photoSquareSm || 'band.jpg'}` alt=`A photo of ${band.name}`)
+			img(src=band.imagePath ? imageUrl(band.imagePath, { w: 400, h: 400, fo: 'auto' }) : imageUrl('/bands/band.jpg') alt=`A photo of ${band.name}`)
 			h2.title
 				a(href=`/band/${band.slug}`) #{band.name}
 		.band__details

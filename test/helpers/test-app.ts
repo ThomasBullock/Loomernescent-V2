@@ -19,11 +19,12 @@ export interface TestAppHandle {
 
 export async function createTestApp(): Promise<TestAppHandle> {
   const imageKit: FakeImageKit = {
-    upload: jest.fn(({ filenameHint }: { filenameHint: string }) =>
-      Promise.resolve({
-        fileId: 'test-file-id',
-        filePath: `/pedals/${filenameHint}.jpg`,
-      }),
+    upload: jest.fn(
+      ({ filenameHint, folder }: { filenameHint: string; folder: string }) =>
+        Promise.resolve({
+          fileId: 'test-file-id',
+          filePath: `/${folder}/${filenameHint}.jpg`,
+        }),
     ),
     delete: jest.fn(() => Promise.resolve()),
     buildUrl: jest.fn((path: string) => `https://img.test${path}`),

@@ -11,7 +11,7 @@ block meta
 block content
 	.inner
 		h2.title--albums.nexa-rust= title
-		.bands
+		.bands(data-testid="bands.list.table")
 			each band in bands
 				+bandCard(band)
 		+pagination(page, pages, count, 'bands')

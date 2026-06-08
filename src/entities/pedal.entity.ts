@@ -30,7 +30,12 @@ export class Pedal {
   @Column({ name: 'pedal_type2', nullable: true })
   pedalType2: string;
 
-  @Column({ type: 'jsonb', name: 'used_by', nullable: true, default: () => "'[]'" })
+  @Column({
+    type: 'jsonb',
+    name: 'used_by',
+    nullable: true,
+    default: () => "'[]'",
+  })
   usedBy: { artist: string; band: string; slug: string }[];
 
   @ManyToOne(() => Band, (band) => band.pedals, { nullable: true })

@@ -1,49 +1,40 @@
-mixin bandForm(band = {})
-	form.add-band(action=`/addband/${band._id || ''}` method="post" class="card" enctype="multipart/form-data")
+mixin bandForm(band = {}, mode = 'add')
+	//- testid uses interpolation intentionally: mode is always 'add' or 'edit',
+	//- never user-derived data. Rendered value is a fixed static string per page.
+	- const p = `bands.${mode}-form`
+	- const action = band.id ? '/bands/' + band.id : '/bands'
+	form.add-band(action=action method="post" class="card" enctype="multipart/form-data")
 		label(for="name") Name
-		input(type="text" id="band-name" name="name" value=band.name)
+		input(type="text" id="band-name" name="name" data-testid=`${p}.name-input` value=band.name)
 		label(for="description") Description
 		textarea(name="description")= band.description
-		//- Image upload
-		label(for="photo") Square Photo
-		input(type="file" name="photos" id="photo" accept="image/png, image/jpeg")
-		if band.photos && band.photos.squareSm
-			img(src=`/uploads/${band.photos.squareSm}` alt=band.name width=200)
-		label(for="photoGallery1") Gallery Photo 1
-		input(type="file" name="photos" id="photoGallery1" accept="image/png, image/jpeg")
-		label(for="photoGallery2") Gallery Photo 2
-		input(type="file" name="photos" id="photoGallery2" accept="image/png, image/jpeg")
-		label(for="photoGallery3") Gallery Photo 3
-		input(type="file" name="photos" id="photoGallery3" accept="image/png, image/jpeg")
-		//- address lng lat
+		label(for="image") Band Image
+		if band.imagePath
+			img.band-form__preview(src=imageUrl(band.imagePath, { w: 200, h: 200, fo: 'auto' }) alt=band.name width=200)
+		input(type="file" id="image" name="image" accept="image/*")
 		label(for="address") Origin
-		input(type="text" id="address" name="location[address]" value=(band.location && band.location.address))
+		input(type="text" id="address" name="locationAddress" value=band.locationAddress)
 		label(for="lng") Origin Lng
-		input.half(type="text" id="lng" name="location[coordinates][0]" value=(band.location && band.location.coordinates[0]) required)
+		input.half(type="text" id="lng" name="locationLng" value=band.locationLng)
 		label(for="lat") Origin Lat
-		input.half(type="text" id="lat" name="location[coordinates][1]" value=(band.location && band.location.coordinates[1]) required)
+		input.half(type="text" id="lat" name="locationLat" value=band.locationLat)
 		label(for="personnel") Personnel
-		input(type="text" name="personnel" placeholder="list personnel seperated bt comma" value=(band.personnel && band.personnel.join(',')))
+		input(type="text" name="personnel" placeholder="list personnel separated by comma" value=band.personnel)
 		label(for="pastPersonnel") Former Personnel
-		input(type="text" name="pastPersonnel" placeholder="list personnel seperated bt comma" value=(band.pastPersonnel && band.pastPersonnel.join(',')))
+		input(type="text" name="pastPersonnel" placeholder="list personnel separated by comma" value=band.pastPersonnel)
 		label(for="yearsActive") Years Active
-		input(type="text" name="yearsActive" placeholder="list years seperated by a comma" value=(band.yearsActive && band.yearsActive.join(',')))
+		input(type="text" name="yearsActive" placeholder="list years separated by a comma" value=band.yearsActive)
 		label(for="labels") Labels
-		input(type="text" name="labels" placeholder="list labels seperated bt comma" value=(band.labels && band.labels.join(',')) )
-		label(for="youtubePL") Youtube Playlist
-		input(type="url" id="youtubePL" name="youtubePL" value=band.youtubePL)
-		label(for="spotifyID") Vimeo Playlist
-		input(type="text" id="vimeoPL" name="vimeoPL" value=band.vimeoPL)
-		label(for="spotifyID") Spotify Id
-		input(type="text" id="spotifyID" name="spotifyID" value=band.spotifyID)
-		label(for="spotifyURL") Spotify URL
-		input(type="text" id="spotifyURL" name="spotifyURL" value=band.spotifyURL)
-		-const choices = ['Male Vox', 'Female Vox', 'Heavy', 'Creation', '4AD', 'Melancholy', 'Ethereal', 'Intense', 'Hypnotic', 'Eighties', 'Nineties', 'Noughties']
-		-const tags = band.tags || []
+		input(type="text" name="labels" placeholder="list labels separated by comma" value=band.labels)
+		label(for="youtubePl") Youtube Playlist
+		input(type="url" id="youtubePl" name="youtubePl" value=band.youtubePl)
+		label(for="vimeoPl") Vimeo Playlist
+		input(type="text" id="vimeoPl" name="vimeoPl" value=band.vimeoPl)
+		- const choices = ['Male Vox', 'Female Vox', 'Heavy', 'Creation', '4AD', 'Melancholy', 'Ethereal', 'Intense', 'Hypnotic', 'Eighties', 'Nineties', 'Noughties']
+		- const tags = [].concat(band.tags || [])
 		ul.tags
 			each tag in choices
 				.tag.tag__choice
 					input(type="checkbox" id=tag value=tag name="tags" checked=(tags.includes(tag)))
 					label(for=tag) #{tag}
-		input(type="submit" value="Save -<" class="button")
-
+		input(type="submit" value="Save -<" class="button" data-testid=`${p}.submit-btn`)
