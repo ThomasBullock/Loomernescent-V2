@@ -157,6 +157,7 @@ Keep this section up to date whenever a new `data-testid` is added or removed.
 |---|---|
 | `bands.add-form.error-message` | Error list `<ul>` (add mode) |
 | `bands.edit-form.error-message` | Error list `<ul>` (edit mode) |
+| `bands.edit-form.delete-btn` | Delete band submit button (edit mode) |
 
 ### Bands — `views/mixins/_bandForm.pug`
 
@@ -165,8 +166,10 @@ Testids use Pug interpolation with a `mode` param (`'add'` or `'edit'`). Caller 
 | Test ID | Element |
 |---|---|
 | `bands.add-form.name-input` | Name input (add form) |
+| `bands.add-form.gallery-input` | Gallery multi-upload input (add form) |
 | `bands.add-form.submit-btn` | Submit button (add form) |
 | `bands.edit-form.name-input` | Name input (edit form) |
+| `bands.edit-form.gallery-input` | Gallery multi-upload input (edit form) |
 | `bands.edit-form.submit-btn` | Save changes button (edit form) |
 
 ### Albums — `views/albums.pug`

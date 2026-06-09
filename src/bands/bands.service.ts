@@ -5,6 +5,11 @@ import slugify from 'slugify';
 import { Band } from '../entities/band.entity';
 import { Album } from '../entities/album.entity';
 
+export interface GalleryImage {
+  fileId: string;
+  filePath: string;
+}
+
 export interface CreateBandInput {
   name: string;
   description?: string;
@@ -21,6 +26,17 @@ export interface CreateBandInput {
   authorId: string;
   imageFileId?: string | null;
   imagePath?: string | null;
+  gallery?: GalleryImage[];
+}
+
+export type UpdateBandInput = Omit<CreateBandInput, 'authorId'>;
+
+export interface HeroTile {
+  type: 'band' | 'album';
+  name: string;
+  slug: string;
+  imagePath: string | null;
+  cover: string | null;
 }
 
 @Injectable()
@@ -51,29 +67,84 @@ export class BandsService {
       authorId: input.authorId,
       imageFileId: input.imageFileId ?? undefined,
       imagePath: input.imagePath ?? undefined,
+      gallery: input.gallery ?? [],
     });
     return this.bandRepo.save(band);
   }
 
-  async getHeroTiles(): Promise<any[]> {
+  async getBandById(id: string): Promise<Band | null> {
+    try {
+      return await this.bandRepo.findOne({ where: { id } });
+    } catch {
+      return null;
+    }
+  }
+
+  /**
+   * Updates an existing band. Slug is recomputed only when the name changes.
+   * Image columns are preserved when no new value is supplied; a supplied
+   * gallery is appended to the existing one (no removal in this step).
+   */
+  async update(id: string, input: UpdateBandInput): Promise<Band | null> {
+    const band = await this.getBandById(id);
+    if (!band) return null;
+
+    if (input.name !== band.name) {
+      band.name = input.name;
+      band.slug = slugify(input.name, { lower: true, strict: true });
+    }
+    band.description = (input.description || null) as string;
+    band.labels = parseList(input.labels);
+    band.personnel = parseList(input.personnel);
+    band.pastPersonnel = parseList(input.pastPersonnel);
+    band.tags = normalizeTags(input.tags);
+    band.yearsActive = parseYears(input.yearsActive);
+    band.locationAddress = (input.locationAddress || null) as string;
+    band.locationLng = (parseCoord(input.locationLng) ?? null) as number;
+    band.locationLat = (parseCoord(input.locationLat) ?? null) as number;
+    band.youtubePl = (input.youtubePl || null) as string;
+    band.vimeoPl = (input.vimeoPl || null) as string;
+    // Only touch the square image when a new value is supplied; an edit
+    // without a file upload must preserve the existing image.
+    if (input.imageFileId !== undefined) band.imageFileId = input.imageFileId;
+    if (input.imagePath !== undefined) band.imagePath = input.imagePath;
+    if (input.gallery?.length) {
+      band.gallery = [...band.gallery, ...input.gallery];
+    }
+
+    return this.bandRepo.save(band);
+  }
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      const result = await this.bandRepo.delete(id);
+      return (result.affected ?? 0) > 0;
+    } catch {
+      return false;
+    }
+  }
+
+  async getHeroTiles(): Promise<HeroTile[]> {
     const bands = await this.bandRepo.find({
-      select: ['id', 'name', 'slug', 'photoSquareSm'],
+      select: ['id', 'name', 'slug', 'imagePath'],
     });
     const albums = await this.albumRepo.find({
       select: ['id', 'title', 'slug', 'cover'],
     });
 
-    const bandTiles = bands.map((b) => ({
+    const bandTiles: HeroTile[] = bands.map((b) => ({
       type: 'band',
       name: b.name,
       slug: b.slug,
-      img: b.photoSquareSm || 'band.jpg',
+      imagePath: b.imagePath,
+      cover: null,
     }));
-    const albumTiles = albums.map((a) => ({
+    const albumTiles: HeroTile[] = albums.map((a) => ({
       type: 'album',
       name: a.title,
       slug: a.slug,
-      img: `covers/${a.cover || 'band.jpg'}`,
+      imagePath: null,
+      cover: a.cover || null,
     }));
 
     const all = [...bandTiles, ...albumTiles];

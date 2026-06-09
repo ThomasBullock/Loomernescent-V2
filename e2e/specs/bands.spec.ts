@@ -145,3 +145,86 @@ test.describe('create band', () => {
     await addForm.expectError('Band name is required');
   });
 });
+
+// ---------------------------------------------------------------------------
+// Edit (admin) — navigates from list card edit icon
+// ---------------------------------------------------------------------------
+
+test.describe('edit band', () => {
+  test.beforeEach(async ({ page }) => {
+    const { user, password } = await createUser(ds, { admin: true });
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login(user.email, password);
+  });
+
+  test('list card edit icon → form pre-fills name', async ({ page }) => {
+    await createBand(ds, { name: 'Pale Saints', slug: 'pale-saints' });
+    const listPage = new BandsListPage(page);
+    await listPage.goto();
+    await listPage.clickEditFirst();
+
+    await expect(page).toHaveURL(/\/bands\/.+\/edit/);
+    const editForm = new BandFormPage(page, 'edit');
+    await expect(editForm.nameInput).toHaveValue('Pale Saints');
+  });
+
+  test('valid update → redirect to detail, flash success', async ({ page }) => {
+    await createBand(ds, { name: 'Chapterhouse', slug: 'chapterhouse' });
+    const layout = new LayoutPage(page);
+    const listPage = new BandsListPage(page);
+    await listPage.goto();
+    await listPage.clickEditFirst();
+
+    const editForm = new BandFormPage(page, 'edit');
+    await editForm.nameInput.fill('Chapterhouse UK');
+    await editForm.submit();
+
+    await expect(page).toHaveURL(/\/band\//);
+    await layout.expectFlash('success', 'updated');
+  });
+
+  test('empty name → error message, re-renders edit form on POST /bands/:id', async ({
+    page,
+  }) => {
+    await createBand(ds, { name: 'Lush', slug: 'lush' });
+    const listPage = new BandsListPage(page);
+    await listPage.goto();
+    await listPage.clickEditFirst();
+
+    const editForm = new BandFormPage(page, 'edit');
+    await editForm.nameInput.fill('');
+    await editForm.submit();
+
+    // Form action is POST /bands/:id — browser URL follows the POST target, not /edit
+    await expect(page).toHaveURL(/\/bands\/[^/]+$/);
+    await editForm.expectError('Band name is required');
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Delete (admin) — navigates from list card edit icon → delete on edit page
+// ---------------------------------------------------------------------------
+
+test.describe('delete band', () => {
+  test('list card edit icon → delete from edit page → redirect to /bands, flash success', async ({
+    page,
+  }) => {
+    const { user, password } = await createUser(ds, { admin: true });
+    const loginPage = new LoginPage(page);
+    await loginPage.goto();
+    await loginPage.login(user.email, password);
+
+    await createBand(ds, { name: 'Medicine', slug: 'medicine' });
+    const layout = new LayoutPage(page);
+    const listPage = new BandsListPage(page);
+    await listPage.goto();
+    await listPage.clickEditFirst();
+
+    const editForm = new BandFormPage(page, 'edit');
+    await editForm.clickDelete();
+
+    await expect(page).toHaveURL('/bands');
+    await layout.expectFlash('success', 'deleted');
+  });
+});

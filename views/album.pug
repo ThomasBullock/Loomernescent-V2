@@ -12,7 +12,7 @@ block meta
 block content
 	.single
 		.single__hero
-			img.single__image(src=`/uploads/${band.photoGallery[0] || 'Band.jpg' }` alt=`A photo of the band ${album.artist}`)
+			img.single__image(src=band.gallery && band.gallery.length ? imageUrl(band.gallery[0].filePath, { w: 1600, h: 900, fo: 'auto' }) : (band.imagePath ? imageUrl(band.imagePath, { w: 1600, h: 900, fo: 'auto' }) : imageUrl('/bands/Band.jpg')) alt=`A photo of the band ${album.artist}`)
 			h2.title.title--single
 				a(href=`/band/${band.slug}`) #{band.name}
 	.single__details.single__details--margin

@@ -53,23 +53,14 @@ export class Band {
   @Column({ type: 'float', name: 'location_lat', nullable: true })
   locationLat: number;
 
-  @Column({ name: 'photo_square_lg', nullable: true })
-  photoSquareLg: string;
-
-  @Column({ name: 'photo_square_sm', nullable: true })
-  photoSquareSm: string;
-
-  @Column('text', { array: true, default: '{}', name: 'photo_gallery' })
-  photoGallery: string[];
-
-  @Column('text', { array: true, default: '{}', name: 'photo_gallery_thumbs' })
-  photoGalleryThumbs: string[];
-
   @Column({ name: 'image_file_id', type: 'text', nullable: true })
   imageFileId: string | null;
 
   @Column({ name: 'image_path', type: 'text', nullable: true })
   imagePath: string | null;
+
+  @Column({ type: 'jsonb', default: () => "'[]'" })
+  gallery: { fileId: string; filePath: string }[];
 
   @Column({ name: 'youtube_pl', nullable: true })
   youtubePl: string;
