@@ -12,7 +12,7 @@ block meta
 block content
 	.single
 		.single__hero
-			img.single__image(src=band.imagePath ? imageUrl(band.imagePath, { w: 1000, h: 1000, fo: 'auto' }) : imageUrl('/bands/Band.jpg') alt=`A photo of ${band.name}`)
+			img.single__image(src=band.gallery && band.gallery.length ? imageUrl(band.gallery[0].filePath, { w: 1600, h: 900, fo: 'auto' }) : (band.imagePath ? imageUrl(band.imagePath, { w: 1600, h: 900, fo: 'auto' }) : imageUrl('/bands/Band.jpg')) alt=`A photo of ${band.name}`)
 			h2.title.title--single(data-testid="bands.detail.name") #{band.name}
 	.single__details
 		- if (band.locationAddress)
@@ -57,12 +57,12 @@ block content
 					.single__album
 						a(href=`/album/${album.slug}`)
 							img(src=`/uploads/covers/${album.cover}` alt=`cover artwork for ${album.title} by ${album.artist}`)
-	if band.photoGallery && band.photoGallery.length
+	if band.gallery && band.gallery.length
 		.single__fullwidth.single__fullwidth--ebony
 			.single__gallery
-				each photo in band.photoGalleryThumbs
+				each photo in band.gallery
 					.single__gallery-thumb
-						img.single__gallery-thumb-img(src=`/uploads/${photo}` alt=`gallery thumbnail for ${band.name}`)
+						img.single__gallery-thumb-img(src=imageUrl(photo.filePath, { w: 600, h: 600, fo: 'auto' }) alt=`gallery image for ${band.name}`)
 	#galleryModal.modal
 		.modal__container
 			.modal__header

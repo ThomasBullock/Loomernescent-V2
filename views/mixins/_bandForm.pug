@@ -12,6 +12,12 @@ mixin bandForm(band = {}, mode = 'add')
 		if band.imagePath
 			img.band-form__preview(src=imageUrl(band.imagePath, { w: 200, h: 200, fo: 'auto' }) alt=band.name width=200)
 		input(type="file" id="image" name="image" accept="image/*")
+		label(for="gallery") Gallery Images
+		if band.gallery && band.gallery.length
+			.band-form__gallery
+				each photo in band.gallery
+					img.band-form__preview(src=imageUrl(photo.filePath, { w: 120, h: 120, fo: 'auto' }) alt=band.name width=120)
+		input(type="file" id="gallery" name="gallery" accept="image/*" multiple data-testid=`${p}.gallery-input`)
 		label(for="address") Origin
 		input(type="text" id="address" name="locationAddress" value=band.locationAddress)
 		label(for="lng") Origin Lng

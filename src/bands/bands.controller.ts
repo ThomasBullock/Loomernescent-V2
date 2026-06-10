@@ -3,27 +3,44 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   Param,
   Post,
   Query,
   Render,
   Req,
   Res,
-  UploadedFile,
+  UploadedFiles,
   UseGuards,
   UseInterceptors,
   NotFoundException,
 } from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import type { Request, Response } from 'express';
-import { BandsService, CreateBandInput } from './bands.service';
+import {
+  BandsService,
+  CreateBandInput,
+  GalleryImage,
+  UpdateBandInput,
+} from './bands.service';
+import { Band } from '../entities/band.entity';
 import { User } from '../entities/user.entity';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { ImageKitService } from '../common/images/image-kit.service';
-import { processImage } from '../common/images/process-image';
 
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+const MAX_GALLERY_FILES = 12;
+
+const bandImageFields = [
+  { name: 'image', maxCount: 1 },
+  { name: 'gallery', maxCount: MAX_GALLERY_FILES },
+];
+
+interface BandUploadFiles {
+  image?: Express.Multer.File[];
+  gallery?: Express.Multer.File[];
+}
 
 const bandImageMulterOptions = {
   storage: memoryStorage(),
@@ -55,6 +72,8 @@ interface BandFormBody {
 
 @Controller()
 export class BandsController {
+  private readonly logger = new Logger(BandsController.name);
+
   constructor(
     private readonly bandsService: BandsService,
     private readonly imageKit: ImageKitService,
@@ -92,10 +111,12 @@ export class BandsController {
 
   @Post('/bands')
   @UseGuards(AdminGuard)
-  @UseInterceptors(FileInterceptor('image', bandImageMulterOptions))
+  @UseInterceptors(
+    FileFieldsInterceptor(bandImageFields, bandImageMulterOptions),
+  )
   async create(
     @Body() body: BandFormBody,
-    @UploadedFile() file: Express.Multer.File | undefined,
+    @UploadedFiles() files: BandUploadFiles | undefined,
     @Req() req: Request,
     @Res() res: Response,
   ) {
@@ -108,7 +129,8 @@ export class BandsController {
       });
     }
 
-    const image = file ? await this.uploadBandImage(file, body.name!) : {};
+    const image = await this.uploadSquare(files?.image?.[0], body.name!);
+    const gallery = await this.uploadGallery(files?.gallery, body.name!);
     const author = req.user as User;
 
     try {
@@ -116,6 +138,7 @@ export class BandsController {
         ...(body as CreateBandInput),
         authorId: author.id,
         ...image,
+        gallery,
       });
       req.session['flash'] = {
         success: [`${band.name} added`],
@@ -133,6 +156,93 @@ export class BandsController {
     }
   }
 
+  @Get('/bands/:id/edit')
+  @UseGuards(AdminGuard)
+  @Render('editBand')
+  async editForm(@Param('id') id: string) {
+    const band = await this.bandsService.getBandById(id);
+    if (!band) throw new NotFoundException('Band not found');
+    return { title: `Edit ${band.name}`, band: bandForForm(band) };
+  }
+
+  @Post('/bands/:id')
+  @UseGuards(AdminGuard)
+  @UseInterceptors(
+    FileFieldsInterceptor(bandImageFields, bandImageMulterOptions),
+  )
+  async update(
+    @Param('id') id: string,
+    @Body() body: BandFormBody,
+    @UploadedFiles() files: BandUploadFiles | undefined,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const existing = await this.bandsService.getBandById(id);
+    if (!existing) throw new NotFoundException('Band not found');
+
+    const errors = validateBandBody(body);
+    if (errors.length) {
+      return res.status(200).render('editBand', {
+        title: `Edit ${existing.name}`,
+        errors,
+        band: { ...body, id },
+      });
+    }
+
+    const oldFileId = existing.imageFileId;
+    const image = await this.uploadSquare(files?.image?.[0], body.name!);
+    const gallery = await this.uploadGallery(files?.gallery, body.name!);
+
+    try {
+      const band = await this.bandsService.update(id, {
+        ...(body as UpdateBandInput),
+        ...image,
+        gallery,
+      });
+      if (!band) throw new NotFoundException('Band not found');
+      if (files?.image?.[0] && oldFileId) {
+        void this.deleteImage(oldFileId);
+      }
+      req.session['flash'] = {
+        success: [`${band.name} updated`],
+      };
+      req.session.save(() => res.redirect(`/band/${band.slug}`));
+    } catch (err: unknown) {
+      if (isUniqueViolation(err)) {
+        return res.status(200).render('editBand', {
+          title: `Edit ${existing.name}`,
+          errors: ['A band with that name already exists'],
+          band: { ...body, id },
+        });
+      }
+      throw err;
+    }
+  }
+
+  @Post('/bands/:id/delete')
+  @UseGuards(AdminGuard)
+  async destroy(
+    @Param('id') id: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const existing = await this.bandsService.getBandById(id);
+    if (!existing) throw new NotFoundException('Band not found');
+
+    await this.bandsService.delete(id);
+    const fileIds = [
+      existing.imageFileId,
+      ...existing.gallery.map((g) => g.fileId),
+    ].filter((fid): fid is string => Boolean(fid));
+    for (const fileId of fileIds) {
+      void this.deleteImage(fileId);
+    }
+    req.session['flash'] = {
+      success: [`${existing.name} deleted`],
+    };
+    req.session.save(() => res.redirect('/bands'));
+  }
+
   @Get('/band/:slug')
   @Render('band')
   async getBandBySlug(@Param('slug') slug: string) {
@@ -141,23 +251,58 @@ export class BandsController {
     return { title: band.name, band, albums };
   }
 
-  private async uploadBandImage(
-    file: Express.Multer.File,
+  // Uploads the single square photo. Originals are sent as-is; ImageKit applies
+  // square/hero crops via URL transforms at display time.
+  private async uploadSquare(
+    file: Express.Multer.File | undefined,
     name: string,
-  ): Promise<{ imageFileId: string; imagePath: string }> {
-    const processed = await processImage(file.buffer, {
-      maxDimension: 2000,
-      aspectRatio: { w: 1, h: 1 },
-      format: 'jpeg',
-      quality: 85,
-    });
+  ): Promise<Pick<CreateBandInput, 'imageFileId' | 'imagePath'> | object> {
+    if (!file) return {};
     const { fileId, filePath } = await this.imageKit.upload({
-      buffer: processed.buffer,
+      buffer: file.buffer,
       filenameHint: name,
       folder: 'bands',
     });
     return { imageFileId: fileId, imagePath: filePath };
   }
+
+  private async uploadGallery(
+    files: Express.Multer.File[] | undefined,
+    name: string,
+  ): Promise<GalleryImage[]> {
+    if (!files?.length) return [];
+    return Promise.all(
+      files.map(async (file) => {
+        const { fileId, filePath } = await this.imageKit.upload({
+          buffer: file.buffer,
+          filenameHint: `${name}-gallery`,
+          folder: 'bands',
+        });
+        return { fileId, filePath };
+      }),
+    );
+  }
+
+  // Best-effort cleanup; an orphaned ImageKit asset must never fail the request.
+  private async deleteImage(fileId: string): Promise<void> {
+    try {
+      await this.imageKit.delete(fileId);
+    } catch (err) {
+      this.logger.error(`Failed to delete ImageKit file ${fileId}`, err);
+    }
+  }
+}
+
+function bandForForm(band: Band): Record<string, unknown> {
+  return {
+    ...band,
+    personnel: band.personnel.join(', '),
+    pastPersonnel: band.pastPersonnel.join(', '),
+    labels: band.labels.join(', '),
+    yearsActive: band.yearsActive
+      .map((d) => new Date(d).getUTCFullYear())
+      .join(', '),
+  };
 }
 
 function validateBandBody(body: BandFormBody): string[] {

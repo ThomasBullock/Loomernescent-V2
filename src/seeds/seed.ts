@@ -16,37 +16,6 @@ const legacyDataDir = path.join(
   'loomernescent',
   'data',
 );
-const uploadsDir = path.join(__dirname, '..', '..', 'public', 'uploads');
-
-// Build a lookup from UUID portion to actual filename on disk
-function buildFileLookup(dir: string): Map<string, string> {
-  const lookup = new Map<string, string>();
-  try {
-    const files = fs.readdirSync(dir);
-    for (const file of files) {
-      const match = file.match(
-        /(?:^[A-Za-z]+-)?([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}_\w+\.\w+)$/,
-      );
-      if (match) {
-        lookup.set(match[1], file);
-      }
-    }
-  } catch {
-    // directory may not exist
-  }
-  return lookup;
-}
-
-function resolveFilename(
-  jsonFilename: string | undefined,
-  lookup: Map<string, string>,
-): string | null {
-  if (!jsonFilename) return null;
-  if ([...lookup.values()].includes(jsonFilename)) return jsonFilename;
-  const resolved = lookup.get(jsonFilename);
-  return resolved || jsonFilename;
-}
-
 async function seed() {
   await AppDataSource.initialize();
   console.log('Connected to database');
@@ -54,10 +23,6 @@ async function seed() {
   const userRepo = AppDataSource.getRepository(User);
   const bandRepo = AppDataSource.getRepository(Band);
   const albumRepo = AppDataSource.getRepository(Album);
-
-  const bandPhotoLookup = buildFileLookup(uploadsDir);
-  // coverLookup available for future use with album cover resolution
-  // const coverLookup = buildFileLookup(path.join(uploadsDir, 'covers'));
 
   const legacyUsers = JSON.parse(
     fs.readFileSync(path.join(legacyDataDir, 'users.json'), 'utf-8'),
@@ -125,16 +90,6 @@ async function seed() {
         locationAddress: lb.location?.address || undefined,
         locationLng: lb.location?.coordinates?.[0] || undefined,
         locationLat: lb.location?.coordinates?.[1] || undefined,
-        photoSquareLg:
-          resolveFilename(lb.photos?.squareLg, bandPhotoLookup) || undefined,
-        photoSquareSm:
-          resolveFilename(lb.photos?.squareSm, bandPhotoLookup) || undefined,
-        photoGallery: (lb.photos?.gallery || []).map(
-          (p: string) => resolveFilename(p, bandPhotoLookup) || p,
-        ),
-        photoGalleryThumbs: (lb.photos?.galleryThumbs || []).map(
-          (p: string) => resolveFilename(p, bandPhotoLookup) || p,
-        ),
         youtubePl: lb.youtubePL || undefined,
         vimeoPl: lb.vimeoPL || undefined,
         spotifyId: lb.spotifyID || undefined,
