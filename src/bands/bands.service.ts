@@ -23,6 +23,8 @@ export interface CreateBandInput {
   locationLat?: string;
   youtubePl?: string;
   vimeoPl?: string;
+  spotifyId?: string;
+  spotifyUrl?: string;
   authorId: string;
   imageFileId?: string | null;
   imagePath?: string | null;
@@ -64,6 +66,8 @@ export class BandsService {
       locationLat: parseCoord(input.locationLat),
       youtubePl: input.youtubePl || undefined,
       vimeoPl: input.vimeoPl || undefined,
+      spotifyId: input.spotifyId || undefined,
+      spotifyUrl: input.spotifyUrl || undefined,
       authorId: input.authorId,
       imageFileId: input.imageFileId ?? undefined,
       imagePath: input.imagePath ?? undefined,
@@ -104,6 +108,8 @@ export class BandsService {
     band.locationLat = (parseCoord(input.locationLat) ?? null) as number;
     band.youtubePl = (input.youtubePl || null) as string;
     band.vimeoPl = (input.vimeoPl || null) as string;
+    if (input.spotifyId !== undefined) band.spotifyId = input.spotifyId;
+    if (input.spotifyUrl !== undefined) band.spotifyUrl = input.spotifyUrl;
     // Only touch the square image when a new value is supplied; an edit
     // without a file upload must preserve the existing image.
     if (input.imageFileId !== undefined) band.imageFileId = input.imageFileId;

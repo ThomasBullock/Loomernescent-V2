@@ -11,6 +11,7 @@ import { TemplateLocalsMiddleware } from './common/middleware/template-locals.mi
 import { ImagesModule } from './common/images/images.module';
 import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
+import { SpotifyModule } from './spotify/spotify.module';
 import { shouldUseSsl } from './configure-app';
 
 @Module({
@@ -33,6 +34,7 @@ import { shouldUseSsl } from './configure-app';
     PedalsModule,
     AuthModule,
     MailModule,
+    SpotifyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

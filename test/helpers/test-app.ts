@@ -4,6 +4,7 @@ import { DataSource } from 'typeorm';
 import { AppModule } from '../../src/app.module';
 import { configureApp } from '../../src/configure-app';
 import { ImageKitService } from '../../src/common/images/image-kit.service';
+import { SpotifyService } from '../../src/spotify/spotify.service';
 
 export interface FakeImageKit {
   upload: jest.Mock;
@@ -11,10 +12,17 @@ export interface FakeImageKit {
   buildUrl: jest.Mock;
 }
 
+export interface FakeSpotify {
+  searchArtist: jest.Mock;
+  getArtistAlbums: jest.Mock;
+  getAlbumTracks: jest.Mock;
+}
+
 export interface TestAppHandle {
   app: NestExpressApplication;
   dataSource: DataSource;
   imageKit: FakeImageKit;
+  spotify: FakeSpotify;
 }
 
 export async function createTestApp(): Promise<TestAppHandle> {
@@ -30,11 +38,24 @@ export async function createTestApp(): Promise<TestAppHandle> {
     buildUrl: jest.fn((path: string) => `https://img.test${path}`),
   };
 
+  const spotify: FakeSpotify = {
+    searchArtist: jest.fn(() =>
+      Promise.resolve({
+        spotifyId: 'sp-artist-1',
+        spotifyUrl: 'https://open.spotify.com/artist/sp-artist-1',
+      }),
+    ),
+    getArtistAlbums: jest.fn(() => Promise.resolve([])),
+    getAlbumTracks: jest.fn(() => Promise.resolve([])),
+  };
+
   const moduleRef = await Test.createTestingModule({
     imports: [AppModule],
   })
     .overrideProvider(ImageKitService)
     .useValue(imageKit)
+    .overrideProvider(SpotifyService)
+    .useValue(spotify)
     .compile();
 
   const app = moduleRef.createNestApplication<NestExpressApplication>();
@@ -42,7 +63,7 @@ export async function createTestApp(): Promise<TestAppHandle> {
   await app.init();
 
   const dataSource = app.get(DataSource);
-  return { app, dataSource, imageKit };
+  return { app, dataSource, imageKit, spotify };
 }
 
 export async function truncate(

@@ -1,5 +1,4 @@
 .single {
-
   @include elem('hero') {
     height: 500px;
     position: relative;
@@ -17,10 +16,18 @@
       top: 0;
       right: 0;
       background:
-      linear-gradient(45deg, #ffa949 0%, hsla(190, 95%, 43%, 0) 70%),
-      linear-gradient(135deg, hsla(219, 93%, 48%, 1) 10%, hsla(219, 93%, 48%, 0) 80%),
-      linear-gradient(225deg, hsla(293, 93%, 48%, 1) 10%, hsla(293, 93%, 48%, 0) 80%),
-      linear-gradient(315deg, #ff4f49 100%, hsla(130, 96%, 45%, 0) 70%);
+        linear-gradient(45deg, #ffa949 0%, hsla(190, 95%, 43%, 0) 70%),
+        linear-gradient(
+          135deg,
+          hsla(219, 93%, 48%, 1) 10%,
+          hsla(219, 93%, 48%, 0) 80%
+        ),
+        linear-gradient(
+          225deg,
+          hsla(293, 93%, 48%, 1) 10%,
+          hsla(293, 93%, 48%, 0) 80%
+        ),
+        linear-gradient(315deg, #ff4f49 100%, hsla(130, 96%, 45%, 0) 70%);
       opacity: 0.6;
       z-index: 1;
       clip-path: polygon(0 0, 100% 0, 100% 100%, 0% calc(100% - 3vw));
@@ -43,22 +50,22 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: $base-spacing;    
+    padding: $base-spacing;
     background: white;
     max-width: 1000px;
-    margin: 0 auto;        
+    margin: 0 auto;
     // clip-path: polygon(0px 2vw, 100% 0, 100% calc(100% - 2vw), 0% 100%);
     position: relative;
     margin-top: -10rem;
     box-shadow: $big-shadow;
 
     // Desktop
-    @media all and (min-width : 1025px) {
+    @media all and (min-width: 1025px) {
       flex-direction: row;
-    } 
-    
+    }
+
     @include mod('margin') {
-      margin-bottom: $base-spacing; 
+      margin-bottom: $base-spacing;
     }
   }
 
@@ -74,8 +81,7 @@
   @include elem('lead') {
     color: $charcoal;
     font-size: modular-scale(1);
-    // margin-top: 1.5em;
-    // margin-bottom: 1.5em;
+    white-space: pre-wrap;
   }
 
   @include elem('detail') {
@@ -103,7 +109,7 @@
 
     @include mod('ebony') {
       background: $ebony;
-    }    
+    }
   }
 
   @include elem('video') {
@@ -123,23 +129,23 @@
     height: 0;
     overflow: hidden;
     padding-bottom: 56.25%; // For ratio 16:9. 75% if ratio is 4:3
-    position: relative;    
+    position: relative;
   }
-  
+
   @include elem('albums') {
     max-width: 900px;
     margin: 0 auto;
     margin-top: $base-spacing;
     display: flex;
     flex-wrap: wrap;
-    justify-content: center;    
+    justify-content: center;
   }
 
   @include elem('album') {
     padding: $base-spacing;
     flex: 1 1 33.3%;
     max-width: 300px;
-    
+
     img {
       // box-shadow: $small-shadow;
     }
@@ -165,9 +171,8 @@
       margin-right: 0;
     }
   }
-  
-  @include elem('gallery') {
 
+  @include elem('gallery') {
     display: flex;
     justify-content: center;
   }
@@ -175,10 +180,9 @@
   @include elem('gallery-thumb') {
     // flex: 1 1 auto;
     text-align: center;
-  }  
+  }
 
   @include elem('gallery-thumb-img') {
-
     max-height: 200px;
     box-shadow: $big-shadow;
     border: solid 1px $black;
@@ -187,21 +191,18 @@
       cursor: pointer;
     }
     // width: auto;
-  
   }
 
   /* ================================= 
     MOBILE
   ==================================== */
   @media all and (max-width: 767px) {
-
   }
 
   /* ================================= 
     TABLET
   ==================================== */
-  @media all and (min-width : 768px) and (max-width : 1024px) {  
-
+  @media all and (min-width: 768px) and (max-width: 1024px) {
     @include elem('video') {
       padding: $base-spacing 0;
       // width: 95%;
@@ -219,8 +220,7 @@
   /* ================================= 
     DESKTOP
   ==================================== */
-  @media all and (min-width : 1025px) { 
-
+  @media all and (min-width: 1025px) {
     @include elem('video') {
       padding: $base-spacing 0;
       width: 900px;
@@ -233,8 +233,5 @@
         @include size(100%);
       }
     }
-
   }
-
-
 }
