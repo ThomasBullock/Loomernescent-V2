@@ -128,16 +128,23 @@ npm run test:e2e:setup
 
 ## Deployment
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+### First-time setup sequence
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Run these once against a fresh production database (in order):
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run migration:run    # apply schema migrations
+npm run seed:accounts    # create admin/user accounts (requires SEED_DEFAULT_PASSWORD)
+npm run seed:content     # insert band records from src/seeds/data/bands.json
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+`seed:content` is idempotent — safe to re-run; bands already in the DB (matched by slug) are silently skipped.
+
+### Adding more bands
+
+1. Export the new row(s) from Neon and append to `src/seeds/data/bands.json`.
+2. Commit the updated JSON.
+3. Run `npm run seed:content` against production — existing rows are untouched.
 
 ## Resources
 

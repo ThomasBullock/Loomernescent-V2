@@ -1,0 +1,112 @@
+[
+  {
+    "id": "0092bc0e-1d98-4fbc-ab21-6e6c23a603cb",
+    "name": "Ride",
+    "slug": "ride",
+    "description": "Formed in Oxford in 1988, Ride quickly established themselves as leading pioneers of the late-80s and early-90s British alternative rock scene. The quintessential lineup—Andy Bell, Mark Gardener, Laurence \"Loz\" Colbert, and Steve Queralt—skyrocketed to critical and commercial fame with their seminal 1990 debut album, Nowhere, followed by the equally brilliant Going Blank Again in 1992. Creative friction and a stylistic shift toward traditional rock led to a messy breakup in 1996, but the story didn't end there. Ride staged a triumphant reunion in 2014, proving they weren't just a nostalgia act by releasing a string of acclaimed modern albums, including 2024's Interplay.\r\n\r\nWhat set Ride apart from their peers was a distinct sound that beautifully balanced ambient fragility with muscular, driving energy. While tagged as \"shoegaze,\" they avoided getting entirely lost in the clouds by anchoring their music with ferocious, propulsive drumming and a sharp, 1960s-inspired melodic sensibility reminiscent of The Byrds and The Beatles. They famously weaponized walls of chiming, distorted guitar feedback, creating a cascading, oceanic wall of sound that managed to feel heavy, hypnotic, and pop-accessible all at once.\r\n\r\nAlongside My Bloody Valentine and Slowdive, Ride stands as a core architect of the shoegaze movement, leaving an indelible footprint on alternative music. Their early chart success helped put Creation Records on the map and laid the structural woodwork for the mid-90s Britpop explosion (guitarist Andy Bell even went on to play bass for Oasis). Today, their influence ripples through generations of post-rock, dream-pop, and indie artists who continue to replicate Ride’s signature formula of beautiful noise and timeless hooks.",
+    "labels": ["Creation", "Warner", "Sire", "The First Time", "Wichita"],
+    "personnel": ["Andy Bell", "Loz Colbert", "Mark Gardener", "Steve Queralt"],
+    "past_personnel": [],
+    "tags": ["Male Vox", "Creation", "Ethereal", "Nineties"],
+    "years_active": [
+      "1988-01-01 00:00:00.000",
+      "1996-01-01 00:00:00.000",
+      "2014-01-01 00:00:00.000"
+    ],
+    "created": "2026-06-11 01:01:34.215287",
+    "location_address": "Oxford",
+    "location_lng": 51.7504091,
+    "location_lat": -1.288873,
+    "youtube_pl": "https://www.youtube.com/embed/videoseries?list=PLGsVUZbhmQLmKAUOEbIteTH-WC6c6gR3e",
+    "vimeo_pl": null,
+    "spotify_id": "0WPY9nnBy01s5QOt4o4oQX",
+    "spotify_url": "https://open.spotify.com/artist/0WPY9nnBy01s5QOt4o4oQX",
+    "author_id": "32d2f6de-d40f-4bab-8a49-ffae0e8b2361",
+    "image_file_id": "6a2a08eb5c7cd75eb8fc4200",
+    "image_path": "/bands/ride-32d35019-7276-403c-9365-7cda97f7ed46_mDBwLCYUh.jpg",
+    "gallery": [
+      {
+        "fileId": "6a2a08ec5c7cd75eb8fc4591",
+        "filePath": "/bands/ride-gallery-13d7186e-71f3-4345-9d32-2371566f4042_rvPCfbPmz.jpg"
+      },
+      {
+        "fileId": "6a2a08ec5c7cd75eb8fc4551",
+        "filePath": "/bands/ride-gallery-eb4f31b5-8068-4d4c-afce-d49e7b4cfecf_oMnOt1_jb.jpg"
+      },
+      {
+        "fileId": "6a2a08ec5c7cd75eb8fc45bc",
+        "filePath": "/bands/ride-gallery-0a7e722d-b2be-4881-a8cf-7e3ef0997ba0_7gnMOM1_1U.jpg"
+      }
+    ]
+  },
+  {
+    "id": "66de30c8-095c-4b5e-b22c-8c1ae7cee33e",
+    "name": "My Bloody Valentine",
+    "slug": "my-bloody-valentine",
+    "description": "Formed in Dublin in 1983, My Bloody Valentine (MBV)—led by guitarist Kevin Shields and vocalist Bilinda Butcher—became the definitive pioneers of the shoegaze genre. After transitioning from early post-punk to a more experimental style, they released their 1991 masterpiece, Loveless. The album earned legendary status not only for its sonic perfection but also for its agonizingly slow, expensive production that nearly bankrupted their label, Creation Records. Following a decades-long hiatus, the band made a triumphant return with m b v in 2013.\r\n\r\nMBV’s signature sound is a captivating paradox: a punishing wall of distorted noise enveloping sweet, ethereal melodies. Shields revolutionized alternative rock with his \"glide guitar\" technique, continuously manipulating the tremolo arm while strumming to create a swirling, pitch-bending drone. Paired with Butcher’s breathy, abstract vocals buried deep within the mix, their music feels less like standard rock and more like a tactile, dreamlike wave of sound.\r\n\r\nThough their studio output is sparse, their influence is monumental. MBV proved that extreme volume and feedback could be used to craft profound beauty rather than just angst. Their sonic blueprint fundamentally reshaped the landscape of alternative music, leaving a permanent mark on iconic acts like Radiohead, The Smashing Pumpkins, and the entire modern dream pop movement.",
+    "labels": [
+      "Tycoon",
+      "Fever",
+      "Kaleidoscope",
+      "SoundLazy",
+      "Creation",
+      "Sire",
+      "Warner Bros",
+      "Island",
+      "MBV",
+      "Domino"
+    ],
+    "personnel": [
+      "Kevin Shields",
+      "Bilinda Butcher",
+      "Colm Ó Cíosóig",
+      "Debbie Googe"
+    ],
+    "past_personnel": [
+      "David Conway",
+      "Stephen Ivers",
+      "Mark Loughlin",
+      "Paul Murtagh",
+      "Tina Durkin"
+    ],
+    "tags": [
+      "Male Vox",
+      "Female Vox",
+      "Creation",
+      "Ethereal",
+      "Hypnotic",
+      "Eighties",
+      "Nineties"
+    ],
+    "years_active": [
+      "1983-01-01 00:00:00.000",
+      "1997-01-01 00:00:00.000",
+      "2007-01-01 00:00:00.000"
+    ],
+    "created": "2026-06-10 09:28:17.902863",
+    "location_address": "Dublin",
+    "location_lng": 53.3242061,
+    "location_lat": -6.4108507,
+    "youtube_pl": "https://www.youtube.com/embed/videoseries?list=PLGsVUZbhmQLkjFYpjY_Ec2lM21Uo1GFDj",
+    "vimeo_pl": null,
+    "spotify_id": "3G3Gdm0ZRAOxLrbyjfhii5",
+    "spotify_url": "https://open.spotify.com/artist/3G3Gdm0ZRAOxLrbyjfhii5",
+    "author_id": "32d2f6de-d40f-4bab-8a49-ffae0e8b2361",
+    "image_file_id": "6a2944ee5c7cd75eb8f6bbe2",
+    "image_path": "/bands/my-bloody-valentine-344b2a0f-c3ab-42ea-b570-7aea3c6eaaff_LNKRaqnSo.jpg",
+    "gallery": [
+      {
+        "fileId": "6a294d9f5c7cd75eb838d11b",
+        "filePath": "/bands/my-bloody-valentine-gallery-053c7270-1a17-418c-b616-5d1178cc1e41_yBVKf66ol.jpg"
+      },
+      {
+        "fileId": "6a294d9f5c7cd75eb838d197",
+        "filePath": "/bands/my-bloody-valentine-gallery-ce6c0f73-8c50-4a7b-bff6-896bda8e9f0d_FWMDjY6af6.jpg"
+      },
+      {
+        "fileId": "6a294d9f5c7cd75eb838d167",
+        "filePath": "/bands/my-bloody-valentine-gallery-757cd952-94d9-415d-82b3-43006cf2f5c9_iiKj3uxtM.jpg"
+      }
+    ]
+  }
+]
