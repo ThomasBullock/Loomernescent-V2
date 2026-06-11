@@ -23,6 +23,7 @@
     "test:integration:setup": "ts-node -r tsconfig-paths/register test/reset-test-db.ts",
     "seed": "ts-node src/seeds/seed.ts",
     "seed:accounts": "ts-node src/seeds/seed-accounts.ts",
+    "seed:content": "ts-node src/seeds/seed-content.ts",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
     "migration:generate": "npm run typeorm -- migration:generate src/migrations/Init -d src/data-source.ts",
     "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts",

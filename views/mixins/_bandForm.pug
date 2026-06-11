@@ -36,6 +36,10 @@ mixin bandForm(band = {}, mode = 'add')
 		input(type="url" id="youtubePl" name="youtubePl" value=band.youtubePl)
 		label(for="vimeoPl") Vimeo Playlist
 		input(type="text" id="vimeoPl" name="vimeoPl" value=band.vimeoPl)
+		label(for="spotifyId") Spotify Artist ID
+		input(type="text" id="spotifyId" name="spotifyId" placeholder="Auto-populated on save; override if needed" value=band.spotifyId)
+		label(for="spotifyUrl") Spotify Artist URL
+		input(type="url" id="spotifyUrl" name="spotifyUrl" placeholder="Auto-populated on save; override if needed" value=band.spotifyUrl)
 		- const choices = ['Male Vox', 'Female Vox', 'Heavy', 'Creation', '4AD', 'Melancholy', 'Ethereal', 'Intense', 'Hypnotic', 'Eighties', 'Nineties', 'Noughties']
 		- const tags = [].concat(band.tags || [])
 		ul.tags

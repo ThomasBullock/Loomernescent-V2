@@ -16,6 +16,21 @@ const jpegFixture = (): Promise<Buffer> =>
     .jpeg()
     .toBuffer();
 
+const pngFixture = (): Promise<Buffer> =>
+  sharp({
+    create: {
+      width: 32,
+      height: 32,
+      channels: 3,
+      background: { r: 10, g: 20, b: 30 },
+    },
+  })
+    .png()
+    .toBuffer();
+
+const isJpeg = (buf: Buffer): boolean =>
+  buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
+
 describe('Bands create (integration)', () => {
   let handle: TestAppHandle;
 
@@ -31,6 +46,11 @@ describe('Bands create (integration)', () => {
     await truncate(handle.dataSource, 'bands', 'users');
     handle.imageKit.upload.mockClear();
     handle.imageKit.delete.mockClear();
+    handle.spotify.searchArtist.mockClear();
+    handle.spotify.searchArtist.mockResolvedValue({
+      spotifyId: 'sp-artist-1',
+      spotifyUrl: 'https://open.spotify.com/artist/sp-artist-1',
+    });
   });
 
   describe('GET /band/new', () => {
@@ -180,6 +200,30 @@ describe('Bands create (integration)', () => {
       expect(row!.imagePath).toBe('/bands/Slowdive.jpg');
     });
 
+    it('converts PNG uploads to JPEG before ImageKit upload', async () => {
+      const { user, password } = await createUser(handle.dataSource, {
+        admin: true,
+      });
+      const agent = await loginAs(handle.app, user.email, password);
+      const res = await agent
+        .post('/bands')
+        .field('name', 'Pale Saints')
+        .attach('image', await pngFixture(), {
+          filename: 'band.png',
+          contentType: 'image/png',
+        })
+        .attach('gallery', await pngFixture(), {
+          filename: 'gallery.png',
+          contentType: 'image/png',
+        });
+      expect(res.status).toBe(302);
+      expect(handle.imageKit.upload).toHaveBeenCalledTimes(2);
+      const buffers = handle.imageKit.upload.mock.calls.map(
+        (call) => call[0].buffer as Buffer,
+      );
+      expect(buffers.every(isJpeg)).toBe(true);
+    });
+
     it('creates a band with gallery files: uploads each and persists fileId + filePath array', async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
@@ -239,6 +283,65 @@ describe('Bands create (integration)', () => {
         });
       expect(res.status).toBe(400);
       expect(handle.imageKit.upload).not.toHaveBeenCalled();
+    });
+
+    it('persists spotifyId and spotifyUrl from Spotify search result', async () => {
+      const { user, password } = await createUser(handle.dataSource, {
+        admin: true,
+      });
+      const agent = await loginAs(handle.app, user.email, password);
+      const res = await agent
+        .post('/bands')
+        .type('form')
+        .send({ name: 'Slowdive' });
+      expect(res.status).toBe(302);
+      expect(handle.spotify.searchArtist).toHaveBeenCalledWith('Slowdive');
+
+      const row = await handle.dataSource
+        .getRepository(Band)
+        .findOne({ where: { slug: 'slowdive' } });
+      expect(row!.spotifyId).toBe('sp-artist-1');
+      expect(row!.spotifyUrl).toBe('https://open.spotify.com/artist/sp-artist-1');
+    });
+
+    it('uses manually provided spotifyId and bypasses auto-search', async () => {
+      const { user, password } = await createUser(handle.dataSource, {
+        admin: true,
+      });
+      const agent = await loginAs(handle.app, user.email, password);
+      const res = await agent.post('/bands').type('form').send({
+        name: 'Slowdive',
+        spotifyId: 'manual-id',
+        spotifyUrl: 'https://open.spotify.com/artist/manual-id',
+      });
+      expect(res.status).toBe(302);
+      expect(handle.spotify.searchArtist).not.toHaveBeenCalled();
+
+      const row = await handle.dataSource
+        .getRepository(Band)
+        .findOne({ where: { slug: 'slowdive' } });
+      expect(row!.spotifyId).toBe('manual-id');
+      expect(row!.spotifyUrl).toBe('https://open.spotify.com/artist/manual-id');
+    });
+
+    it('creates the band without spotify fields when Spotify returns null', async () => {
+      handle.spotify.searchArtist.mockResolvedValue(null);
+      const { user, password } = await createUser(handle.dataSource, {
+        admin: true,
+      });
+      const agent = await loginAs(handle.app, user.email, password);
+      const res = await agent
+        .post('/bands')
+        .type('form')
+        .send({ name: 'Pale Saints' });
+      expect(res.status).toBe(302);
+
+      const row = await handle.dataSource
+        .getRepository(Band)
+        .findOne({ where: { slug: 'pale-saints' } });
+      expect(row).toBeTruthy();
+      expect(row!.spotifyId).toBeNull();
+      expect(row!.spotifyUrl).toBeNull();
     });
   });
 
@@ -441,6 +544,48 @@ describe('Bands create (integration)', () => {
         .getRepository(Band)
         .findOne({ where: { id: band.id } });
       expect(row!.imageFileId).toBe('test-file-id');
+    });
+
+    it('preserves existing spotifyId when form fields are blank', async () => {
+      const { user, password } = await createUser(handle.dataSource, {
+        admin: true,
+      });
+      const band = await seedBand(user.id, {
+        name: 'Ride',
+        slug: 'ride',
+        spotifyId: 'existing-sp-id',
+        spotifyUrl: 'https://open.spotify.com/artist/existing-sp-id',
+      });
+      const agent = await loginAs(handle.app, user.email, password);
+      await agent
+        .post(`/bands/${band.id}`)
+        .type('form')
+        .send({ name: 'Ride', description: 'Updated' });
+      expect(handle.spotify.searchArtist).not.toHaveBeenCalled();
+
+      const row = await handle.dataSource
+        .getRepository(Band)
+        .findOne({ where: { id: band.id } });
+      expect(row!.spotifyId).toBe('existing-sp-id');
+      expect(row!.spotifyUrl).toBe('https://open.spotify.com/artist/existing-sp-id');
+    });
+
+    it('runs Spotify lookup on update when band has no existing spotifyId', async () => {
+      const { user, password } = await createUser(handle.dataSource, {
+        admin: true,
+      });
+      const band = await seedBand(user.id, { name: 'Ride', slug: 'ride' });
+      const agent = await loginAs(handle.app, user.email, password);
+      await agent
+        .post(`/bands/${band.id}`)
+        .type('form')
+        .send({ name: 'Ride' });
+      expect(handle.spotify.searchArtist).toHaveBeenCalledWith('Ride');
+
+      const row = await handle.dataSource
+        .getRepository(Band)
+        .findOne({ where: { id: band.id } });
+      expect(row!.spotifyId).toBe('sp-artist-1');
     });
 
     it('appends uploaded gallery files to the existing gallery', async () => {

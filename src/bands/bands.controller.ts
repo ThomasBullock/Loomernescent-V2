@@ -28,9 +28,13 @@ import { Band } from '../entities/band.entity';
 import { User } from '../entities/user.entity';
 import { AdminGuard } from '../auth/guards/admin.guard';
 import { ImageKitService } from '../common/images/image-kit.service';
-
-const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
-const MAX_GALLERY_FILES = 12;
+import { processImage } from '../common/images/process-image';
+import { SpotifyService } from '../spotify/spotify.service';
+import {
+  BAND_IMAGE_OPTS,
+  MAX_GALLERY_FILES,
+  MAX_UPLOAD_BYTES,
+} from 'src/common/constants/image';
 
 const bandImageFields = [
   { name: 'image', maxCount: 1 },
@@ -68,6 +72,8 @@ interface BandFormBody {
   locationLat?: string;
   youtubePl?: string;
   vimeoPl?: string;
+  spotifyId?: string;
+  spotifyUrl?: string;
 }
 
 @Controller()
@@ -77,6 +83,7 @@ export class BandsController {
   constructor(
     private readonly bandsService: BandsService,
     private readonly imageKit: ImageKitService,
+    private readonly spotify: SpotifyService,
   ) {}
 
   @Get('/')
@@ -133,9 +140,12 @@ export class BandsController {
     const gallery = await this.uploadGallery(files?.gallery, body.name!);
     const author = req.user as User;
 
+    const spotifyData = await this.resolveSpotifyForCreate(body);
+
     try {
       const band = await this.bandsService.create({
         ...(body as CreateBandInput),
+        ...spotifyData,
         authorId: author.id,
         ...image,
         gallery,
@@ -193,9 +203,12 @@ export class BandsController {
     const image = await this.uploadSquare(files?.image?.[0], body.name!);
     const gallery = await this.uploadGallery(files?.gallery, body.name!);
 
+    const spotifyData = await this.resolveSpotifyForUpdate(body, existing);
+
     try {
       const band = await this.bandsService.update(id, {
         ...(body as UpdateBandInput),
+        ...spotifyData,
         ...image,
         gallery,
       });
@@ -251,15 +264,48 @@ export class BandsController {
     return { title: band.name, band, albums };
   }
 
-  // Uploads the single square photo. Originals are sent as-is; ImageKit applies
-  // square/hero crops via URL transforms at display time.
+  private async resolveSpotifyForCreate(
+    body: BandFormBody,
+  ): Promise<{ spotifyId?: string; spotifyUrl?: string }> {
+    const manualId = body.spotifyId?.trim();
+    const manualUrl = body.spotifyUrl?.trim();
+    if (manualId && manualUrl)
+      return { spotifyId: manualId, spotifyUrl: manualUrl };
+
+    if (!body.name?.trim()) return {};
+    const result = await this.spotify.searchArtist(body.name.trim());
+    return result ?? {};
+  }
+
+  private async resolveSpotifyForUpdate(
+    body: BandFormBody,
+    existing: Band,
+  ): Promise<{ spotifyId?: string; spotifyUrl?: string }> {
+    const manualId = body.spotifyId?.trim();
+    const manualUrl = body.spotifyUrl?.trim();
+    if (manualId && manualUrl)
+      return { spotifyId: manualId, spotifyUrl: manualUrl };
+
+    if (existing.spotifyId) {
+      return { spotifyId: existing.spotifyId, spotifyUrl: existing.spotifyUrl };
+    }
+
+    const name = body.name?.trim() || existing.name;
+    const result = await this.spotify.searchArtist(name);
+    return result ?? {};
+  }
+
   private async uploadSquare(
     file: Express.Multer.File | undefined,
     name: string,
   ): Promise<Pick<CreateBandInput, 'imageFileId' | 'imagePath'> | object> {
     if (!file) return {};
+    const processed = await processImage(file.buffer, {
+      ...BAND_IMAGE_OPTS,
+      aspectRatio: { w: 1, h: 1 },
+    });
     const { fileId, filePath } = await this.imageKit.upload({
-      buffer: file.buffer,
+      buffer: processed.buffer,
       filenameHint: name,
       folder: 'bands',
     });
@@ -273,8 +319,9 @@ export class BandsController {
     if (!files?.length) return [];
     return Promise.all(
       files.map(async (file) => {
+        const processed = await processImage(file.buffer, BAND_IMAGE_OPTS);
         const { fileId, filePath } = await this.imageKit.upload({
-          buffer: file.buffer,
+          buffer: processed.buffer,
           filenameHint: `${name}-gallery`,
           folder: 'bands',
         });
