@@ -30,15 +30,11 @@ import { AdminGuard } from '../auth/guards/admin.guard';
 import { ImageKitService } from '../common/images/image-kit.service';
 import { processImage } from '../common/images/process-image';
 import { SpotifyService } from '../spotify/spotify.service';
-
-const BAND_IMAGE_OPTS = {
-  maxDimension: 2000,
-  format: 'jpeg' as const,
-  quality: 85,
-};
-
-const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
-const MAX_GALLERY_FILES = 12;
+import {
+  BAND_IMAGE_OPTS,
+  MAX_GALLERY_FILES,
+  MAX_UPLOAD_BYTES,
+} from 'src/common/constants/image';
 
 const bandImageFields = [
   { name: 'image', maxCount: 1 },
