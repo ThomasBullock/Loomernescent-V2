@@ -1,0 +1,18 @@
+# Build output
+dist
+public/dist
+
+# Dependencies
+node_modules
+
+# Test artifacts
+coverage
+playwright-report
+test-results
+
+# Lockfiles (managed by package manager)
+package-lock.json
+
+# Generated / vendor
+*.min.js
+*.min.css
