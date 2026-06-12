@@ -75,8 +75,9 @@ block content
       .single__gallery
         each photo in band.gallery
           .single__gallery-thumb
-            img.single__gallery-thumb-img(
+            img.single__gallery-thumb-img.js-gallery-thumb(
               src=imageUrl(photo.filePath, { w: 600, h: 600, fo: "auto" }),
+              data-large=imageUrl(photo.filePath, { w: 1600 }),
               alt=`gallery image for ${band.name}`
             )
   #galleryModal.modal

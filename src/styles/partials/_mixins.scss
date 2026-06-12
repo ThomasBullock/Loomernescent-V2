@@ -39,3 +39,14 @@
   top: $vertical;
   transform: translate(-50%, -50%);
 }
+
+@mixin button-reset {
+  all: unset;
+  box-sizing: border-box;
+  cursor: pointer;
+
+  // Restores accessible focus indicators for keyboard users
+  &:focus-visible {
+    outline: revert;
+  }
+}
