@@ -1,4 +1,4 @@
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect } from "@playwright/test";
 
 export class BandDetailPage {
   readonly page: Page;
@@ -6,7 +6,7 @@ export class BandDetailPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.nameHeading = page.getByTestId('bands.detail.name');
+    this.nameHeading = page.getByTestId("bands.detail.name");
   }
 
   async goto(slug: string): Promise<void> {

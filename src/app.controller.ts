@@ -1,20 +1,20 @@
-import { Controller, Get, Render } from '@nestjs/common';
+import { Controller, Get, Render } from "@nestjs/common";
 
 @Controller()
 export class AppController {
-  @Get('add')
-  @Render('add')
+  @Get("add")
+  @Render("add")
   add() {
     return {
-      title: 'Add',
+      title: "Add",
     };
   }
 
-  @Get('favourites')
-  @Render('favourites')
+  @Get("favourites")
+  @Render("favourites")
   favourites() {
     return {
-      title: 'My Favourites',
+      title: "My Favourites",
       bands: [],
       albums: [],
       pedals: [],
@@ -23,11 +23,11 @@ export class AppController {
 
   // TODO tags
 
-  @Get('map')
-  @Render('map')
+  @Get("map")
+  @Render("map")
   map() {
     return {
-      title: 'Map of Shoegaze bands',
+      title: "Map of Shoegaze bands",
     };
   }
 }

@@ -1,34 +1,37 @@
-mixin pedalForm(pedal = {}, mode = 'add')
-	//- testid uses interpolation intentionally: mode is always 'add' or 'edit',
-	//- never user-derived data. Rendered value is a fixed static string per page.
-	- const p = `pedals.${mode}-form`
-	- const effectTypes = ['Chorus', 'Delay', 'Distortion', 'Fuzz', 'Flanger','Phaser', 'Reverb', 'Tremelo']
-	- const effectTypes2 = ['None'].concat(effectTypes)
-	- const action = pedal.id ? '/pedals/' + pedal.id : '/pedals'
-	form.add-band(action=action method="post" enctype="multipart/form-data" class="card")
-		label(for="brand") Brand
-		input(type="text" id="brand" name="brand" data-testid=`${p}.brand-input` value=(pedal.brand))
-		label(for="name") Pedal Name
-		input(type="text" id="name" name="name" data-testid=`${p}.name-input` value=(pedal.name))
-		.effects
-			.effect-select
-				label.half(for="pedalType") Effect Type
-				select(id="pedalType" name="pedalType")
-					each effect in effectTypes
-						option(value=effect selected=(pedal.pedalType === effect))= effect
-			.effect-select
-				label.half(for="pedalType2") Secondary Effect Type
-				select(id="pedalType2" name="pedalType2")
-					each effect in effectTypes2
-						option(value=effect selected=(pedal.pedalType2 === effect))= effect
-		label(for="yearsManufactured") Years Manufactured
-		input(type="text" id="yearsManufactured" name="yearsManufactured" value=pedal.yearsManufactured)
-		label(for="comments") Comments
-		textarea(rows="3" id="comments" name="comments")= pedal.comments
-		label(for="youtube") Youtube Video
-		input(type="url" id="youtube" name="youtube" value=pedal.youtube)
-		label(for="image") Pedal Image
-		if pedal.imagePath
-			img.pedal-form__preview(src=imageUrl(pedal.imagePath, { w: 200, h: 200, fo: 'auto' }) alt=`${pedal.brand} ${pedal.name}`)
-		input(type="file" id="image" name="image" accept="image/*")
-		input(type="submit" value="Save -<" class="button" data-testid=`${p}.submit-btn`)
+mixin pedalForm(pedal = {}, mode = "add")
+  //- testid uses interpolation intentionally: mode is always 'add' or 'edit',
+  //- never user-derived data. Rendered value is a fixed static string per page.
+  - const p = `pedals.${mode}-form`;
+  - const effectTypes = ["Chorus", "Delay", "Distortion", "Fuzz", "Flanger", "Phaser", "Reverb", "Tremelo"];
+  - const effectTypes2 = ["None"].concat(effectTypes);
+  - const action = pedal.id ? "/pedals/" + pedal.id : "/pedals";
+  form.add-band.card(action=action, method="post", enctype="multipart/form-data")
+    label(for="brand") Brand
+    input#brand(type="text", name="brand", data-testid=`${p}.brand-input`, value=pedal.brand)
+    label(for="name") Pedal Name
+    input#name(type="text", name="name", data-testid=`${p}.name-input`, value=pedal.name)
+    .effects
+      .effect-select
+        label.half(for="pedalType") Effect Type
+        select#pedalType(name="pedalType")
+          each effect in effectTypes
+            option(value=effect, selected=pedal.pedalType === effect)= effect
+      .effect-select
+        label.half(for="pedalType2") Secondary Effect Type
+        select#pedalType2(name="pedalType2")
+          each effect in effectTypes2
+            option(value=effect, selected=pedal.pedalType2 === effect)= effect
+    label(for="yearsManufactured") Years Manufactured
+    input#yearsManufactured(type="text", name="yearsManufactured", value=pedal.yearsManufactured)
+    label(for="comments") Comments
+    textarea#comments(rows="3", name="comments")= pedal.comments
+    label(for="youtube") Youtube Video
+    input#youtube(type="url", name="youtube", value=pedal.youtube)
+    label(for="image") Pedal Image
+    if pedal.imagePath
+      img.pedal-form__preview(
+        src=imageUrl(pedal.imagePath, { w: 200, h: 200, fo: "auto" }),
+        alt=`${pedal.brand} ${pedal.name}`
+      )
+    input#image(type="file", name="image", accept="image/*")
+    input.button(type="submit", value="Save -<", data-testid=`${p}.submit-btn`)

@@ -2,33 +2,32 @@
   position: relative;
   width: 100%;
   display: flex;
-  @include elem('results') {
+  @include elem("results") {
     background: white;
     position: absolute;
-    z-index: 300;    
+    z-index: 300;
     width: 100%;
     top: 100%;
-    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
   }
-  @include elem('input') {
+  @include elem("input") {
     font-size: 30px;
     background: $jet;
     color: white;
     outline: 0;
     border: 0;
   }
-  @include elem('result') {
+  @include elem("result") {
     padding: 10px;
     display: block;
     border-bottom: 1px solid #ececec;
-    
+
     &:hover {
       background: #f1f1f1;
     }
-    
-    @include mod('active') {
+
+    @include mod("active") {
       background: #f1f1f1;
     }
   }
 }
-

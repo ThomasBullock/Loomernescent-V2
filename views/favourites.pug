@@ -6,17 +6,17 @@ include mixins/_pedalCard
 include mixins/_pagination
 
 block content
-	.inner
-		h2 Favourite Bands
-		.bands
-			each band in bands
-				+bandCard(band)
-		//- +pagination(page, pages, count, 'bands')
-		h2 Favourite Albums
-		.albums
-			each album in albums
-				+albumCard(album)
-		h2 Favourite Pedals
-		.pedals
-			each pedal in pedals
-				+pedalCard(pedal)
+  .inner
+    h2 Favourite Bands
+    .bands
+      each band in bands
+        +bandCard(band)
+    //- +pagination(page, pages, count, 'bands')
+    h2 Favourite Albums
+    .albums
+      each album in albums
+        +albumCard(album)
+    h2 Favourite Pedals
+    .pedals
+      each pedal in pedals
+        +pedalCard(pedal)

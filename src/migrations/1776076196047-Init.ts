@@ -1,7 +1,7 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class Init1776076196047 implements MigrationInterface {
-  name = 'Init1776076196047';
+  name = "Init1776076196047";
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
@@ -43,9 +43,7 @@ export class Init1776076196047 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "bands" DROP CONSTRAINT "FK_2cbf614a12388fc86ed6b3623c2"`,
-    );
+    await queryRunner.query(`ALTER TABLE "bands" DROP CONSTRAINT "FK_2cbf614a12388fc86ed6b3623c2"`);
     await queryRunner.query(
       `ALTER TABLE "albums" DROP CONSTRAINT "FK_e7f0c9810c413c6bda257317b5e"`,
     );

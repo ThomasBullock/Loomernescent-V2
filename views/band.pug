@@ -5,67 +5,85 @@ include icons/_cross
 include icons/_pick
 
 block meta
-	meta(name="description" content=`Find albums, videos and history for ${band.name} on Loomernescent`)
-	meta(name="keywords" content=`${band.name}, ${albums.map(v => v.title).join(", ")}, ${band.personnel.join(", ")}, ${band.tags.join(", ")}, shoegaze, guitar, dreampop, loomernescent, indie`)
-	meta(property="og:url" content=`http://loomernescent.com/band/${band.slug}`)
+  meta(
+    name="description",
+    content=`Find albums, videos and history for ${band.name} on Loomernescent`
+  )
+  meta(
+    name="keywords",
+    content=`${band.name}, ${albums.map(v => v.title).join(", ")}, ${band.personnel.join(", ")}, ${band.tags.join(", ")}, shoegaze, guitar, dreampop, loomernescent, indie`
+  )
+  meta(property="og:url", content=`http://loomernescent.com/band/${band.slug}`)
 
 block content
-	.single
-		.single__hero
-			img.single__image(src=band.gallery && band.gallery.length ? imageUrl(band.gallery[0].filePath, { w: 1600, h: 900, fo: 'auto' }) : (band.imagePath ? imageUrl(band.imagePath, { w: 1600, h: 900, fo: 'auto' }) : imageUrl('/bands/Band.jpg')) alt=`A photo of ${band.name}`)
-			h2.title.title--single(data-testid="bands.detail.name") #{band.name}
-	.single__details
-		- if (band.locationAddress)
-			- if (band.locationAddress.length > 30)
-				.ribbon__wrapper--long
-					.ribbon.ribbon--long!= band.locationAddress
-			- else
-				.ribbon__wrapper
-					.ribbon!= band.locationAddress
-		.band-info
-			.band-info__photo
-				img(src=band.imagePath ? imageUrl(band.imagePath, { w: 600, h: 600, fo: 'auto' }) : imageUrl('/bands/Band.jpg') alt=`A photo of ${band.name}`)
-			.band-info__facts
-				p.single__detail
-					strong Years Active:
-					!= h.buildDatesString(band.yearsActive)
-				p.single__detail
-					strong Personnel:
-					!= band.personnel.join(' | ')
-				if band.pastPersonnel.length
-					p.single__detail
-						strong Past Personnel:
-						!= band.pastPersonnel.join(' | ')
-				p.single__detail
-					strong Record Labels:
-					!= band.labels.join(' | ')
-			.band-info__content
-				p.single__lead= band.description
-	if band.vimeoPl || band.youtubePl
-		.single__fullwidth.single__fullwidth--black
-			if band.youtubePl
-				.single__video
-					.single__video-wrapper
-						iframe(src=band.youtubePl frameborder="0" allowfullscreen)
-	if albums.length
-		.single__fullwidth.single__fullwidth
-			h2.section-heading Albums by #{band.name}
-			.single__albums
-				each album in albums
-					.single__album
-						a(href=`/album/${album.slug}`)
-							img(src=`/uploads/covers/${album.cover}` alt=`cover artwork for ${album.title} by ${album.artist}`)
-	if band.gallery && band.gallery.length
-		.single__fullwidth.single__fullwidth--ebony
-			.single__gallery
-				each photo in band.gallery
-					.single__gallery-thumb
-						img.single__gallery-thumb-img(src=imageUrl(photo.filePath, { w: 600, h: 600, fo: 'auto' }) alt=`gallery image for ${band.name}`)
-	#galleryModal.modal
-		.modal__container
-			.modal__header
-				h3.modal__title #{band.name}
-				span.modal__close
-					+cross()
-			.modal__body
-			.modal__footer
+  .single
+    .single__hero
+      img.single__image(
+        src=band.gallery && band.gallery.length ? imageUrl(band.gallery[0].filePath, { w: 1600, h: 900, fo: "auto" }) : band.imagePath ? imageUrl(band.imagePath, { w: 1600, h: 900, fo: "auto" }) : imageUrl("/bands/Band.jpg"),
+        alt=`A photo of ${band.name}`
+      )
+      h2.title.title--single(data-testid="bands.detail.name") #{ band.name }
+  .single__details
+    - if (band.locationAddress)
+      - if (band.locationAddress.length > 30)
+        .ribbon__wrapper--long
+          .ribbon.ribbon--long!= band.locationAddress
+      - else
+        .ribbon__wrapper
+          .ribbon!= band.locationAddress
+    .band-info
+      .band-info__photo
+        img(
+          src=band.imagePath ? imageUrl(band.imagePath, { w: 600, h: 600, fo: "auto" }) : imageUrl("/bands/Band.jpg"),
+          alt=`A photo of ${band.name}`
+        )
+      .band-info__facts
+        p.single__detail
+          strong Years Active:
+          != h.buildDatesString(band.yearsActive)
+        p.single__detail
+          strong Personnel:
+          != band.personnel.join(" | ")
+        if band.pastPersonnel.length
+          p.single__detail
+            strong Past Personnel:
+            != band.pastPersonnel.join(" | ")
+        p.single__detail
+          strong Record Labels:
+          != band.labels.join(" | ")
+      .band-info__content
+        p.single__lead= band.description
+  if band.vimeoPl || band.youtubePl
+    .single__fullwidth.single__fullwidth--black
+      if band.youtubePl
+        .single__video
+          .single__video-wrapper
+            iframe(src=band.youtubePl, frameborder="0", allowfullscreen)
+  if albums.length
+    .single__fullwidth.single__fullwidth
+      h2.section-heading Albums by #{ band.name }
+      .single__albums
+        each album in albums
+          .single__album
+            a(href=`/album/${album.slug}`)
+              img(
+                src=`/uploads/covers/${album.cover}`,
+                alt=`cover artwork for ${album.title} by ${album.artist}`
+              )
+  if band.gallery && band.gallery.length
+    .single__fullwidth.single__fullwidth--ebony
+      .single__gallery
+        each photo in band.gallery
+          .single__gallery-thumb
+            img.single__gallery-thumb-img(
+              src=imageUrl(photo.filePath, { w: 600, h: 600, fo: "auto" }),
+              alt=`gallery image for ${band.name}`
+            )
+  #galleryModal.modal
+    .modal__container
+      .modal__header
+        h3.modal__title #{ band.name }
+        span.modal__close
+          +cross
+      .modal__body
+      .modal__footer

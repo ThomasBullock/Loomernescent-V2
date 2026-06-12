@@ -1,4 +1,4 @@
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect } from "@playwright/test";
 
 export class BandFormPage {
   readonly page: Page;
@@ -8,18 +8,18 @@ export class BandFormPage {
   readonly galleryInput: Locator;
   readonly deleteBtn: Locator;
 
-  constructor(page: Page, mode: 'add' | 'edit') {
+  constructor(page: Page, mode: "add" | "edit") {
     this.page = page;
     const p = `bands.${mode}-form`;
     this.nameInput = page.getByTestId(`${p}.name-input`);
     this.submitBtn = page.getByTestId(`${p}.submit-btn`);
     this.errorMessage = page.getByTestId(`${p}.error-message`);
     this.galleryInput = page.getByTestId(`${p}.gallery-input`);
-    this.deleteBtn = page.getByTestId('bands.edit-form.delete-btn');
+    this.deleteBtn = page.getByTestId("bands.edit-form.delete-btn");
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/band/new');
+    await this.page.goto("/band/new");
   }
 
   async fill(name: string): Promise<void> {

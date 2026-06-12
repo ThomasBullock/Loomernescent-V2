@@ -1,10 +1,10 @@
-import { Test } from '@nestjs/testing';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { DataSource } from 'typeorm';
-import { AppModule } from '../../src/app.module';
-import { configureApp } from '../../src/configure-app';
-import { ImageKitService } from '../../src/common/images/image-kit.service';
-import { SpotifyService } from '../../src/spotify/spotify.service';
+import { Test } from "@nestjs/testing";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { DataSource } from "typeorm";
+import { AppModule } from "../../src/app.module";
+import { configureApp } from "../../src/configure-app";
+import { ImageKitService } from "../../src/common/images/image-kit.service";
+import { SpotifyService } from "../../src/spotify/spotify.service";
 
 export interface FakeImageKit {
   upload: jest.Mock;
@@ -27,12 +27,11 @@ export interface TestAppHandle {
 
 export async function createTestApp(): Promise<TestAppHandle> {
   const imageKit: FakeImageKit = {
-    upload: jest.fn(
-      ({ filenameHint, folder }: { filenameHint: string; folder: string }) =>
-        Promise.resolve({
-          fileId: 'test-file-id',
-          filePath: `/${folder}/${filenameHint}.jpg`,
-        }),
+    upload: jest.fn(({ filenameHint, folder }: { filenameHint: string; folder: string }) =>
+      Promise.resolve({
+        fileId: "test-file-id",
+        filePath: `/${folder}/${filenameHint}.jpg`,
+      }),
     ),
     delete: jest.fn(() => Promise.resolve()),
     buildUrl: jest.fn((path: string) => `https://img.test${path}`),
@@ -41,8 +40,8 @@ export async function createTestApp(): Promise<TestAppHandle> {
   const spotify: FakeSpotify = {
     searchArtist: jest.fn(() =>
       Promise.resolve({
-        spotifyId: 'sp-artist-1',
-        spotifyUrl: 'https://open.spotify.com/artist/sp-artist-1',
+        spotifyId: "sp-artist-1",
+        spotifyUrl: "https://open.spotify.com/artist/sp-artist-1",
       }),
     ),
     getArtistAlbums: jest.fn(() => Promise.resolve([])),
@@ -66,11 +65,10 @@ export async function createTestApp(): Promise<TestAppHandle> {
   return { app, dataSource, imageKit, spotify };
 }
 
-export async function truncate(
-  ds: DataSource,
-  ...tables: string[]
-): Promise<void> {
-  if (tables.length === 0) return;
-  const quoted = tables.map((t) => `"${t}"`).join(', ');
+export async function truncate(ds: DataSource, ...tables: string[]): Promise<void> {
+  if (tables.length === 0) {
+    return;
+  }
+  const quoted = tables.map((t) => `"${t}"`).join(", ");
   await ds.query(`TRUNCATE TABLE ${quoted} RESTART IDENTITY CASCADE`);
 }

@@ -1,4 +1,4 @@
-import sharp from 'sharp';
+import sharp from "sharp";
 
 const DEFAULT_MAX_DIMENSION = 2000;
 const DEFAULT_QUALITY = 85;
@@ -9,14 +9,14 @@ export interface ProcessImageOptions {
   /** When set, output is cropped (cover, centre) to exactly this ratio. */
   aspectRatio?: { w: number; h: number };
   /** Output format. Default 'jpeg'. */
-  format?: 'jpeg' | 'png';
+  format?: "jpeg" | "png";
   /** JPEG quality 1–100. Default 85. Ignored for PNG. */
   quality?: number;
 }
 
 export interface ProcessedImage {
   buffer: Buffer;
-  format: 'jpeg' | 'png';
+  format: "jpeg" | "png";
   width: number;
   height: number;
   bytes: number;
@@ -28,7 +28,7 @@ export async function processImage(
 ): Promise<ProcessedImage> {
   const maxDimension = opts.maxDimension ?? DEFAULT_MAX_DIMENSION;
   const quality = opts.quality ?? DEFAULT_QUALITY;
-  const format = opts.format ?? 'jpeg';
+  const format = opts.format ?? "jpeg";
 
   let pipeline = sharp(input);
 
@@ -36,7 +36,7 @@ export async function processImage(
     //
     const { width, height } = await pipeline.metadata();
     if (!width || !height) {
-      throw new Error('Unable to read image dimensions');
+      throw new Error("Unable to read image dimensions");
     }
     const { w: rw, h: rh } = opts.aspectRatio;
 
@@ -51,11 +51,7 @@ export async function processImage(
     // maxDimension / Math.max(rw, rh) — k limited by the max-dimension cap
     // width / rw — k limited by the source width
     // height / rh — k limited by the source height
-    const scaleFactor = Math.min(
-      maxDimension / Math.max(rw, rh),
-      width / rw,
-      height / rh,
-    );
+    const scaleFactor = Math.min(maxDimension / Math.max(rw, rh), width / rw, height / rh);
 
     // Largest box fitting the ratio within both maxDimension and the source (no upscale).
     const targetW = Math.max(1, Math.round(rw * scaleFactor));
@@ -63,20 +59,20 @@ export async function processImage(
     pipeline = sharp(input).resize({
       width: targetW,
       height: targetH,
-      fit: 'cover',
-      position: 'centre',
+      fit: "cover",
+      position: "centre",
     });
   } else {
     // ✕ scales 4000x3000 down to 2000x1500 at maxDimension 2000 (long edge wins) (111 ms)
     pipeline = pipeline.resize({
       width: maxDimension,
       height: maxDimension,
-      fit: 'inside',
+      fit: "inside",
       withoutEnlargement: true,
     });
   }
 
-  pipeline = format === 'png' ? pipeline.png() : pipeline.jpeg({ quality });
+  pipeline = format === "png" ? pipeline.png() : pipeline.jpeg({ quality });
 
   const { data, info } = await pipeline.toBuffer({ resolveWithObject: true });
 

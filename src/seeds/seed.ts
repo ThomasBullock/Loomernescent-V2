@@ -1,37 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-call */
-import 'dotenv/config';
-import { AppDataSource } from '../data-source';
-import { User } from '../entities/user.entity';
-import { Band } from '../entities/band.entity';
-import { Album } from '../entities/album.entity';
-import * as fs from 'fs';
-import * as path from 'path';
-import { randomUUID } from 'crypto';
+import "dotenv/config";
+import { AppDataSource } from "../data-source";
+import { User } from "../entities/user.entity";
+import { Band } from "../entities/band.entity";
+import { Album } from "../entities/album.entity";
+import * as fs from "fs";
+import * as path from "path";
+import { randomUUID } from "crypto";
 
-const legacyDataDir = path.join(
-  __dirname,
-  '..',
-  '..',
-  '..',
-  'loomernescent',
-  'data',
-);
+const legacyDataDir = path.join(__dirname, "..", "..", "..", "loomernescent", "data");
 async function seed() {
   await AppDataSource.initialize();
-  console.log('Connected to database');
+  console.log("Connected to database");
 
   const userRepo = AppDataSource.getRepository(User);
   const bandRepo = AppDataSource.getRepository(Band);
   const albumRepo = AppDataSource.getRepository(Album);
 
-  const legacyUsers = JSON.parse(
-    fs.readFileSync(path.join(legacyDataDir, 'users.json'), 'utf-8'),
-  );
-  const legacyBands = JSON.parse(
-    fs.readFileSync(path.join(legacyDataDir, 'bands.json'), 'utf-8'),
-  );
+  const legacyUsers = JSON.parse(fs.readFileSync(path.join(legacyDataDir, "users.json"), "utf-8"));
+  const legacyBands = JSON.parse(fs.readFileSync(path.join(legacyDataDir, "bands.json"), "utf-8"));
   const legacyAlbums = JSON.parse(
-    fs.readFileSync(path.join(legacyDataDir, 'albums.json'), 'utf-8'),
+    fs.readFileSync(path.join(legacyDataDir, "albums.json"), "utf-8"),
   );
 
   const userIdMap = new Map<string, string>();
@@ -52,11 +41,11 @@ async function seed() {
         email: lu.email,
         name: lu.name,
         passwordHash: lu.hash,
-        admin: lu.admin === 'true' || lu.admin === true,
+        admin: lu.admin === "true" || lu.admin === true,
       })
       .execute();
   }
-  console.log('Users seeded');
+  console.log("Users seeded");
 
   // Seed Bands
   console.log(`Seeding ${legacyBands.length} bands...`);
@@ -66,9 +55,7 @@ async function seed() {
 
     const authorId = userIdMap.get(lb.author);
     if (!authorId) {
-      console.warn(
-        `No user mapping for band "${lb.name}" author: ${lb.author}`,
-      );
+      console.warn(`No user mapping for band "${lb.name}" author: ${lb.author}`);
       continue;
     }
 
@@ -98,16 +85,14 @@ async function seed() {
       })
       .execute();
   }
-  console.log('Bands seeded');
+  console.log("Bands seeded");
 
   // Seed Albums
   console.log(`Seeding ${legacyAlbums.length} albums...`);
   for (const la of legacyAlbums) {
     const bandId = bandIdMap.get(la.bandID);
     if (!bandId) {
-      console.warn(
-        `No band mapping for album "${la.title}" bandID: ${la.bandID}`,
-      );
+      console.warn(`No band mapping for album "${la.title}" bandID: ${la.bandID}`);
       continue;
     }
 
@@ -133,13 +118,13 @@ async function seed() {
       })
       .execute();
   }
-  console.log('Albums seeded');
+  console.log("Albums seeded");
 
-  console.log('Seeding complete!');
+  console.log("Seeding complete!");
   await AppDataSource.destroy();
 }
 
 seed().catch((err) => {
-  console.error('Seed failed:', err);
+  console.error("Seed failed:", err);
   process.exit(1);
 });

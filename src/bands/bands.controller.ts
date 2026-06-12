@@ -14,31 +14,22 @@ import {
   UseGuards,
   UseInterceptors,
   NotFoundException,
-} from '@nestjs/common';
-import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { memoryStorage } from 'multer';
-import type { Request, Response } from 'express';
-import {
-  BandsService,
-  CreateBandInput,
-  GalleryImage,
-  UpdateBandInput,
-} from './bands.service';
-import { Band } from '../entities/band.entity';
-import { User } from '../entities/user.entity';
-import { AdminGuard } from '../auth/guards/admin.guard';
-import { ImageKitService } from '../common/images/image-kit.service';
-import { processImage } from '../common/images/process-image';
-import { SpotifyService } from '../spotify/spotify.service';
-import {
-  BAND_IMAGE_OPTS,
-  MAX_GALLERY_FILES,
-  MAX_UPLOAD_BYTES,
-} from 'src/common/constants/image';
+} from "@nestjs/common";
+import { FileFieldsInterceptor } from "@nestjs/platform-express";
+import { memoryStorage } from "multer";
+import type { Request, Response } from "express";
+import { BandsService, CreateBandInput, GalleryImage, UpdateBandInput } from "./bands.service";
+import { Band } from "../entities/band.entity";
+import { User } from "../entities/user.entity";
+import { AdminGuard } from "../auth/guards/admin.guard";
+import { ImageKitService } from "../common/images/image-kit.service";
+import { processImage } from "../common/images/process-image";
+import { SpotifyService } from "../spotify/spotify.service";
+import { BAND_IMAGE_OPTS, MAX_GALLERY_FILES, MAX_UPLOAD_BYTES } from "src/common/constants/image";
 
 const bandImageFields = [
-  { name: 'image', maxCount: 1 },
-  { name: 'gallery', maxCount: MAX_GALLERY_FILES },
+  { name: "image", maxCount: 1 },
+  { name: "gallery", maxCount: MAX_GALLERY_FILES },
 ];
 
 interface BandUploadFiles {
@@ -54,8 +45,11 @@ const bandImageMulterOptions = {
     file: Express.Multer.File,
     cb: (error: Error | null, accept: boolean) => void,
   ) => {
-    if (file.mimetype.startsWith('image/')) cb(null, true);
-    else cb(new BadRequestException('Only image uploads are allowed'), false);
+    if (file.mimetype.startsWith("image/")) {
+      cb(null, true);
+    } else {
+      cb(new BadRequestException("Only image uploads are allowed"), false);
+    }
   },
 };
 
@@ -86,41 +80,39 @@ export class BandsController {
     private readonly spotify: SpotifyService,
   ) {}
 
-  @Get('/')
-  @Render('index')
+  @Get("/")
+  @Render("index")
   async homePage() {
     const hero = await this.bandsService.getHeroTiles();
-    return { title: 'Home', hero };
+    return { title: "Home", hero };
   }
 
-  @Get('/bands')
-  @Render('bands')
-  async getBands(@Query('page') page?: string) {
-    const pageNum = parseInt(page || '1', 10) || 1;
+  @Get("/bands")
+  @Render("bands")
+  async getBands(@Query("page") page?: string) {
+    const pageNum = parseInt(page || "1", 10) || 1;
     const result = await this.bandsService.getBands(pageNum);
-    return { title: 'Bands', ...result };
+    return { title: "Bands", ...result };
   }
 
-  @Get('/bands/page/:page')
-  @Render('bands')
-  async getBandsPaginated(@Param('page') page: string) {
+  @Get("/bands/page/:page")
+  @Render("bands")
+  async getBandsPaginated(@Param("page") page: string) {
     const pageNum = parseInt(page, 10) || 1;
     const result = await this.bandsService.getBands(pageNum);
-    return { title: 'Bands', ...result };
+    return { title: "Bands", ...result };
   }
 
-  @Get('/band/new')
+  @Get("/band/new")
   @UseGuards(AdminGuard)
-  @Render('editBand')
+  @Render("editBand")
   addForm() {
-    return { title: 'Add Band', band: {} };
+    return { title: "Add Band", band: {} };
   }
 
-  @Post('/bands')
+  @Post("/bands")
   @UseGuards(AdminGuard)
-  @UseInterceptors(
-    FileFieldsInterceptor(bandImageFields, bandImageMulterOptions),
-  )
+  @UseInterceptors(FileFieldsInterceptor(bandImageFields, bandImageMulterOptions))
   async create(
     @Body() body: BandFormBody,
     @UploadedFiles() files: BandUploadFiles | undefined,
@@ -129,8 +121,8 @@ export class BandsController {
   ) {
     const errors = validateBandBody(body);
     if (errors.length) {
-      return res.status(200).render('editBand', {
-        title: 'Add Band',
+      return res.status(200).render("editBand", {
+        title: "Add Band",
         errors,
         band: body,
       });
@@ -150,15 +142,15 @@ export class BandsController {
         ...image,
         gallery,
       });
-      req.session['flash'] = {
+      req.session["flash"] = {
         success: [`${band.name} added`],
       };
       req.session.save(() => res.redirect(`/band/${band.slug}`));
     } catch (err: unknown) {
       if (isUniqueViolation(err)) {
-        return res.status(200).render('editBand', {
-          title: 'Add Band',
-          errors: ['A band with that name already exists'],
+        return res.status(200).render("editBand", {
+          title: "Add Band",
+          errors: ["A band with that name already exists"],
           band: body,
         });
       }
@@ -166,33 +158,35 @@ export class BandsController {
     }
   }
 
-  @Get('/bands/:id/edit')
+  @Get("/bands/:id/edit")
   @UseGuards(AdminGuard)
-  @Render('editBand')
-  async editForm(@Param('id') id: string) {
+  @Render("editBand")
+  async editForm(@Param("id") id: string) {
     const band = await this.bandsService.getBandById(id);
-    if (!band) throw new NotFoundException('Band not found');
+    if (!band) {
+      throw new NotFoundException("Band not found");
+    }
     return { title: `Edit ${band.name}`, band: bandForForm(band) };
   }
 
-  @Post('/bands/:id')
+  @Post("/bands/:id")
   @UseGuards(AdminGuard)
-  @UseInterceptors(
-    FileFieldsInterceptor(bandImageFields, bandImageMulterOptions),
-  )
+  @UseInterceptors(FileFieldsInterceptor(bandImageFields, bandImageMulterOptions))
   async update(
-    @Param('id') id: string,
+    @Param("id") id: string,
     @Body() body: BandFormBody,
     @UploadedFiles() files: BandUploadFiles | undefined,
     @Req() req: Request,
     @Res() res: Response,
   ) {
     const existing = await this.bandsService.getBandById(id);
-    if (!existing) throw new NotFoundException('Band not found');
+    if (!existing) {
+      throw new NotFoundException("Band not found");
+    }
 
     const errors = validateBandBody(body);
     if (errors.length) {
-      return res.status(200).render('editBand', {
+      return res.status(200).render("editBand", {
         title: `Edit ${existing.name}`,
         errors,
         band: { ...body, id },
@@ -212,19 +206,21 @@ export class BandsController {
         ...image,
         gallery,
       });
-      if (!band) throw new NotFoundException('Band not found');
+      if (!band) {
+        throw new NotFoundException("Band not found");
+      }
       if (files?.image?.[0] && oldFileId) {
         void this.deleteImage(oldFileId);
       }
-      req.session['flash'] = {
+      req.session["flash"] = {
         success: [`${band.name} updated`],
       };
       req.session.save(() => res.redirect(`/band/${band.slug}`));
     } catch (err: unknown) {
       if (isUniqueViolation(err)) {
-        return res.status(200).render('editBand', {
+        return res.status(200).render("editBand", {
           title: `Edit ${existing.name}`,
-          errors: ['A band with that name already exists'],
+          errors: ["A band with that name already exists"],
           band: { ...body, id },
         });
       }
@@ -232,35 +228,34 @@ export class BandsController {
     }
   }
 
-  @Post('/bands/:id/delete')
+  @Post("/bands/:id/delete")
   @UseGuards(AdminGuard)
-  async destroy(
-    @Param('id') id: string,
-    @Req() req: Request,
-    @Res() res: Response,
-  ) {
+  async destroy(@Param("id") id: string, @Req() req: Request, @Res() res: Response) {
     const existing = await this.bandsService.getBandById(id);
-    if (!existing) throw new NotFoundException('Band not found');
+    if (!existing) {
+      throw new NotFoundException("Band not found");
+    }
 
     await this.bandsService.delete(id);
-    const fileIds = [
-      existing.imageFileId,
-      ...existing.gallery.map((g) => g.fileId),
-    ].filter((fid): fid is string => Boolean(fid));
+    const fileIds = [existing.imageFileId, ...existing.gallery.map((g) => g.fileId)].filter(
+      (fid): fid is string => Boolean(fid),
+    );
     for (const fileId of fileIds) {
       void this.deleteImage(fileId);
     }
-    req.session['flash'] = {
+    req.session["flash"] = {
       success: [`${existing.name} deleted`],
     };
-    req.session.save(() => res.redirect('/bands'));
+    req.session.save(() => res.redirect("/bands"));
   }
 
-  @Get('/band/:slug')
-  @Render('band')
-  async getBandBySlug(@Param('slug') slug: string) {
+  @Get("/band/:slug")
+  @Render("band")
+  async getBandBySlug(@Param("slug") slug: string) {
     const { band, albums } = await this.bandsService.getBandBySlug(slug);
-    if (!band) throw new NotFoundException('Band not found');
+    if (!band) {
+      throw new NotFoundException("Band not found");
+    }
     return { title: band.name, band, albums };
   }
 
@@ -269,10 +264,13 @@ export class BandsController {
   ): Promise<{ spotifyId?: string; spotifyUrl?: string }> {
     const manualId = body.spotifyId?.trim();
     const manualUrl = body.spotifyUrl?.trim();
-    if (manualId && manualUrl)
+    if (manualId && manualUrl) {
       return { spotifyId: manualId, spotifyUrl: manualUrl };
+    }
 
-    if (!body.name?.trim()) return {};
+    if (!body.name?.trim()) {
+      return {};
+    }
     const result = await this.spotify.searchArtist(body.name.trim());
     return result ?? {};
   }
@@ -283,8 +281,9 @@ export class BandsController {
   ): Promise<{ spotifyId?: string; spotifyUrl?: string }> {
     const manualId = body.spotifyId?.trim();
     const manualUrl = body.spotifyUrl?.trim();
-    if (manualId && manualUrl)
+    if (manualId && manualUrl) {
       return { spotifyId: manualId, spotifyUrl: manualUrl };
+    }
 
     if (existing.spotifyId) {
       return { spotifyId: existing.spotifyId, spotifyUrl: existing.spotifyUrl };
@@ -298,8 +297,10 @@ export class BandsController {
   private async uploadSquare(
     file: Express.Multer.File | undefined,
     name: string,
-  ): Promise<Pick<CreateBandInput, 'imageFileId' | 'imagePath'> | object> {
-    if (!file) return {};
+  ): Promise<Pick<CreateBandInput, "imageFileId" | "imagePath"> | object> {
+    if (!file) {
+      return {};
+    }
     const processed = await processImage(file.buffer, {
       ...BAND_IMAGE_OPTS,
       aspectRatio: { w: 1, h: 1 },
@@ -307,7 +308,7 @@ export class BandsController {
     const { fileId, filePath } = await this.imageKit.upload({
       buffer: processed.buffer,
       filenameHint: name,
-      folder: 'bands',
+      folder: "bands",
     });
     return { imageFileId: fileId, imagePath: filePath };
   }
@@ -316,14 +317,16 @@ export class BandsController {
     files: Express.Multer.File[] | undefined,
     name: string,
   ): Promise<GalleryImage[]> {
-    if (!files?.length) return [];
+    if (!files?.length) {
+      return [];
+    }
     return Promise.all(
       files.map(async (file) => {
         const processed = await processImage(file.buffer, BAND_IMAGE_OPTS);
         const { fileId, filePath } = await this.imageKit.upload({
           buffer: processed.buffer,
           filenameHint: `${name}-gallery`,
-          folder: 'bands',
+          folder: "bands",
         });
         return { fileId, filePath };
       }),
@@ -343,22 +346,22 @@ export class BandsController {
 function bandForForm(band: Band): Record<string, unknown> {
   return {
     ...band,
-    personnel: band.personnel.join(', '),
-    pastPersonnel: band.pastPersonnel.join(', '),
-    labels: band.labels.join(', '),
-    yearsActive: band.yearsActive
-      .map((d) => new Date(d).getUTCFullYear())
-      .join(', '),
+    personnel: band.personnel.join(", "),
+    pastPersonnel: band.pastPersonnel.join(", "),
+    labels: band.labels.join(", "),
+    yearsActive: band.yearsActive.map((d) => new Date(d).getUTCFullYear()).join(", "),
   };
 }
 
 function validateBandBody(body: BandFormBody): string[] {
   const errors: string[] = [];
-  if (!body.name?.trim()) errors.push('Band name is required');
+  if (!body.name?.trim()) {
+    errors.push("Band name is required");
+  }
   return errors;
 }
 
 function isUniqueViolation(err: unknown): boolean {
   const e = err as { code?: string; driverError?: { code?: string } };
-  return e?.code === '23505' || e?.driverError?.code === '23505';
+  return e?.code === "23505" || e?.driverError?.code === "23505";
 }

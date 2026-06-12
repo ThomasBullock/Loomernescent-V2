@@ -1,20 +1,20 @@
 extends layout
 
 block content
-	.inner
-		if errors
-			ul.errors
-				each err in errors
-					li.error(data-testid="auth.register-form.error-message")= err
-		form.form(action="/auth/register" method="POST")
-			h2 Register
-			label(for="name") Name 
-			input(type="text" name="name" required data-testid="auth.register-form.name-input")
-			label(for="email") Email
-			input(type="text" name="email" required data-testid="auth.register-form.email-input")
-			label(for="password") Password
-			input(type="password" name="password" data-testid="auth.register-form.password-input")
-			label(for="password-confirm") Confirm Password
-			input(type="password" name="password-confirm")  
-			input(type="text" name="stratosphere")
-			input.button(type="submit" value="Register ->" data-testid="auth.register-form.submit-btn")
+  .inner
+    if errors
+      ul.errors
+        each err in errors
+          li.error(data-testid="auth.register-form.error-message")= err
+    form.form(action="/auth/register", method="POST")
+      h2 Register
+      label(for="name") Name
+      input(type="text", name="name", required, data-testid="auth.register-form.name-input")
+      label(for="email") Email
+      input(type="text", name="email", required, data-testid="auth.register-form.email-input")
+      label(for="password") Password
+      input(type="password", name="password", data-testid="auth.register-form.password-input")
+      label(for="password-confirm") Confirm Password
+      input(type="password", name="password-confirm") 
+      input(type="text", name="stratosphere")
+      input.button(type="submit", value="Register ->", data-testid="auth.register-form.submit-btn")

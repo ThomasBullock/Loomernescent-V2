@@ -1,4 +1,4 @@
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect } from "@playwright/test";
 
 export class PedalFormPage {
   readonly page: Page;
@@ -8,7 +8,7 @@ export class PedalFormPage {
   readonly errorMessage: Locator;
   readonly deleteBtn: Locator;
 
-  constructor(page: Page, mode: 'add' | 'edit') {
+  constructor(page: Page, mode: "add" | "edit") {
     this.page = page;
     const p = `pedals.${mode}-form`;
     this.brandInput = page.getByTestId(`${p}.brand-input`);
@@ -19,7 +19,7 @@ export class PedalFormPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/pedals/new');
+    await this.page.goto("/pedals/new");
   }
 
   async fill(brand: string, name: string): Promise<void> {

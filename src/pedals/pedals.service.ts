@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import slugify from 'slugify';
-import { Pedal } from '../entities/pedal.entity';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import slugify from "slugify";
+import { Pedal } from "../entities/pedal.entity";
 
 export interface CreatePedalInput {
   brand: string;
@@ -28,7 +28,7 @@ export class PedalsService {
     perPage: number = 6,
   ): Promise<{ pedals: Pedal[]; page: number; pages: number; count: number }> {
     const [pedals, count] = await this.pedalRepo.findAndCount({
-      order: { createdAt: 'DESC' },
+      order: { createdAt: "DESC" },
       skip: (page - 1) * perPage,
       take: perPage,
     });
@@ -50,10 +50,11 @@ export class PedalsService {
 
   async update(id: string, input: CreatePedalInput): Promise<Pedal | null> {
     const pedal = await this.getPedalById(id);
-    if (!pedal) return null;
+    if (!pedal) {
+      return null;
+    }
 
-    const slugChanged =
-      input.brand !== pedal.brand || input.name !== pedal.name;
+    const slugChanged = input.brand !== pedal.brand || input.name !== pedal.name;
 
     pedal.brand = input.brand;
     pedal.name = input.name;
@@ -65,15 +66,19 @@ export class PedalsService {
     }
     pedal.pedalType = (input.pedalType || null) as string;
     pedal.pedalType2 = (
-      input.pedalType2 && input.pedalType2 !== 'None' ? input.pedalType2 : null
+      input.pedalType2 && input.pedalType2 !== "None" ? input.pedalType2 : null
     ) as string;
     pedal.yearsManufactured = parseYears(input.yearsManufactured);
     pedal.comments = (input.comments || null) as string;
     pedal.youtube = (input.youtube || null) as string;
     // Only touch image columns when a new value is supplied; an edit without a
     // file upload must preserve the existing image.
-    if (input.imageFileId !== undefined) pedal.imageFileId = input.imageFileId;
-    if (input.imagePath !== undefined) pedal.imagePath = input.imagePath;
+    if (input.imageFileId !== undefined) {
+      pedal.imageFileId = input.imageFileId;
+    }
+    if (input.imagePath !== undefined) {
+      pedal.imagePath = input.imagePath;
+    }
 
     return this.pedalRepo.save(pedal);
   }
@@ -98,10 +103,7 @@ export class PedalsService {
       // Contrast with update() below, where null is passed explicitly to clear a
       // field on an existing row.
       pedalType: input.pedalType || undefined,
-      pedalType2:
-        input.pedalType2 && input.pedalType2 !== 'None'
-          ? input.pedalType2
-          : undefined,
+      pedalType2: input.pedalType2 && input.pedalType2 !== "None" ? input.pedalType2 : undefined,
       yearsManufactured: parseYears(input.yearsManufactured),
       comments: input.comments || undefined,
       youtube: input.youtube || undefined,
@@ -122,9 +124,11 @@ export class PedalsService {
 }
 
 function parseYears(csv?: string): Date[] {
-  if (!csv) return [];
+  if (!csv) {
+    return [];
+  }
   return csv
-    .split(',')
+    .split(",")
     .map((s) => s.trim())
     .filter(Boolean)
     .map((s) => new Date(s));

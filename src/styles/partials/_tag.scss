@@ -9,7 +9,7 @@
   justify-content: center;
   // margin-bottom: $base-spacing;
   // flex-wrap: wrap;
-  @include mod('list') {
+  @include mod("list") {
     flex-wrap: wrap;
     margin-top: $base-spacing;
 
@@ -29,7 +29,7 @@
   // margin-right: 1rem;
   // flex: 0 1 20px;
   // width: 20%;
-  @include elem('choice') {
+  @include elem("choice") {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -50,7 +50,7 @@
       }
     }
   }
-  @include elem('link') {
+  @include elem("link") {
     // background:$yellow;
     width: 100%;
     height: 100px;
@@ -67,7 +67,7 @@
       }
     }
 
-    @include mod('active') {
+    @include mod("active") {
       // background: lighten($purple, 40%);
       .tag__text {
         color: $white;
@@ -84,11 +84,11 @@
     }
   }
 
-  @include elem('body') {
+  @include elem("body") {
     fill: $pink;
   }
 
-  @include elem('pick') {
+  @include elem("pick") {
     // width: 120px;
     // height: 60px;
     width: 80%;
@@ -100,11 +100,11 @@
     }
   }
 
-  @include elem('text') {
+  @include elem("text") {
     padding: 1rem 1rem;
     display: block;
   }
-  @include elem('count') {
+  @include elem("count") {
     padding: 1rem 1rem;
     background: $white;
     border-left: 3px solid rgba(0, 0, 0, 0.1);
@@ -132,6 +132,6 @@
 }
 
 .pick {
-  @include elem('link') {
+  @include elem("link") {
   }
 }

@@ -1,9 +1,9 @@
-import bcrypt from 'bcrypt';
-import { DataSource } from 'typeorm';
-import request from 'supertest';
-import type TestAgent from 'supertest/lib/agent';
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { User } from '../../src/entities/user.entity';
+import bcrypt from "bcrypt";
+import { DataSource } from "typeorm";
+import request from "supertest";
+import type TestAgent from "supertest/lib/agent";
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { User } from "../../src/entities/user.entity";
 
 export interface CreateUserOptions {
   email?: string;
@@ -23,14 +23,13 @@ export async function createUser(
   ds: DataSource,
   opts: CreateUserOptions = {},
 ): Promise<CreatedUser> {
-  const password = opts.password ?? 'password123';
+  const password = opts.password ?? "password123";
   const passwordHash = await bcrypt.hash(password, 10);
   userCounter += 1;
-  const email =
-    opts.email ?? `test-user-${Date.now()}-${userCounter}@example.test`;
+  const email = opts.email ?? `test-user-${Date.now()}-${userCounter}@example.test`;
   const user = await ds.getRepository(User).save({
     email,
-    name: opts.name ?? 'Test User',
+    name: opts.name ?? "Test User",
     passwordHash,
     admin: opts.admin ?? false,
   });
@@ -47,14 +46,9 @@ export async function loginAs(
   password: string,
 ): Promise<TestAgent> {
   const agent = request.agent(app.getHttpServer());
-  const res = await agent
-    .post('/auth/login')
-    .type('form')
-    .send({ email, password });
+  const res = await agent.post("/auth/login").type("form").send({ email, password });
   if (res.status !== 302) {
-    throw new Error(
-      `Expected 302 from /auth/login but got ${res.status}: ${res.text}`,
-    );
+    throw new Error(`Expected 302 from /auth/login but got ${res.status}: ${res.text}`);
   }
   return agent;
 }

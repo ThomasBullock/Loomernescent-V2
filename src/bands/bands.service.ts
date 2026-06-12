@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import slugify from 'slugify';
-import { Band } from '../entities/band.entity';
-import { Album } from '../entities/album.entity';
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import slugify from "slugify";
+import { Band } from "../entities/band.entity";
+import { Album } from "../entities/album.entity";
 
 export interface GalleryImage {
   fileId: string;
@@ -31,10 +31,10 @@ export interface CreateBandInput {
   gallery?: GalleryImage[];
 }
 
-export type UpdateBandInput = Omit<CreateBandInput, 'authorId'>;
+export type UpdateBandInput = Omit<CreateBandInput, "authorId">;
 
 export interface HeroTile {
-  type: 'band' | 'album';
+  type: "band" | "album";
   name: string;
   slug: string;
   imagePath: string | null;
@@ -91,7 +91,9 @@ export class BandsService {
    */
   async update(id: string, input: UpdateBandInput): Promise<Band | null> {
     const band = await this.getBandById(id);
-    if (!band) return null;
+    if (!band) {
+      return null;
+    }
 
     if (input.name !== band.name) {
       band.name = input.name;
@@ -108,12 +110,20 @@ export class BandsService {
     band.locationLat = (parseCoord(input.locationLat) ?? null) as number;
     band.youtubePl = (input.youtubePl || null) as string;
     band.vimeoPl = (input.vimeoPl || null) as string;
-    if (input.spotifyId !== undefined) band.spotifyId = input.spotifyId;
-    if (input.spotifyUrl !== undefined) band.spotifyUrl = input.spotifyUrl;
+    if (input.spotifyId !== undefined) {
+      band.spotifyId = input.spotifyId;
+    }
+    if (input.spotifyUrl !== undefined) {
+      band.spotifyUrl = input.spotifyUrl;
+    }
     // Only touch the square image when a new value is supplied; an edit
     // without a file upload must preserve the existing image.
-    if (input.imageFileId !== undefined) band.imageFileId = input.imageFileId;
-    if (input.imagePath !== undefined) band.imagePath = input.imagePath;
+    if (input.imageFileId !== undefined) {
+      band.imageFileId = input.imageFileId;
+    }
+    if (input.imagePath !== undefined) {
+      band.imagePath = input.imagePath;
+    }
     if (input.gallery?.length) {
       band.gallery = [...band.gallery, ...input.gallery];
     }
@@ -132,21 +142,21 @@ export class BandsService {
 
   async getHeroTiles(): Promise<HeroTile[]> {
     const bands = await this.bandRepo.find({
-      select: ['id', 'name', 'slug', 'imagePath'],
+      select: ["id", "name", "slug", "imagePath"],
     });
     const albums = await this.albumRepo.find({
-      select: ['id', 'title', 'slug', 'cover'],
+      select: ["id", "title", "slug", "cover"],
     });
 
     const bandTiles: HeroTile[] = bands.map((b) => ({
-      type: 'band',
+      type: "band",
       name: b.name,
       slug: b.slug,
       imagePath: b.imagePath,
       cover: null,
     }));
     const albumTiles: HeroTile[] = albums.map((a) => ({
-      type: 'album',
+      type: "album",
       name: a.title,
       slug: a.slug,
       imagePath: null,
@@ -167,7 +177,7 @@ export class BandsService {
     perPage: number = 6,
   ): Promise<{ bands: Band[]; page: number; pages: number; count: number }> {
     const [bands, count] = await this.bandRepo.findAndCount({
-      order: { created: 'DESC' },
+      order: { created: "DESC" },
       skip: (page - 1) * perPage,
       take: perPage,
     });
@@ -175,17 +185,15 @@ export class BandsService {
     return { bands, page, pages, count };
   }
 
-  async getBandBySlug(
-    slug: string,
-  ): Promise<{ band: Band | null; albums: Album[] }> {
+  async getBandBySlug(slug: string): Promise<{ band: Band | null; albums: Album[] }> {
     const band = await this.bandRepo.findOne({
       where: { slug },
-      relations: ['author'],
+      relations: ["author"],
     });
     const albums = band
       ? await this.albumRepo.find({
           where: { bandId: band.id },
-          order: { releaseDate: 'DESC' },
+          order: { releaseDate: "DESC" },
         })
       : [];
     return { band, albums };
@@ -193,9 +201,11 @@ export class BandsService {
 }
 
 function parseList(csv?: string): string[] {
-  if (!csv) return [];
+  if (!csv) {
+    return [];
+  }
   return csv
-    .split(',')
+    .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
 }
@@ -205,12 +215,16 @@ function parseYears(csv?: string): Date[] {
 }
 
 function normalizeTags(tags?: string | string[]): string[] {
-  if (!tags) return [];
+  if (!tags) {
+    return [];
+  }
   return Array.isArray(tags) ? tags : [tags];
 }
 
 function parseCoord(value?: string): number | undefined {
-  if (!value?.trim()) return undefined;
+  if (!value?.trim()) {
+    return undefined;
+  }
   const num = parseFloat(value);
   return Number.isNaN(num) ? undefined : num;
 }

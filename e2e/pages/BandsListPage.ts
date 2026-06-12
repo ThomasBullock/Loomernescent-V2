@@ -1,4 +1,4 @@
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect } from "@playwright/test";
 
 export class BandsListPage {
   readonly page: Page;
@@ -7,12 +7,12 @@ export class BandsListPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.container = page.getByTestId('bands.list.table');
-    this.editLink = page.getByTestId('bands.list.edit-link').first();
+    this.container = page.getByTestId("bands.list.table");
+    this.editLink = page.getByTestId("bands.list.edit-link").first();
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/bands');
+    await this.page.goto("/bands");
   }
 
   async clickEditFirst(): Promise<void> {

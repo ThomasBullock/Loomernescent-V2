@@ -1,50 +1,94 @@
-mixin bandForm(band = {}, mode = 'add')
-	//- testid uses interpolation intentionally: mode is always 'add' or 'edit',
-	//- never user-derived data. Rendered value is a fixed static string per page.
-	- const p = `bands.${mode}-form`
-	- const action = band.id ? '/bands/' + band.id : '/bands'
-	form.add-band(action=action method="post" class="card" enctype="multipart/form-data")
-		label(for="name") Name
-		input(type="text" id="band-name" name="name" data-testid=`${p}.name-input` value=band.name)
-		label(for="description") Description
-		textarea(name="description")= band.description
-		label(for="image") Band Image
-		if band.imagePath
-			img.band-form__preview(src=imageUrl(band.imagePath, { w: 200, h: 200, fo: 'auto' }) alt=band.name width=200)
-		input(type="file" id="image" name="image" accept="image/*")
-		label(for="gallery") Gallery Images
-		if band.gallery && band.gallery.length
-			.band-form__gallery
-				each photo in band.gallery
-					img.band-form__preview(src=imageUrl(photo.filePath, { w: 120, h: 120, fo: 'auto' }) alt=band.name width=120)
-		input(type="file" id="gallery" name="gallery" accept="image/*" multiple data-testid=`${p}.gallery-input`)
-		label(for="address") Origin
-		input(type="text" id="address" name="locationAddress" value=band.locationAddress)
-		label(for="lng") Origin Lng
-		input.half(type="text" id="lng" name="locationLng" value=band.locationLng)
-		label(for="lat") Origin Lat
-		input.half(type="text" id="lat" name="locationLat" value=band.locationLat)
-		label(for="personnel") Personnel
-		input(type="text" name="personnel" placeholder="list personnel separated by comma" value=band.personnel)
-		label(for="pastPersonnel") Former Personnel
-		input(type="text" name="pastPersonnel" placeholder="list personnel separated by comma" value=band.pastPersonnel)
-		label(for="yearsActive") Years Active
-		input(type="text" name="yearsActive" placeholder="list years separated by a comma" value=band.yearsActive)
-		label(for="labels") Labels
-		input(type="text" name="labels" placeholder="list labels separated by comma" value=band.labels)
-		label(for="youtubePl") Youtube Playlist
-		input(type="url" id="youtubePl" name="youtubePl" value=band.youtubePl)
-		label(for="vimeoPl") Vimeo Playlist
-		input(type="text" id="vimeoPl" name="vimeoPl" value=band.vimeoPl)
-		label(for="spotifyId") Spotify Artist ID
-		input(type="text" id="spotifyId" name="spotifyId" placeholder="Auto-populated on save; override if needed" value=band.spotifyId)
-		label(for="spotifyUrl") Spotify Artist URL
-		input(type="url" id="spotifyUrl" name="spotifyUrl" placeholder="Auto-populated on save; override if needed" value=band.spotifyUrl)
-		- const choices = ['Male Vox', 'Female Vox', 'Heavy', 'Creation', '4AD', 'Melancholy', 'Ethereal', 'Intense', 'Hypnotic', 'Eighties', 'Nineties', 'Noughties']
-		- const tags = [].concat(band.tags || [])
-		ul.tags
-			each tag in choices
-				.tag.tag__choice
-					input(type="checkbox" id=tag value=tag name="tags" checked=(tags.includes(tag)))
-					label(for=tag) #{tag}
-		input(type="submit" value="Save -<" class="button" data-testid=`${p}.submit-btn`)
+mixin bandForm(band = {}, mode = "add")
+  //- testid uses interpolation intentionally: mode is always 'add' or 'edit',
+  //- never user-derived data. Rendered value is a fixed static string per page.
+  - const p = `bands.${mode}-form`;
+  - const action = band.id ? "/bands/" + band.id : "/bands";
+  form.add-band.card(action=action, method="post", enctype="multipart/form-data")
+    label(for="name") Name
+    input#band-name(type="text", name="name", data-testid=`${p}.name-input`, value=band.name)
+    label(for="description") Description
+    textarea(name="description")= band.description
+    label(for="image") Band Image
+    if band.imagePath
+      img.band-form__preview(
+        src=imageUrl(band.imagePath, { w: 200, h: 200, fo: "auto" }),
+        alt=band.name,
+        width=200
+      )
+    input#image(type="file", name="image", accept="image/*")
+    label(for="gallery") Gallery Images
+    if band.gallery && band.gallery.length
+      .band-form__gallery
+        each photo in band.gallery
+          img.band-form__preview(
+            src=imageUrl(photo.filePath, { w: 120, h: 120, fo: "auto" }),
+            alt=band.name,
+            width=120
+          )
+    input#gallery(
+      type="file",
+      name="gallery",
+      accept="image/*",
+      multiple,
+      data-testid=`${p}.gallery-input`
+    )
+    label(for="address") Origin
+    input#address(type="text", name="locationAddress", value=band.locationAddress)
+    label(for="lng") Origin Lng
+    input#lng.half(type="text", name="locationLng", value=band.locationLng)
+    label(for="lat") Origin Lat
+    input#lat.half(type="text", name="locationLat", value=band.locationLat)
+    label(for="personnel") Personnel
+    input(
+      type="text",
+      name="personnel",
+      placeholder="list personnel separated by comma",
+      value=band.personnel
+    )
+    label(for="pastPersonnel") Former Personnel
+    input(
+      type="text",
+      name="pastPersonnel",
+      placeholder="list personnel separated by comma",
+      value=band.pastPersonnel
+    )
+    label(for="yearsActive") Years Active
+    input(
+      type="text",
+      name="yearsActive",
+      placeholder="list years separated by a comma",
+      value=band.yearsActive
+    )
+    label(for="labels") Labels
+    input(
+      type="text",
+      name="labels",
+      placeholder="list labels separated by comma",
+      value=band.labels
+    )
+    label(for="youtubePl") Youtube Playlist
+    input#youtubePl(type="url", name="youtubePl", value=band.youtubePl)
+    label(for="vimeoPl") Vimeo Playlist
+    input#vimeoPl(type="text", name="vimeoPl", value=band.vimeoPl)
+    label(for="spotifyId") Spotify Artist ID
+    input#spotifyId(
+      type="text",
+      name="spotifyId",
+      placeholder="Auto-populated on save; override if needed",
+      value=band.spotifyId
+    )
+    label(for="spotifyUrl") Spotify Artist URL
+    input#spotifyUrl(
+      type="url",
+      name="spotifyUrl",
+      placeholder="Auto-populated on save; override if needed",
+      value=band.spotifyUrl
+    )
+    - const choices = ["Male Vox", "Female Vox", "Heavy", "Creation", "4AD", "Melancholy", "Ethereal", "Intense", "Hypnotic", "Eighties", "Nineties", "Noughties"];
+    - const tags = [].concat(band.tags || []);
+    ul.tags
+      each tag in choices
+        .tag.tag__choice
+          input(type="checkbox", id=tag, value=tag, name="tags", checked=tags.includes(tag))
+          label(for=tag) #{ tag }
+    input.button(type="submit", value="Save -<", data-testid=`${p}.submit-btn`)

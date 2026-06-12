@@ -1,53 +1,45 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { resolve } from 'path';
-import * as nodemailer from 'nodemailer';
-import * as pug from 'pug';
-import juice from 'juice';
-import { convert } from 'html-to-text';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import { resolve } from "path";
+import * as nodemailer from "nodemailer";
+import type SMTPTransport from "nodemailer/lib/smtp-transport";
+import * as pug from "pug";
+import juice from "juice";
+import { convert } from "html-to-text";
 
 export interface MailSendOptions {
   to: string;
   subject: string;
-  template: 'welcome' | 'password-reset';
-  context?: Record<string, any>;
+  template: "welcome" | "password-reset";
+  context?: Record<string, unknown>;
 }
 
 @Injectable()
 export class MailService {
   private readonly logger = new Logger(MailService.name);
-  private readonly transporter: nodemailer.Transporter;
+  private readonly transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo>;
   private readonly from: string;
   private readonly appUrl: string;
 
   constructor(private readonly config: ConfigService) {
-    this.from =
-      this.config.get<string>('MAIL_FROM') ??
-      'Loomernescent <talk@tbullock.net>';
-    this.appUrl = this.config.get<string>('APP_URL') ?? 'http://localhost:3000';
+    this.from = this.config.get<string>("MAIL_FROM") ?? "Loomernescent <talk@tbullock.net>";
+    this.appUrl = this.config.get<string>("APP_URL") ?? "http://localhost:3000";
 
-    const smtpUser = this.config.get<string>('MAILGUN_SMTP_LOGIN');
-    const smtpPass = this.config.get<string>('MAILGUN_SMTP_PASSWORD');
+    const smtpUser = this.config.get<string>("MAILGUN_SMTP_LOGIN");
+    const smtpPass = this.config.get<string>("MAILGUN_SMTP_PASSWORD");
 
     this.transporter = nodemailer.createTransport({
-      host: this.config.get<string>('MAILGUN_SMTP_HOST') ?? 'smtp.mailgun.org',
-      port: Number(this.config.get<string>('MAILGUN_SMTP_PORT') ?? 587),
-      ...(smtpUser && smtpPass
-        ? { auth: { user: smtpUser, pass: smtpPass } }
-        : {}),
+      host: this.config.get<string>("MAILGUN_SMTP_HOST") ?? "smtp.mailgun.org",
+      port: Number(this.config.get<string>("MAILGUN_SMTP_PORT") ?? 587),
+      ...(smtpUser && smtpPass ? { auth: { user: smtpUser, pass: smtpPass } } : {}),
     });
   }
 
   private renderHtml(
-    template: MailSendOptions['template'],
-    context: Record<string, any>,
+    template: MailSendOptions["template"],
+    context: Record<string, unknown>,
   ): string {
-    const templatePath = resolve(
-      process.cwd(),
-      'views',
-      'email',
-      `${template}.pug`,
-    );
+    const templatePath = resolve(process.cwd(), "views", "email", `${template}.pug`);
     const html = pug.renderFile(templatePath, {
       ...context,
       appUrl: this.appUrl,

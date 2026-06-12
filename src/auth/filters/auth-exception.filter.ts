@@ -1,10 +1,5 @@
-import {
-  ArgumentsHost,
-  Catch,
-  ExceptionFilter,
-  UnauthorizedException,
-} from '@nestjs/common';
-import type { Request, Response } from 'express';
+import { ArgumentsHost, Catch, ExceptionFilter, UnauthorizedException } from "@nestjs/common";
+import type { Request, Response } from "express";
 
 @Catch(UnauthorizedException)
 export class LoginExceptionFilter implements ExceptionFilter {
@@ -12,7 +7,7 @@ export class LoginExceptionFilter implements ExceptionFilter {
     const ctx = host.switchToHttp();
     const req = ctx.getRequest<Request>();
     const res = ctx.getResponse<Response>();
-    req.session['flash'] = { error: ['Invalid email or password'] };
-    req.session.save(() => res.redirect('/auth/login'));
+    req.session["flash"] = { error: ["Invalid email or password"] };
+    req.session.save(() => res.redirect("/auth/login"));
   }
 }

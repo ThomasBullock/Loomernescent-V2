@@ -1,6 +1,6 @@
 export const BAND_IMAGE_OPTS = {
   maxDimension: 2000,
-  format: 'jpeg' as const,
+  format: "jpeg" as const,
   quality: 85,
 };
 

@@ -7,7 +7,7 @@
   border: 0;
   background: $yellow;
   color: $black;
-  font-family: 'Panama';
+  font-family: "Panama";
   font-weight: 600;
 }
 
@@ -56,7 +56,7 @@ p.error {
   width: 120px;
   z-index: 999;
 
-  @include elem('wrapper') {
+  @include elem("wrapper") {
     $action-color: #477dca !default;
     $ribbon-background: $action-color;
     $ribbon-size: 105px;
@@ -68,7 +68,7 @@ p.error {
     top: -1px;
   }
 
-  @include mod('long') {
+  @include mod("long") {
     width: 230px;
     left: -18px;
     top: 40px;

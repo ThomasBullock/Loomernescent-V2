@@ -21,7 +21,8 @@
     min-height: 400px;
     height: calc(100vh - 335px);
     height: auto;
-    background: linear-gradient(#ffa949, transparent 90%),
+    background:
+      linear-gradient(#ffa949, transparent 90%),
       linear-gradient(0deg, $red, transparent 30%),
       #ffa949 url("/images/Lava.jpg") no-repeat center;
     background-size: cover;
@@ -39,7 +40,9 @@
       position: relative;
       z-index: 5;
       filter: grayscale(100%);
-      transition: opacity 0.5s, filter 0.5s;
+      transition:
+        opacity 0.5s,
+        filter 0.5s;
       opacity: 0.15;
 
       &:hover {

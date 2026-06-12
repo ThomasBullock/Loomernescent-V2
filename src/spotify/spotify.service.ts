@@ -1,5 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { Injectable, Logger } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 export interface SpotifyArtistResult {
   spotifyId: string;
@@ -44,8 +44,8 @@ interface AlbumTracksResponse {
 }
 
 const TOKEN_EXPIRY_BUFFER_MS = 60_000;
-const SPOTIFY_ACCOUNTS_URL = 'https://accounts.spotify.com/api/token';
-const SPOTIFY_API_BASE = 'https://api.spotify.com/v1';
+const SPOTIFY_ACCOUNTS_URL = "https://accounts.spotify.com/api/token";
+const SPOTIFY_API_BASE = "https://api.spotify.com/v1";
 
 @Injectable()
 export class SpotifyService {
@@ -55,29 +55,24 @@ export class SpotifyService {
   private tokenCache: TokenCache | null = null;
 
   constructor(private readonly config: ConfigService) {
-    this.clientId = this.config.getOrThrow<string>('SPOTIFY_CLIENT_ID');
-    this.clientSecret = this.config.getOrThrow<string>('SPOTIFY_CLIENT_SECRET');
+    this.clientId = this.config.getOrThrow<string>("SPOTIFY_CLIENT_ID");
+    this.clientSecret = this.config.getOrThrow<string>("SPOTIFY_CLIENT_SECRET");
   }
 
   async getAccessToken(): Promise<string> {
     const now = Date.now();
-    if (
-      this.tokenCache &&
-      this.tokenCache.expiresAt - now > TOKEN_EXPIRY_BUFFER_MS
-    ) {
+    if (this.tokenCache && this.tokenCache.expiresAt - now > TOKEN_EXPIRY_BUFFER_MS) {
       return this.tokenCache.token;
     }
 
-    const credentials = Buffer.from(
-      `${this.clientId}:${this.clientSecret}`,
-    ).toString('base64');
+    const credentials = Buffer.from(`${this.clientId}:${this.clientSecret}`).toString("base64");
     const res = await fetch(SPOTIFY_ACCOUNTS_URL, {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Basic ${credentials}`,
-        'Content-Type': 'application/x-www-form-urlencoded',
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: 'grant_type=client_credentials',
+      body: "grant_type=client_credentials",
     });
 
     if (!res.ok) {
@@ -107,14 +102,16 @@ export class SpotifyService {
 
       const body = (await res.json()) as ArtistSearchResponse;
       const first = body.artists?.items?.[0];
-      if (!first) return null;
+      if (!first) {
+        return null;
+      }
 
       return {
         spotifyId: first.id,
         spotifyUrl: first.external_urls.spotify,
       };
     } catch (err) {
-      this.logger.error('searchArtist error', err);
+      this.logger.error("searchArtist error", err);
       return null;
     }
   }
@@ -139,7 +136,7 @@ export class SpotifyService {
         spotifyUrl: item.external_urls.spotify,
       }));
     } catch (err) {
-      this.logger.error('getArtistAlbums error', err);
+      this.logger.error("getArtistAlbums error", err);
       return [];
     }
   }
@@ -160,7 +157,7 @@ export class SpotifyService {
       const body = (await res.json()) as AlbumTracksResponse;
       return body.items.map((t) => t.name);
     } catch (err) {
-      this.logger.error('getAlbumTracks error', err);
+      this.logger.error("getAlbumTracks error", err);
       return [];
     }
   }

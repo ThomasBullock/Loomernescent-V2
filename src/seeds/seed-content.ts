@@ -1,11 +1,11 @@
-import 'dotenv/config';
-import { AppDataSource } from '../data-source';
-import { User } from '../entities/user.entity';
-import { Band } from '../entities/band.entity';
-import * as fs from 'fs';
-import * as path from 'path';
+import "dotenv/config";
+import { AppDataSource } from "../data-source";
+import { User } from "../entities/user.entity";
+import { Band } from "../entities/band.entity";
+import * as fs from "fs";
+import * as path from "path";
 
-const DEFAULT_AUTHOR_EMAIL = 'motbollox@gmail.com';
+const DEFAULT_AUTHOR_EMAIL = "motbollox@gmail.com";
 
 /** Shape of a row exported from Neon (snake_case column names). */
 interface BandRecord {
@@ -41,14 +41,12 @@ async function seedContent(): Promise<void> {
   const author = await userRepo.findOneBy({ email: authorEmail });
 
   if (!author) {
-    console.error(
-      `Author user not found: ${authorEmail}. Run seed:accounts first.`,
-    );
+    console.error(`Author user not found: ${authorEmail}. Run seed:accounts first.`);
     process.exit(1);
   }
 
   const records: BandRecord[] = JSON.parse(
-    fs.readFileSync(path.join(__dirname, 'data', 'bands.json'), 'utf-8'),
+    fs.readFileSync(path.join(__dirname, "data", "bands.json"), "utf-8"),
   ) as BandRecord[];
 
   console.log(`Seeding ${records.length} band(s)...`);
@@ -88,10 +86,10 @@ async function seedContent(): Promise<void> {
   }
 
   await AppDataSource.destroy();
-  console.log('Content seeding complete.');
+  console.log("Content seeding complete.");
 }
 
 seedContent().catch((err) => {
-  console.error('Content seeding failed:', err);
+  console.error("Content seeding failed:", err);
   process.exit(1);
 });

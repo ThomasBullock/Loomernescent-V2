@@ -1,11 +1,11 @@
-mixin loginForm()
-	if error
-		p.error(data-testid="auth.login-form.error-message")= error
-	form.form(action="/auth/login" method="POST")
-		h2 Login
-		label(for="email") Email Address
-		input(type="email" name="email" value=email data-testid="auth.login-form.email-input")
-		label(for="password") Password
-		input(type="password" name="password" data-testid="auth.login-form.password-input")
-		a(href="#forgot" data-testid="auth.login-form.forgot-link") Forgot password?
-		input.button(type="submit" value="Log In -<" data-testid="auth.login-form.sign-in-btn")
+mixin loginForm
+  if error
+    p.error(data-testid="auth.login-form.error-message")= error
+  form.form(action="/auth/login", method="POST")
+    h2 Login
+    label(for="email") Email Address
+    input(type="email", name="email", value=email, data-testid="auth.login-form.email-input")
+    label(for="password") Password
+    input(type="password", name="password", data-testid="auth.login-form.password-input")
+    a(href="#forgot", data-testid="auth.login-form.forgot-link") Forgot password?
+    input.button(type="submit", value="Log In -<", data-testid="auth.login-form.sign-in-btn")

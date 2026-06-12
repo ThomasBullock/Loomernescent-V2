@@ -1,15 +1,15 @@
-import { NestExpressApplication } from '@nestjs/platform-express';
-import { join } from 'path';
-import session from 'express-session';
-import passport from 'passport';
-import connectPgSimple from 'connect-pg-simple';
+import { NestExpressApplication } from "@nestjs/platform-express";
+import { join } from "path";
+import session from "express-session";
+import passport from "passport";
+import connectPgSimple from "connect-pg-simple";
 
 const PgStore = connectPgSimple(session);
 
 export function configureApp(app: NestExpressApplication): void {
-  app.setViewEngine('pug');
-  app.setBaseViewsDir(join(__dirname, '..', 'views'));
-  app.useStaticAssets(join(__dirname, '..', 'public'));
+  app.setViewEngine("pug");
+  app.setBaseViewsDir(join(__dirname, "..", "views"));
+  app.useStaticAssets(join(__dirname, "..", "public"));
 
   app.use(
     session({
@@ -23,8 +23,8 @@ export function configureApp(app: NestExpressApplication): void {
       cookie: {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
       },
     }),
   );
@@ -33,7 +33,11 @@ export function configureApp(app: NestExpressApplication): void {
 }
 
 export function shouldUseSsl(): boolean {
-  if (process.env.DATABASE_SSL === 'false') return false;
-  if (process.env.DATABASE_SSL === 'true') return true;
-  return /sslmode=require/.test(process.env.DATABASE_URL ?? '');
+  if (process.env.DATABASE_SSL === "false") {
+    return false;
+  }
+  if (process.env.DATABASE_SSL === "true") {
+    return true;
+  }
+  return /sslmode=require/.test(process.env.DATABASE_URL ?? "");
 }
