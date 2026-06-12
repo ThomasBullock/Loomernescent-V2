@@ -66,6 +66,7 @@
     }
   }
   @include elem("link") {
+    @include button-reset;
     background: $jet;
     color: $white;
     text-align: center;
