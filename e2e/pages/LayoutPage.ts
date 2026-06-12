@@ -1,4 +1,4 @@
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect } from "@playwright/test";
 
 export class LayoutPage {
   readonly page: Page;
@@ -9,16 +9,14 @@ export class LayoutPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.logoutBtn = page.getByTestId('nav.header.logout-btn');
-    this.accountLink = page.getByTestId('nav.header.account-link');
-    this.loginLink = page.getByTestId('nav.header.login-link');
-    this.registerLink = page.getByTestId('nav.header.register-link');
+    this.logoutBtn = page.getByTestId("nav.header.logout-btn");
+    this.accountLink = page.getByTestId("nav.header.account-link");
+    this.loginLink = page.getByTestId("nav.header.login-link");
+    this.registerLink = page.getByTestId("nav.header.register-link");
   }
 
-  async expectFlash(type: 'success' | 'error', text: string): Promise<void> {
-    await expect(
-      this.page.locator(`.flash--${type}`).filter({ hasText: text }),
-    ).toBeVisible();
+  async expectFlash(type: "success" | "error", text: string): Promise<void> {
+    await expect(this.page.locator(`.flash--${type}`).filter({ hasText: text })).toBeVisible();
   }
 
   async isLoggedIn(): Promise<boolean> {

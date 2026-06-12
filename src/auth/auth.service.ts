@@ -1,9 +1,9 @@
-import { ConflictException, Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '../entities/user.entity';
-import { MoreThan, Repository } from 'typeorm';
-import bcrypt from 'bcrypt';
-import { randomBytes } from 'crypto';
+import { ConflictException, Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "../entities/user.entity";
+import { MoreThan, Repository } from "typeorm";
+import bcrypt from "bcrypt";
+import { randomBytes } from "crypto";
 
 const RESET_TOKEN_LIFETIME_MS = 60 * 60 * 1000;
 
@@ -20,7 +20,9 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<User | null> {
     const user = await this.userRepo.findOneBy({ email });
-    if (!user) return null;
+    if (!user) {
+      return null;
+    }
     const match = await bcrypt.compare(password, user.passwordHash);
     return match ? user : null;
   }
@@ -28,7 +30,7 @@ export class AuthService {
   async register(name: string, email: string, password: string): Promise<User> {
     const existing = await this.findByEmail(email);
     if (existing) {
-      throw new ConflictException('Email already registered');
+      throw new ConflictException("Email already registered");
     }
     const hash = await bcrypt.hash(password, 12);
     const user = this.userRepo.create({
@@ -40,7 +42,7 @@ export class AuthService {
   }
 
   async setResetToken(user: User): Promise<string> {
-    const token = randomBytes(20).toString('hex');
+    const token = randomBytes(20).toString("hex");
     user.resetPasswordToken = token;
     user.resetPasswordExpires = new Date(Date.now() + RESET_TOKEN_LIFETIME_MS);
     await this.userRepo.save(user);
@@ -61,14 +63,11 @@ export class AuthService {
     return this.userRepo.save(user);
   }
 
-  async updateProfile(
-    user: User,
-    updates: { name: string; email: string },
-  ): Promise<User> {
+  async updateProfile(user: User, updates: { name: string; email: string }): Promise<User> {
     if (updates.email !== user.email) {
       const existing = await this.findByEmail(updates.email);
       if (existing && existing.id !== user.id) {
-        throw new ConflictException('Email already in use');
+        throw new ConflictException("Email already in use");
       }
     }
     user.name = updates.name;

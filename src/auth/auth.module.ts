@@ -1,12 +1,12 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from '../entities/user.entity';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
-import { AccountController } from './account.controller';
-import { LocalStrategy } from './local.strategy';
-import { PassportModule } from '@nestjs/passport';
-import { SessionSerializer } from './session.serializer';
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { User } from "../entities/user.entity";
+import { AuthService } from "./auth.service";
+import { AuthController } from "./auth.controller";
+import { AccountController } from "./account.controller";
+import { LocalStrategy } from "./local.strategy";
+import { PassportModule } from "@nestjs/passport";
+import { SessionSerializer } from "./session.serializer";
 
 @Module({
   //  every module that injects a repository must declare the entity in TypeOrmModule.forFeature([...]) in its own imports

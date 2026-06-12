@@ -1,7 +1,7 @@
-import request from 'supertest';
-import { createTestApp, TestAppHandle } from './helpers/test-app';
+import request from "supertest";
+import { createTestApp, TestAppHandle } from "./helpers/test-app";
 
-describe('App smoke (integration)', () => {
+describe("App smoke (integration)", () => {
   let handle: TestAppHandle;
 
   beforeAll(async () => {
@@ -12,10 +12,8 @@ describe('App smoke (integration)', () => {
     await handle.app.close();
   });
 
-  it('renders the login page', async () => {
-    const res = await request(handle.app.getHttpServer())
-      .get('/auth/login')
-      .expect(200);
-    expect(res.text).toContain('<form');
+  it("renders the login page", async () => {
+    const res = await request(handle.app.getHttpServer()).get("/auth/login").expect(200);
+    expect(res.text).toContain("<form");
   });
 });

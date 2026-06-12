@@ -1,4 +1,4 @@
-import { type Page, type Locator } from '@playwright/test';
+import { type Page, type Locator } from "@playwright/test";
 
 export class ForgotPage {
   readonly page: Page;
@@ -7,8 +7,8 @@ export class ForgotPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.getByTestId('auth.forgot-form.email-input');
-    this.submitBtn = page.getByTestId('auth.forgot-form.submit-btn');
+    this.emailInput = page.getByTestId("auth.forgot-form.email-input");
+    this.submitBtn = page.getByTestId("auth.forgot-form.submit-btn");
   }
 
   async fillEmail(value: string): Promise<void> {

@@ -12,12 +12,26 @@
 
 @keyframes neon1 {
   from {
-    box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #fff, 0 0 40px #ff1177,
-      0 0 70px #ff1177, 0 0 80px #ff1177, 0 0 100px #ff1177, 0 0 150px #ff1177;
+    box-shadow:
+      0 0 10px #fff,
+      0 0 20px #fff,
+      0 0 30px #fff,
+      0 0 40px #ff1177,
+      0 0 70px #ff1177,
+      0 0 80px #ff1177,
+      0 0 100px #ff1177,
+      0 0 150px #ff1177;
   }
   to {
-    box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px #fff, 0 0 20px #ff1177,
-      0 0 35px #ff1177, 0 0 40px #ff1177, 0 0 50px #ff1177, 0 0 75px #ff1177;
+    box-shadow:
+      0 0 5px #fff,
+      0 0 10px #fff,
+      0 0 15px #fff,
+      0 0 20px #ff1177,
+      0 0 35px #ff1177,
+      0 0 40px #ff1177,
+      0 0 50px #ff1177,
+      0 0 75px #ff1177;
   }
 }
 
@@ -73,19 +87,30 @@
   }
   @include mod("success") {
     background: linear-gradient(135deg, $magenta 0%, $purple 100%);
-    box-shadow: 0 0 10px lighten($magenta, 10%), 0 0 20px lighten($magenta, 5%),
-      0 0 30px $magenta, 0 0 40px $magenta, 0 0 70px $magenta;
+    box-shadow:
+      0 0 10px lighten($magenta, 10%),
+      0 0 20px lighten($magenta, 5%),
+      0 0 30px $magenta,
+      0 0 40px $magenta,
+      0 0 70px $magenta;
   }
   @include mod("error") {
     background: linear-gradient(20deg, $redNeon 0%, $purple 100%);
-    box-shadow: 0 0 10px lighten($redNeon, 10%), 0 0 20px lighten($redNeon, 5%),
-      0 0 30px $redNeon, 0 0 40px $redNeon, 0 0 70px $redNeon;
+    box-shadow:
+      0 0 10px lighten($redNeon, 10%),
+      0 0 20px lighten($redNeon, 5%),
+      0 0 30px $redNeon,
+      0 0 40px $redNeon,
+      0 0 70px $redNeon;
   }
   @include mod("info") {
     background: linear-gradient(35deg, $twitter-blue 0%, $purple 100%);
-    box-shadow: 0 0 10px lighten($twitter-blue, 10%),
-      0 0 20px lighten($twitter-blue, 5%), 0 0 30px $twitter-blue,
-      0 0 40px $twitter-blue, 0 0 70px $twitter-blue;
+    box-shadow:
+      0 0 10px lighten($twitter-blue, 10%),
+      0 0 20px lighten($twitter-blue, 5%),
+      0 0 30px $twitter-blue,
+      0 0 40px $twitter-blue,
+      0 0 70px $twitter-blue;
   }
   p {
     margin: 0;

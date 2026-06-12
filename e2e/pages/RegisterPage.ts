@@ -1,4 +1,4 @@
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect } from "@playwright/test";
 
 export class RegisterPage {
   readonly page: Page;
@@ -11,24 +11,19 @@ export class RegisterPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.nameInput = page.getByTestId('auth.register-form.name-input');
-    this.emailInput = page.getByTestId('auth.register-form.email-input');
-    this.passwordInput = page.getByTestId('auth.register-form.password-input');
+    this.nameInput = page.getByTestId("auth.register-form.name-input");
+    this.emailInput = page.getByTestId("auth.register-form.email-input");
+    this.passwordInput = page.getByTestId("auth.register-form.password-input");
     this.passwordConfirmInput = page.locator('input[name="password-confirm"]');
-    this.submitBtn = page.getByTestId('auth.register-form.submit-btn');
-    this.errorMessage = page.getByTestId('auth.register-form.error-message');
+    this.submitBtn = page.getByTestId("auth.register-form.submit-btn");
+    this.errorMessage = page.getByTestId("auth.register-form.error-message");
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/auth/register');
+    await this.page.goto("/auth/register");
   }
 
-  async fill(
-    name: string,
-    email: string,
-    password: string,
-    confirm: string,
-  ): Promise<void> {
+  async fill(name: string, email: string, password: string, confirm: string): Promise<void> {
     await this.nameInput.fill(name);
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);

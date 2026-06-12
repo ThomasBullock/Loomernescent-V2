@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
-import { ImageKitService } from './image-kit.service';
+import { Module } from "@nestjs/common";
+import { ImageKitService } from "./image-kit.service";
 
 @Module({
   providers: [ImageKitService],

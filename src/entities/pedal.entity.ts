@@ -6,13 +6,13 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
-} from 'typeorm';
-import { Band } from './band.entity';
-import { Favourite } from './favourite.entity';
+} from "typeorm";
+import { Band } from "./band.entity";
+import { Favourite } from "./favourite.entity";
 
-@Entity('pedals')
+@Entity("pedals")
 export class Pedal {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryGeneratedColumn("uuid")
   id: string;
 
   @Column()
@@ -24,47 +24,47 @@ export class Pedal {
   @Column({ unique: true })
   slug: string;
 
-  @Column({ name: 'pedal_type', nullable: true })
+  @Column({ name: "pedal_type", nullable: true })
   pedalType: string;
 
-  @Column({ name: 'pedal_type2', nullable: true })
+  @Column({ name: "pedal_type2", nullable: true })
   pedalType2: string;
 
   @Column({
-    type: 'jsonb',
-    name: 'used_by',
+    type: "jsonb",
+    name: "used_by",
     nullable: true,
     default: () => "'[]'",
   })
   usedBy: { artist: string; band: string; slug: string }[];
 
   @ManyToOne(() => Band, (band) => band.pedals, { nullable: true })
-  @JoinColumn({ name: 'associated_band_id' })
+  @JoinColumn({ name: "associated_band_id" })
   associatedBand: Band;
 
-  @Column({ name: 'associated_band_id', nullable: true })
+  @Column({ name: "associated_band_id", nullable: true })
   associatedBandId: string;
 
-  @Column('timestamp', {
+  @Column("timestamp", {
     array: true,
-    default: '{}',
-    name: 'years_manufactured',
+    default: "{}",
+    name: "years_manufactured",
   })
   yearsManufactured: Date[];
 
-  @Column({ name: 'image_file_id', type: 'text', nullable: true })
+  @Column({ name: "image_file_id", type: "text", nullable: true })
   imageFileId: string | null;
 
-  @Column({ name: 'image_path', type: 'text', nullable: true })
+  @Column({ name: "image_path", type: "text", nullable: true })
   imagePath: string | null;
 
-  @Column({ type: 'text', nullable: true })
+  @Column({ type: "text", nullable: true })
   comments: string;
 
   @Column({ nullable: true })
   youtube: string;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
   @OneToMany(() => Favourite, (fav) => fav.pedal)

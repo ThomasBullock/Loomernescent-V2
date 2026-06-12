@@ -70,14 +70,14 @@ export interface ProcessImageOptions {
   /** When set, output is cropped (cover, centre) to exactly this ratio. */
   aspectRatio?: { w: number; h: number };
   /** Output format. Default 'jpeg'. */
-  format?: 'jpeg' | 'png';
+  format?: "jpeg" | "png";
   /** JPEG quality 1–100. Default 85. Ignored for PNG. */
   quality?: number;
 }
 
 export interface ProcessedImage {
   buffer: Buffer;
-  format: 'jpeg' | 'png';
+  format: "jpeg" | "png";
   width: number;
   height: number;
   bytes: number;
@@ -119,14 +119,19 @@ Each `it` is one acceptance criterion. Fixtures are synthesised with `sharp({ cr
 ```typescript
 @Injectable()
 export class ImageKitService {
-  constructor(private readonly config: ConfigService) { /* construct ImageKit client */ }
+  constructor(private readonly config: ConfigService) {
+    /* construct ImageKit client */
+  }
 
-  upload(input: { buffer: Buffer; filenameHint: string; folder: string })
-    : Promise<{ fileId: string; filePath: string }>;
+  upload(input: {
+    buffer: Buffer;
+    filenameHint: string;
+    folder: string;
+  }): Promise<{ fileId: string; filePath: string }>;
 
-  delete(fileId: string): Promise<void>;            // idempotent (swallows 404)
+  delete(fileId: string): Promise<void>; // idempotent (swallows 404)
 
-  buildUrl(filePath: string, transforms?: { w?: number; h?: number; fo?: 'auto' | string }): string;
+  buildUrl(filePath: string, transforms?: { w?: number; h?: number; fo?: "auto" | string }): string;
 }
 ```
 
@@ -218,7 +223,8 @@ Extend `[test/pedals.integration-spec.ts](../loomernescent.v2/test/pedals.integr
 
 ```typescript
 const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
-  .overrideProvider(ImageKitService).useValue(fakeImageKit)
+  .overrideProvider(ImageKitService)
+  .useValue(fakeImageKit)
   .compile();
 ```
 

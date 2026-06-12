@@ -1,15 +1,24 @@
 extends layout
 
 block content
-	.inner
-		h2 Edit Your Account
-		if errors
-			ul.errors
-				each err in errors
-					li.error(data-testid="account.edit-form.error-message")= err
-		form.form(action="/account" method="POST")
-			label(for="name") Name
-			input(type="text" name="name" value=user.name data-testid="account.edit-form.name-input")
-			label(for="email") Email Address
-			input(type="email" name="email" value=user.email data-testid="account.edit-form.email-input")
-			input.button(type="submit" value="Update My Account" data-testid="account.edit-form.submit-btn")
+  .inner
+    h2 Edit Your Account
+    if errors
+      ul.errors
+        each err in errors
+          li.error(data-testid="account.edit-form.error-message")= err
+    form.form(action="/account", method="POST")
+      label(for="name") Name
+      input(type="text", name="name", value=user.name, data-testid="account.edit-form.name-input")
+      label(for="email") Email Address
+      input(
+        type="email",
+        name="email",
+        value=user.email,
+        data-testid="account.edit-form.email-input"
+      )
+      input.button(
+        type="submit",
+        value="Update My Account",
+        data-testid="account.edit-form.submit-btn"
+      )

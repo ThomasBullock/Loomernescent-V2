@@ -1,4 +1,4 @@
-import { type Page, type Locator, expect } from '@playwright/test';
+import { type Page, type Locator, expect } from "@playwright/test";
 
 export class LoginPage {
   readonly page: Page;
@@ -10,15 +10,15 @@ export class LoginPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.getByTestId('auth.login-form.email-input');
-    this.passwordInput = page.getByTestId('auth.login-form.password-input');
-    this.submitBtn = page.getByTestId('auth.login-form.sign-in-btn');
-    this.errorMessage = page.getByTestId('auth.login-form.error-message');
-    this.forgotLink = page.getByTestId('auth.login-form.forgot-link');
+    this.emailInput = page.getByTestId("auth.login-form.email-input");
+    this.passwordInput = page.getByTestId("auth.login-form.password-input");
+    this.submitBtn = page.getByTestId("auth.login-form.sign-in-btn");
+    this.errorMessage = page.getByTestId("auth.login-form.error-message");
+    this.forgotLink = page.getByTestId("auth.login-form.forgot-link");
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/auth/login');
+    await this.page.goto("/auth/login");
   }
 
   async fillEmail(value: string): Promise<void> {

@@ -1,8 +1,8 @@
-import { randomUUID } from 'node:crypto';
-import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import ImageKit from 'imagekit';
-import slugify from 'slugify';
+import { randomUUID } from "node:crypto";
+import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
+import ImageKit from "imagekit";
+import slugify from "slugify";
 
 export interface UploadInput {
   buffer: Buffer;
@@ -28,10 +28,10 @@ export class ImageKitService {
   private readonly urlEndpoint: string;
 
   constructor(private readonly config: ConfigService) {
-    this.urlEndpoint = this.config.getOrThrow<string>('IMAGEKIT_URL_ENDPOINT');
+    this.urlEndpoint = this.config.getOrThrow<string>("IMAGEKIT_URL_ENDPOINT");
     this.client = new ImageKit({
-      publicKey: this.config.getOrThrow<string>('IMAGEKIT_PUBLIC_KEY'),
-      privateKey: this.config.getOrThrow<string>('IMAGEKIT_PRIVATE_KEY'),
+      publicKey: this.config.getOrThrow<string>("IMAGEKIT_PUBLIC_KEY"),
+      privateKey: this.config.getOrThrow<string>("IMAGEKIT_PRIVATE_KEY"),
       urlEndpoint: this.urlEndpoint,
     });
   }
@@ -53,20 +53,32 @@ export class ImageKitService {
     try {
       await this.client.deleteFile(fileId);
     } catch (err: unknown) {
-      if (isNotFound(err)) return;
+      if (isNotFound(err)) {
+        return;
+      }
       throw err;
     }
   }
 
   buildUrl(filePath: string, transforms?: UrlTransforms): string {
     const base = `${this.urlEndpoint}${filePath}`;
-    if (!transforms) return base;
+    if (!transforms) {
+      return base;
+    }
     const parts: string[] = [];
-    if (transforms.w != null) parts.push(`w-${transforms.w}`);
-    if (transforms.h != null) parts.push(`h-${transforms.h}`);
-    if (transforms.fo != null) parts.push(`fo-${transforms.fo}`);
-    if (parts.length === 0) return base;
-    return `${base}?tr=${parts.join(',')}`;
+    if (transforms.w != null) {
+      parts.push(`w-${transforms.w}`);
+    }
+    if (transforms.h != null) {
+      parts.push(`h-${transforms.h}`);
+    }
+    if (transforms.fo != null) {
+      parts.push(`fo-${transforms.fo}`);
+    }
+    if (parts.length === 0) {
+      return base;
+    }
+    return `${base}?tr=${parts.join(",")}`;
   }
 }
 
@@ -77,8 +89,6 @@ function isNotFound(err: unknown): boolean {
     $ResponseMetadata?: { statusCode?: number };
   };
   return (
-    e?.httpStatusCode === 404 ||
-    e?.statusCode === 404 ||
-    e?.$ResponseMetadata?.statusCode === 404
+    e?.httpStatusCode === 404 || e?.statusCode === 404 || e?.$ResponseMetadata?.statusCode === 404
   );
 }

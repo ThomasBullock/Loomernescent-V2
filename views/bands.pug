@@ -3,15 +3,21 @@ extends layout
 include mixins/_bandCard
 include mixins/_pagination
 
-block meta 
-	meta(name="description" content=`Find albums, videos and history for shoegaze bands on Loomernescent`)
-	meta(name="keywords" content=`${bands.map(v => v.name).join(", ")}, shoegaze, guitar, dreampop, loomernescent, indie`)
-	meta(property="og:url" content="http://loomernescent.com/bands")
+block meta
+  meta(
+    name="description",
+    content="Find albums, videos and history for shoegaze bands on Loomernescent"
+  )
+  meta(
+    name="keywords",
+    content=`${bands.map(v => v.name).join(", ")}, shoegaze, guitar, dreampop, loomernescent, indie`
+  )
+  meta(property="og:url", content="http://loomernescent.com/bands")
 
 block content
-	.inner
-		h2.title--albums.nexa-rust= title
-		.bands(data-testid="bands.list.table")
-			each band in bands
-				+bandCard(band)
-		+pagination(page, pages, count, 'bands')
+  .inner
+    h2.title--albums.nexa-rust= title
+    .bands(data-testid="bands.list.table")
+      each band in bands
+        +bandCard(band)
+    +pagination(page, pages, count, "bands")

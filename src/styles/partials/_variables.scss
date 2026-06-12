@@ -1,52 +1,53 @@
 $width: 800px;
 $purple: #363171;
-$facebook-blue     : #3b5998;
-$flickr            : #f40083;
-$bandcamp-blue     : #629aa9;
-$twitter-blue      : #1da1f2;
-$skype-blue        : #00aff0;      
-$soundcloud-orange : #ff8800;
-$spotify-green     : #2ebd59;
-$vimeo             : #45bbff;
-$youtube           : #b31217;
-$redNeon: #FF1177;
-$yellow: #FFC40E;
+$facebook-blue: #3b5998;
+$flickr: #f40083;
+$bandcamp-blue: #629aa9;
+$twitter-blue: #1da1f2;
+$skype-blue: #00aff0;
+$soundcloud-orange: #ff8800;
+$spotify-green: #2ebd59;
+$vimeo: #45bbff;
+$youtube: #b31217;
+$redNeon: #ff1177;
+$yellow: #ffc40e;
 $magenta: #ff33cc;
-$pink: #EE7297;
-$green: #93FF00;
-$red: #E50714;
+$pink: #ee7297;
+$green: #93ff00;
+$red: #e50714;
 $grey: lighten(grey, 40%);
-$shad: 0 0 10px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
+$shad:
+  0 0 10px rgba(0, 0, 0, 0.1),
+  0 5px 10px rgba(0, 0, 0, 0.05);
 $grad: linear-gradient(90deg, #48ded4 0%, #a026bf 20%, #e82c75 60%, $yellow 85%, #48ded4 95%);
 $verticalGrad: linear-gradient(#a026bf 20%, #e82c75 60%, $magenta 85%, #a026bf 99%);
 
 // Colors
-$white         : #FEFEFE !default;
-$ghost         : #FAFAFA !default;
-$snow          : #F9F9F9 !default;
-$vapor         : #F6F6F6 !default;
-$white-smoke   : #F5F5F5 !default;
-$silver        : #EFEFEF !default;
-$smoke         : #EEEEEE !default;
-$gainsboro     : #DDDDDD !default;
-$iron          : #CCCCCC !default;
-$base          : #AAAAAA !default;
-$aluminum      : #999999 !default;
-$jumbo         : #888888 !default;
-$monsoon       : #777777 !default;
-$steel         : #666666 !default;
-$charcoal      : #555555 !default;
-$tuatara       : #444444 !default;
-$oil           : #333333 !default;
-$jet           : #222222 !default;
-$ebony         : #111111 !default;
-$black         : #000000 !default;
+$white: #fefefe !default;
+$ghost: #fafafa !default;
+$snow: #f9f9f9 !default;
+$vapor: #f6f6f6 !default;
+$white-smoke: #f5f5f5 !default;
+$silver: #efefef !default;
+$smoke: #eeeeee !default;
+$gainsboro: #dddddd !default;
+$iron: #cccccc !default;
+$base: #aaaaaa !default;
+$aluminum: #999999 !default;
+$jumbo: #888888 !default;
+$monsoon: #777777 !default;
+$steel: #666666 !default;
+$charcoal: #555555 !default;
+$tuatara: #444444 !default;
+$oil: #333333 !default;
+$jet: #222222 !default;
+$ebony: #111111 !default;
+$black: #000000 !default;
 
+// Drop shadows
 
-// Drop shadows 
-
-$small-shadow: 0 0 2px 2px rgba(0,0,0,0.1);
-$big-shadow: 0 0 10px 2px rgba(0,0,0,0.3);
+$small-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1);
+$big-shadow: 0 0 10px 2px rgba(0, 0, 0, 0.3);
 
 // Breakpoints
 $medium-screen: 600px;

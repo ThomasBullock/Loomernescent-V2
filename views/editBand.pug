@@ -3,14 +3,18 @@ extends layout
 include mixins/_bandForm
 
 block content
-	.inner
-		h2 #{title}
-		- const mode = band && band.id ? 'edit' : 'add'
-		if errors
-			ul.errors(data-testid=`bands.${mode}-form.error-message`)
-				each err in errors
-					li= err
-		+bandForm(band, mode)
-		if band.id
-			form.delete-band(action=`/bands/${band.id}/delete` method="post")
-				input.button.button--danger(type="submit" value="Delete band" data-testid="bands.edit-form.delete-btn")
+  .inner
+    h2 #{ title }
+    - const mode = band && band.id ? "edit" : "add";
+    if errors
+      ul.errors(data-testid=`bands.${mode}-form.error-message`)
+        each err in errors
+          li= err
+    +bandForm(band, mode)
+    if band.id
+      form.delete-band(action=`/bands/${band.id}/delete`, method="post")
+        input.button.button--danger(
+          type="submit",
+          value="Delete band",
+          data-testid="bands.edit-form.delete-btn"
+        )

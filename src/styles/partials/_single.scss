@@ -1,5 +1,5 @@
 .single {
-  @include elem('hero') {
+  @include elem("hero") {
     height: 500px;
     position: relative;
     overflow: hidden;
@@ -9,7 +9,7 @@
     clip-path: polygon(0 0, 100% 0, 100% 100%, 0% calc(100% - 3vw));
     &:before {
       display: block;
-      content: '';
+      content: "";
       position: absolute;
       height: 100%;
       width: 100%;
@@ -17,23 +17,15 @@
       right: 0;
       background:
         linear-gradient(45deg, #ffa949 0%, hsla(190, 95%, 43%, 0) 70%),
-        linear-gradient(
-          135deg,
-          hsla(219, 93%, 48%, 1) 10%,
-          hsla(219, 93%, 48%, 0) 80%
-        ),
-        linear-gradient(
-          225deg,
-          hsla(293, 93%, 48%, 1) 10%,
-          hsla(293, 93%, 48%, 0) 80%
-        ),
+        linear-gradient(135deg, hsla(219, 93%, 48%, 1) 10%, hsla(219, 93%, 48%, 0) 80%),
+        linear-gradient(225deg, hsla(293, 93%, 48%, 1) 10%, hsla(293, 93%, 48%, 0) 80%),
         linear-gradient(315deg, #ff4f49 100%, hsla(130, 96%, 45%, 0) 70%);
       opacity: 0.6;
       z-index: 1;
       clip-path: polygon(0 0, 100% 0, 100% 100%, 0% calc(100% - 3vw));
     }
   }
-  @include elem('image') {
+  @include elem("image") {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -41,12 +33,12 @@
     position: absolute;
   }
 
-  @include elem('inner') {
+  @include elem("inner") {
     display: flex;
     flex-direction: column;
   }
 
-  @include elem('details') {
+  @include elem("details") {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -64,55 +56,55 @@
       flex-direction: row;
     }
 
-    @include mod('margin') {
+    @include mod("margin") {
       margin-bottom: $base-spacing;
     }
   }
 
-  @include elem('body') {
+  @include elem("body") {
     display: flex;
     margin-bottom: $base-spacing;
   }
 
-  @include elem('col') {
+  @include elem("col") {
     flex: 1 1 70%;
   }
 
-  @include elem('lead') {
+  @include elem("lead") {
     color: $charcoal;
     font-size: modular-scale(1);
     white-space: pre-wrap;
   }
 
-  @include elem('detail') {
+  @include elem("detail") {
     margin-top: 0;
     margin-bottom: $base-spacing;
   }
 
-  @include elem('img-col') {
+  @include elem("img-col") {
     flex: 1 1 30%;
     // max-width: 100%;
   }
 
-  @include elem('detail-img') {
+  @include elem("detail-img") {
     @include img-responsive();
   }
 
-  @include elem('fullwidth') {
+  @include elem("fullwidth") {
     margin-top: -$base-spacing;
     width: 100%;
     padding: $base-spacing * 2 $base-spacing;
 
-    @include mod('black') {
+    @include mod("black") {
       background: $black;
     }
 
-    @include mod('ebony') {
+    @include mod("ebony") {
       background: $ebony;
     }
   }
 
-  @include elem('video') {
+  @include elem("video") {
     padding: $base-spacing;
     width: 100%;
     margin: 0 auto;
@@ -125,14 +117,14 @@
     }
   }
 
-  @include elem('video-wrapper') {
+  @include elem("video-wrapper") {
     height: 0;
     overflow: hidden;
     padding-bottom: 56.25%; // For ratio 16:9. 75% if ratio is 4:3
     position: relative;
   }
 
-  @include elem('albums') {
+  @include elem("albums") {
     max-width: 900px;
     margin: 0 auto;
     margin-top: $base-spacing;
@@ -141,7 +133,7 @@
     justify-content: center;
   }
 
-  @include elem('album') {
+  @include elem("album") {
     padding: $base-spacing;
     flex: 1 1 33.3%;
     max-width: 300px;
@@ -172,17 +164,17 @@
     }
   }
 
-  @include elem('gallery') {
+  @include elem("gallery") {
     display: flex;
     justify-content: center;
   }
 
-  @include elem('gallery-thumb') {
+  @include elem("gallery-thumb") {
     // flex: 1 1 auto;
     text-align: center;
   }
 
-  @include elem('gallery-thumb-img') {
+  @include elem("gallery-thumb-img") {
     max-height: 200px;
     box-shadow: $big-shadow;
     border: solid 1px $black;
@@ -203,7 +195,7 @@
     TABLET
   ==================================== */
   @media all and (min-width: 768px) and (max-width: 1024px) {
-    @include elem('video') {
+    @include elem("video") {
       padding: $base-spacing 0;
       // width: 95%;
       // margin: 0 auto;
@@ -221,7 +213,7 @@
     DESKTOP
   ==================================== */
   @media all and (min-width: 1025px) {
-    @include elem('video') {
+    @include elem("video") {
       padding: $base-spacing 0;
       width: 900px;
       margin: 0 auto;

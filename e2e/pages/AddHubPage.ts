@@ -1,4 +1,4 @@
-import { type Page, type Locator } from '@playwright/test';
+import { type Page, type Locator } from "@playwright/test";
 
 export class AddHubPage {
   readonly page: Page;
@@ -7,12 +7,12 @@ export class AddHubPage {
 
   constructor(page: Page) {
     this.page = page;
-    this.addBandsLink = page.getByTestId('add.hub.bands-link');
-    this.addPedalLink = page.getByTestId('add.hub.pedals-link');
+    this.addBandsLink = page.getByTestId("add.hub.bands-link");
+    this.addPedalLink = page.getByTestId("add.hub.pedals-link");
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/add');
+    await this.page.goto("/add");
   }
 
   async clickAddBand(): Promise<void> {

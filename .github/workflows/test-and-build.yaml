@@ -1,28 +1,28 @@
 name: Test & Build
 
 on:
-    pull_request:
-        branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
-    test-and-build:
-        runs-on: ubuntu-latest
+  test-and-build:
+    runs-on: ubuntu-latest
 
-        steps:
-            - uses: actions/checkout@v4
+    steps:
+      - uses: actions/checkout@v4
 
-            - uses: actions/setup-node@v4
-              with:
-                  node-version: 22
-                  cache: npm
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
 
-            - run: npm ci
+      - run: npm ci
 
-            - name: Type check
-              run: npx tsc -b
+      - name: Type check
+        run: npx tsc -b
 
-            - name: Unit tests
-              run: npm run test
+      - name: Unit tests
+        run: npm run test
 
-            - name: Build
-              run: npm run build
+      - name: Build
+        run: npm run build

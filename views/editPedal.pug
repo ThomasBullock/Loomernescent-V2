@@ -3,13 +3,17 @@ extends layout
 include mixins/_pedalForm
 
 block content
-	.inner
-		h2= title
-		if errors
-			ul.errors(data-testid="pedals.edit-form.error-message")
-				each err in errors
-					li= err
-		+pedalForm(pedal, 'edit')
-		if pedal.id
-			form.delete-pedal(action=`/pedals/${pedal.id}/delete` method="post")
-				input.button.button--danger(type="submit" value="Delete pedal" data-testid="pedals.edit-form.delete-btn")
+  .inner
+    h2= title
+    if errors
+      ul.errors(data-testid="pedals.edit-form.error-message")
+        each err in errors
+          li= err
+    +pedalForm(pedal, "edit")
+    if pedal.id
+      form.delete-pedal(action=`/pedals/${pedal.id}/delete`, method="post")
+        input.button.button--danger(
+          type="submit",
+          value="Delete pedal",
+          data-testid="pedals.edit-form.delete-btn"
+        )

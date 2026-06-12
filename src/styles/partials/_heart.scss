@@ -1,5 +1,5 @@
 .heart {
-  @include elem('button') {
+  @include elem("button") {
     background: none;
     border: 0;
     outline: 0;
@@ -10,13 +10,12 @@
     &:hover {
       cursor: pointer;
       svg {
-        fill: $vapor;        
+        fill: $vapor;
       }
-
     }
 
     &:after {
-      content: '♥️';
+      content: "♥️";
       font-size: 20px;
       position: absolute;
       opacity: 0;
@@ -26,22 +25,22 @@
       width: 25px;
       fill: $charcoal;
     }
-    @include mod('hearted') {
+    @include mod("hearted") {
       svg {
         fill: red;
       }
     }
-    @include mod('float') {
+    @include mod("float") {
       &:after {
         animation: fly 2.5s 1 ease-out;
       }
     }
 
-    @include mod('pedal') {
+    @include mod("pedal") {
       svg {
         width: 25px;
         fill: $oil;
-      }      
+      }
     }
   }
 }
@@ -52,10 +51,18 @@
     left: 0;
     opacity: 1;
   }
-  20% { left: 20px; }
-  40% { left: -20px; }
-  60% { left: 20px; }
-  80% { left: -20px; }
+  20% {
+    left: 20px;
+  }
+  40% {
+    left: -20px;
+  }
+  60% {
+    left: 20px;
+  }
+  80% {
+    left: -20px;
+  }
   100% {
     transform: translateY(-400px);
     opacity: 0;

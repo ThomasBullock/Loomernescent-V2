@@ -5,61 +5,73 @@ include icons/_spotify
 include icons/_cross
 
 block meta
-	meta(name="description" content=`Find album information, credits and streaming services for ${album.title} - ${album.artist} on Loomernescent`)
-	meta(name="keywords" content=`${album.title}, ${album.tracks.join(", ")}, shoegaze, guitar, fx, pedals, effects, noise, dreampop, loomernescent, indie`)
-	meta(property="og:url" content=`http://loomernescent.com/album/${album.slug}`)
+  meta(
+    name="description",
+    content=`Find album information, credits and streaming services for ${album.title} - ${album.artist} on Loomernescent`
+  )
+  meta(
+    name="keywords",
+    content=`${album.title}, ${album.tracks.join(", ")}, shoegaze, guitar, fx, pedals, effects, noise, dreampop, loomernescent, indie`
+  )
+  meta(property="og:url", content=`http://loomernescent.com/album/${album.slug}`)
 
 block content
-	.single
-		.single__hero
-			img.single__image(src=band.gallery && band.gallery.length ? imageUrl(band.gallery[0].filePath, { w: 1600, h: 900, fo: 'auto' }) : (band.imagePath ? imageUrl(band.imagePath, { w: 1600, h: 900, fo: 'auto' }) : imageUrl('/bands/Band.jpg')) alt=`A photo of the band ${album.artist}`)
-			h2.title.title--single
-				a(href=`/band/${band.slug}`) #{band.name}
-	.single__details.single__details--margin
-		.album-info
-			.album-info__cover
-				img(src=`/uploads/covers/${album.cover}` alt=`cover artwork for ${album.title} by ${album.artist}`)
-			.album-info__content
-				h3.album-info__title #{album.title}
-				a.album-info__artist-link(href=`/band/${band.slug}`)
-					span.album-info__before by
-					h3.album-info__artist #{album.artist}
-				hr.album-info__hr
-				ol.album-info__tracklist
-					each track in album.tracks
-						li.album-info__track #{track}
-				.album-info__credits
-					if album.releaseDate
-						span.album-info__date
-							strong Released:
-							- const rd = new Date(album.releaseDate)
-							!= rd.toLocaleDateString('en-GB', { year: 'numeric', month: 'short', day: 'numeric' })
-					span.album-info__label
-						strong Label:
-						| #{album.label}
-					if album.producer.length
-						span.album-info__credit
-							strong Producers:
-							| #{album.producer.join(' - ')}
-					if album.mixedBy.length
-						span.album-info__credit
-							strong Mixed:
-							| #{album.mixedBy.join(' - ')}
-					if album.engineer.length
-						span.album-info__credit
-							strong Engineer(s):
-							| #{album.engineer.join(' - ')}
-					if album.spotifyUrl
-						.album-info__link
-							span
-								strong Stream It
-							a.album-info__spotify(href=`${album.spotifyUrl}` target='_blank')
-								+spotify()
-					if album.bandcampUrl
-						.album-info__link
-							span
-								strong Buy It
-							a.album-info__spotify(href=`${album.bandcampUrl}` target='_blank')
-								+bandcamp()
-				if album.comments
-					.album-info__comments #{album.comments}
+  .single
+    .single__hero
+      img.single__image(
+        src=band.gallery && band.gallery.length ? imageUrl(band.gallery[0].filePath, { w: 1600, h: 900, fo: "auto" }) : band.imagePath ? imageUrl(band.imagePath, { w: 1600, h: 900, fo: "auto" }) : imageUrl("/bands/Band.jpg"),
+        alt=`A photo of the band ${album.artist}`
+      )
+      h2.title.title--single
+        a(href=`/band/${band.slug}`) #{ band.name }
+  .single__details.single__details--margin
+    .album-info
+      .album-info__cover
+        img(
+          src=`/uploads/covers/${album.cover}`,
+          alt=`cover artwork for ${album.title} by ${album.artist}`
+        )
+      .album-info__content
+        h3.album-info__title #{ album.title }
+        a.album-info__artist-link(href=`/band/${band.slug}`)
+          span.album-info__before by
+          h3.album-info__artist #{ album.artist }
+        hr.album-info__hr
+        ol.album-info__tracklist
+          each track in album.tracks
+            li.album-info__track #{ track }
+        .album-info__credits
+          if album.releaseDate
+            span.album-info__date
+              strong Released:
+              - const rd = new Date(album.releaseDate);
+              != rd.toLocaleDateString("en-GB", { year: "numeric", month: "short", day: "numeric" })
+          span.album-info__label
+            strong Label:
+            | #{ album.label }
+          if album.producer.length
+            span.album-info__credit
+              strong Producers:
+              | #{ album.producer.join(' - ') }
+          if album.mixedBy.length
+            span.album-info__credit
+              strong Mixed:
+              | #{ album.mixedBy.join(' - ') }
+          if album.engineer.length
+            span.album-info__credit
+              strong Engineer(s):
+              | #{ album.engineer.join(' - ') }
+          if album.spotifyUrl
+            .album-info__link
+              span
+                strong Stream It
+              a.album-info__spotify(href=`${album.spotifyUrl}`, target="_blank")
+                +spotify
+          if album.bandcampUrl
+            .album-info__link
+              span
+                strong Buy It
+              a.album-info__spotify(href=`${album.bandcampUrl}`, target="_blank")
+                +bandcamp
+        if album.comments
+          .album-info__comments #{ album.comments }

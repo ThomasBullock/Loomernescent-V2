@@ -1,35 +1,35 @@
 .icon {
-	fill: $vapor;
+  fill: $vapor;
 
-	@include elem('facebook') {
-		fill: $facebook-blue; 
-	}
+  @include elem("facebook") {
+    fill: $facebook-blue;
+  }
 
-	@include elem('spotify') {
-		fill: $spotify-green;
-	}
+  @include elem("spotify") {
+    fill: $spotify-green;
+  }
 
-	@include elem('soundcloud') {
-		fill: $soundcloud-orange;
-	}
+  @include elem("soundcloud") {
+    fill: $soundcloud-orange;
+  }
 
-	@include elem('twitter') {
-		fill: $twitter-blue;
-	}
+  @include elem("twitter") {
+    fill: $twitter-blue;
+  }
 
-	@include elem('vimeo') {
-		fill: $vimeo;
-	}
+  @include elem("vimeo") {
+    fill: $vimeo;
+  }
 
-	@include elem('www') {
-		fill: $vapor;
-	}
+  @include elem("www") {
+    fill: $vapor;
+  }
 
-	@include elem('youtube') {
-		fill: $youtube;
-	}
+  @include elem("youtube") {
+    fill: $youtube;
+  }
 
-	@include elem('cross') {
-		// fill: $base;
-	}	
+  @include elem("cross") {
+    // fill: $base;
+  }
 }

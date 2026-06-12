@@ -1,16 +1,20 @@
 extends layout
 
 block content
-	.inner
-		//- form omits action so it posts to the current URL (/auth/reset/:token)
-		form.form(method="POST")
-			h2 Reset Your Password
-			if errors
-				ul.errors
-					each err in errors
-						li.error(data-testid="auth.reset-form.error-message")= err
-			label(for="password") Password
-			input(type="password" name="password" data-testid="auth.reset-form.password-input")
-			label(for="password-confirm") Confirm Password
-			input(type="password" name="password-confirm")
-			input.button(type="submit" value="Reset Password ->" data-testid="auth.reset-form.submit-btn")
+  .inner
+    //- form omits action so it posts to the current URL (/auth/reset/:token)
+    form.form(method="POST")
+      h2 Reset Your Password
+      if errors
+        ul.errors
+          each err in errors
+            li.error(data-testid="auth.reset-form.error-message")= err
+      label(for="password") Password
+      input(type="password", name="password", data-testid="auth.reset-form.password-input")
+      label(for="password-confirm") Confirm Password
+      input(type="password", name="password-confirm")
+      input.button(
+        type="submit",
+        value="Reset Password ->",
+        data-testid="auth.reset-form.submit-btn"
+      )

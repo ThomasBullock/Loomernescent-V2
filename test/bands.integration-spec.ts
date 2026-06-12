@@ -1,8 +1,8 @@
-import request from 'supertest';
-import sharp from 'sharp';
-import { createTestApp, truncate, TestAppHandle } from './helpers/test-app';
-import { createUser, loginAs } from './helpers/auth';
-import { Band } from '../src/entities/band.entity';
+import request from "supertest";
+import sharp from "sharp";
+import { createTestApp, truncate, TestAppHandle } from "./helpers/test-app";
+import { createUser, loginAs } from "./helpers/auth";
+import { Band } from "../src/entities/band.entity";
 
 const jpegFixture = (): Promise<Buffer> =>
   sharp({
@@ -31,7 +31,7 @@ const pngFixture = (): Promise<Buffer> =>
 const isJpeg = (buf: Buffer): boolean =>
   buf.length >= 3 && buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff;
 
-describe('Bands create (integration)', () => {
+describe("Bands create (integration)", () => {
   let handle: TestAppHandle;
 
   beforeAll(async () => {
@@ -43,330 +43,307 @@ describe('Bands create (integration)', () => {
   });
 
   beforeEach(async () => {
-    await truncate(handle.dataSource, 'bands', 'users');
+    await truncate(handle.dataSource, "bands", "users");
     handle.imageKit.upload.mockClear();
     handle.imageKit.delete.mockClear();
     handle.spotify.searchArtist.mockClear();
     handle.spotify.searchArtist.mockResolvedValue({
-      spotifyId: 'sp-artist-1',
-      spotifyUrl: 'https://open.spotify.com/artist/sp-artist-1',
+      spotifyId: "sp-artist-1",
+      spotifyUrl: "https://open.spotify.com/artist/sp-artist-1",
     });
   });
 
-  describe('GET /band/new', () => {
-    it('redirects anonymous users to /auth/login', async () => {
-      const res = await request(handle.app.getHttpServer()).get('/band/new');
+  describe("GET /band/new", () => {
+    it("redirects anonymous users to /auth/login", async () => {
+      const res = await request(handle.app.getHttpServer()).get("/band/new");
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/auth/login');
+      expect(res.headers.location).toBe("/auth/login");
     });
 
-    it('returns 403 for non-admin users', async () => {
+    it("returns 403 for non-admin users", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: false,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent.get('/band/new');
+      const res = await agent.get("/band/new");
       expect(res.status).toBe(403);
     });
 
-    it('renders the add-band form for admins', async () => {
+    it("renders the add-band form for admins", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent.get('/band/new');
+      const res = await agent.get("/band/new");
       expect(res.status).toBe(200);
       expect(res.text).toContain('name="name"');
       expect(res.text).toMatch(/action="\/bands"/);
     });
   });
 
-  describe('POST /bands', () => {
-    it('redirects anonymous users to /auth/login', async () => {
+  describe("POST /bands", () => {
+    it("redirects anonymous users to /auth/login", async () => {
       const res = await request(handle.app.getHttpServer())
-        .post('/bands')
-        .type('form')
-        .send({ name: 'Slowdive' });
+        .post("/bands")
+        .type("form")
+        .send({ name: "Slowdive" });
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/auth/login');
+      expect(res.headers.location).toBe("/auth/login");
     });
 
-    it('returns 403 for non-admin users', async () => {
+    it("returns 403 for non-admin users", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: false,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent
-        .post('/bands')
-        .type('form')
-        .send({ name: 'Slowdive' });
+      const res = await agent.post("/bands").type("form").send({ name: "Slowdive" });
       expect(res.status).toBe(403);
     });
 
-    it('re-renders the form with an error when name is missing', async () => {
+    it("re-renders the form with an error when name is missing", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent.post('/bands').type('form').send({ name: '' });
+      const res = await agent.post("/bands").type("form").send({ name: "" });
       expect(res.status).toBe(200);
-      expect(res.text).toContain('Band name is required');
+      expect(res.text).toContain("Band name is required");
       expect(res.text).toContain('name="name"');
     });
 
-    it('creates a band and redirects to the detail page', async () => {
+    it("creates a band and redirects to the detail page", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent.post('/bands').type('form').send({
-        name: 'My Bloody Valentine',
-        description: 'Irish shoegaze pioneers',
-        personnel: 'Kevin Shields, Bilinda Butcher',
-        labels: 'Creation, Sire',
-        yearsActive: '1984, 1997',
-        locationAddress: 'Dublin, Ireland',
-        youtubePl: 'https://www.youtube.com/embed/abc',
+      const res = await agent.post("/bands").type("form").send({
+        name: "My Bloody Valentine",
+        description: "Irish shoegaze pioneers",
+        personnel: "Kevin Shields, Bilinda Butcher",
+        labels: "Creation, Sire",
+        yearsActive: "1984, 1997",
+        locationAddress: "Dublin, Ireland",
+        youtubePl: "https://www.youtube.com/embed/abc",
       });
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/band/my-bloody-valentine');
+      expect(res.headers.location).toBe("/band/my-bloody-valentine");
 
       const row = await handle.dataSource
         .getRepository(Band)
-        .findOne({ where: { slug: 'my-bloody-valentine' } });
+        .findOne({ where: { slug: "my-bloody-valentine" } });
       expect(row).toBeTruthy();
-      expect(row!.name).toBe('My Bloody Valentine');
-      expect(row!.description).toBe('Irish shoegaze pioneers');
-      expect(row!.personnel).toEqual(['Kevin Shields', 'Bilinda Butcher']);
-      expect(row!.labels).toEqual(['Creation', 'Sire']);
+      expect(row!.name).toBe("My Bloody Valentine");
+      expect(row!.description).toBe("Irish shoegaze pioneers");
+      expect(row!.personnel).toEqual(["Kevin Shields", "Bilinda Butcher"]);
+      expect(row!.labels).toEqual(["Creation", "Sire"]);
       expect(row!.yearsActive).toHaveLength(2);
-      expect(row!.locationAddress).toBe('Dublin, Ireland');
+      expect(row!.locationAddress).toBe("Dublin, Ireland");
       expect(row!.authorId).toBe(user.id);
     });
 
-    it('re-renders the form when the slug already exists', async () => {
+    it("re-renders the form when the slug already exists", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      await agent.post('/bands').type('form').send({ name: 'Ride' });
-      const res = await agent.post('/bands').type('form').send({ name: 'Ride' });
+      await agent.post("/bands").type("form").send({ name: "Ride" });
+      const res = await agent.post("/bands").type("form").send({ name: "Ride" });
       expect(res.status).toBe(200);
       expect(res.text).toMatch(/already exists/i);
     });
 
-    it('creates a band with no file: image columns are NULL', async () => {
+    it("creates a band with no file: image columns are NULL", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent
-        .post('/bands')
-        .type('form')
-        .send({ name: 'Lush' });
+      const res = await agent.post("/bands").type("form").send({ name: "Lush" });
       expect(res.status).toBe(302);
       expect(handle.imageKit.upload).not.toHaveBeenCalled();
 
-      const row = await handle.dataSource
-        .getRepository(Band)
-        .findOne({ where: { slug: 'lush' } });
+      const row = await handle.dataSource.getRepository(Band).findOne({ where: { slug: "lush" } });
       expect(row!.imageFileId).toBeNull();
       expect(row!.imagePath).toBeNull();
     });
 
-    it('creates a band with a file: uploads once and persists fileId + filePath', async () => {
+    it("creates a band with a file: uploads once and persists fileId + filePath", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent
-        .post('/bands')
-        .field('name', 'Slowdive')
-        .attach('image', await jpegFixture(), {
-          filename: 'band.jpg',
-          contentType: 'image/jpeg',
+        .post("/bands")
+        .field("name", "Slowdive")
+        .attach("image", await jpegFixture(), {
+          filename: "band.jpg",
+          contentType: "image/jpeg",
         });
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/band/slowdive');
+      expect(res.headers.location).toBe("/band/slowdive");
       expect(handle.imageKit.upload).toHaveBeenCalledTimes(1);
       expect(handle.imageKit.upload).toHaveBeenCalledWith(
-        expect.objectContaining({ filenameHint: 'Slowdive', folder: 'bands' }),
+        expect.objectContaining({ filenameHint: "Slowdive", folder: "bands" }),
       );
 
       const row = await handle.dataSource
         .getRepository(Band)
-        .findOne({ where: { slug: 'slowdive' } });
-      expect(row!.imageFileId).toBe('test-file-id');
-      expect(row!.imagePath).toBe('/bands/Slowdive.jpg');
+        .findOne({ where: { slug: "slowdive" } });
+      expect(row!.imageFileId).toBe("test-file-id");
+      expect(row!.imagePath).toBe("/bands/Slowdive.jpg");
     });
 
-    it('converts PNG uploads to JPEG before ImageKit upload', async () => {
+    it("converts PNG uploads to JPEG before ImageKit upload", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent
-        .post('/bands')
-        .field('name', 'Pale Saints')
-        .attach('image', await pngFixture(), {
-          filename: 'band.png',
-          contentType: 'image/png',
+        .post("/bands")
+        .field("name", "Pale Saints")
+        .attach("image", await pngFixture(), {
+          filename: "band.png",
+          contentType: "image/png",
         })
-        .attach('gallery', await pngFixture(), {
-          filename: 'gallery.png',
-          contentType: 'image/png',
+        .attach("gallery", await pngFixture(), {
+          filename: "gallery.png",
+          contentType: "image/png",
         });
       expect(res.status).toBe(302);
       expect(handle.imageKit.upload).toHaveBeenCalledTimes(2);
-      const buffers = handle.imageKit.upload.mock.calls.map(
-        (call) => call[0].buffer as Buffer,
-      );
+      const buffers = handle.imageKit.upload.mock.calls.map((call) => call[0].buffer as Buffer);
       expect(buffers.every(isJpeg)).toBe(true);
     });
 
-    it('creates a band with gallery files: uploads each and persists fileId + filePath array', async () => {
+    it("creates a band with gallery files: uploads each and persists fileId + filePath array", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent
-        .post('/bands')
-        .field('name', 'Chapterhouse')
-        .attach('gallery', await jpegFixture(), {
-          filename: 'g1.jpg',
-          contentType: 'image/jpeg',
+        .post("/bands")
+        .field("name", "Chapterhouse")
+        .attach("gallery", await jpegFixture(), {
+          filename: "g1.jpg",
+          contentType: "image/jpeg",
         })
-        .attach('gallery', await jpegFixture(), {
-          filename: 'g2.jpg',
-          contentType: 'image/jpeg',
+        .attach("gallery", await jpegFixture(), {
+          filename: "g2.jpg",
+          contentType: "image/jpeg",
         });
       expect(res.status).toBe(302);
       expect(handle.imageKit.upload).toHaveBeenCalledTimes(2);
 
       const row = await handle.dataSource
         .getRepository(Band)
-        .findOne({ where: { slug: 'chapterhouse' } });
+        .findOne({ where: { slug: "chapterhouse" } });
       expect(row!.gallery).toHaveLength(2);
       expect(row!.gallery[0]).toEqual({
-        fileId: 'test-file-id',
-        filePath: '/bands/Chapterhouse-gallery.jpg',
+        fileId: "test-file-id",
+        filePath: "/bands/Chapterhouse-gallery.jpg",
       });
     });
 
-    it('rejects an oversized file (>10 MB) with 413', async () => {
+    it("rejects an oversized file (>10 MB) with 413", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent
-        .post('/bands')
-        .field('name', 'Big File')
-        .attach('image', Buffer.alloc(11 * 1024 * 1024), {
-          filename: 'big.jpg',
-          contentType: 'image/jpeg',
+        .post("/bands")
+        .field("name", "Big File")
+        .attach("image", Buffer.alloc(11 * 1024 * 1024), {
+          filename: "big.jpg",
+          contentType: "image/jpeg",
         });
       expect(res.status).toBe(413);
       expect(handle.imageKit.upload).not.toHaveBeenCalled();
     });
 
-    it('rejects a non-image mimetype with 400', async () => {
+    it("rejects a non-image mimetype with 400", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent
-        .post('/bands')
-        .field('name', 'Text File')
-        .attach('image', Buffer.from('just text'), {
-          filename: 'note.txt',
-          contentType: 'text/plain',
+        .post("/bands")
+        .field("name", "Text File")
+        .attach("image", Buffer.from("just text"), {
+          filename: "note.txt",
+          contentType: "text/plain",
         });
       expect(res.status).toBe(400);
       expect(handle.imageKit.upload).not.toHaveBeenCalled();
     });
 
-    it('persists spotifyId and spotifyUrl from Spotify search result', async () => {
+    it("persists spotifyId and spotifyUrl from Spotify search result", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent
-        .post('/bands')
-        .type('form')
-        .send({ name: 'Slowdive' });
+      const res = await agent.post("/bands").type("form").send({ name: "Slowdive" });
       expect(res.status).toBe(302);
-      expect(handle.spotify.searchArtist).toHaveBeenCalledWith('Slowdive');
+      expect(handle.spotify.searchArtist).toHaveBeenCalledWith("Slowdive");
 
       const row = await handle.dataSource
         .getRepository(Band)
-        .findOne({ where: { slug: 'slowdive' } });
-      expect(row!.spotifyId).toBe('sp-artist-1');
-      expect(row!.spotifyUrl).toBe('https://open.spotify.com/artist/sp-artist-1');
+        .findOne({ where: { slug: "slowdive" } });
+      expect(row!.spotifyId).toBe("sp-artist-1");
+      expect(row!.spotifyUrl).toBe("https://open.spotify.com/artist/sp-artist-1");
     });
 
-    it('uses manually provided spotifyId and bypasses auto-search', async () => {
+    it("uses manually provided spotifyId and bypasses auto-search", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent.post('/bands').type('form').send({
-        name: 'Slowdive',
-        spotifyId: 'manual-id',
-        spotifyUrl: 'https://open.spotify.com/artist/manual-id',
+      const res = await agent.post("/bands").type("form").send({
+        name: "Slowdive",
+        spotifyId: "manual-id",
+        spotifyUrl: "https://open.spotify.com/artist/manual-id",
       });
       expect(res.status).toBe(302);
       expect(handle.spotify.searchArtist).not.toHaveBeenCalled();
 
       const row = await handle.dataSource
         .getRepository(Band)
-        .findOne({ where: { slug: 'slowdive' } });
-      expect(row!.spotifyId).toBe('manual-id');
-      expect(row!.spotifyUrl).toBe('https://open.spotify.com/artist/manual-id');
+        .findOne({ where: { slug: "slowdive" } });
+      expect(row!.spotifyId).toBe("manual-id");
+      expect(row!.spotifyUrl).toBe("https://open.spotify.com/artist/manual-id");
     });
 
-    it('creates the band without spotify fields when Spotify returns null', async () => {
+    it("creates the band without spotify fields when Spotify returns null", async () => {
       handle.spotify.searchArtist.mockResolvedValue(null);
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent
-        .post('/bands')
-        .type('form')
-        .send({ name: 'Pale Saints' });
+      const res = await agent.post("/bands").type("form").send({ name: "Pale Saints" });
       expect(res.status).toBe(302);
 
       const row = await handle.dataSource
         .getRepository(Band)
-        .findOne({ where: { slug: 'pale-saints' } });
+        .findOne({ where: { slug: "pale-saints" } });
       expect(row).toBeTruthy();
       expect(row!.spotifyId).toBeNull();
       expect(row!.spotifyUrl).toBeNull();
     });
   });
 
-  const seedBand = async (
-    authorId: string,
-    overrides: Partial<Band> = {},
-  ): Promise<Band> => {
+  const seedBand = async (authorId: string, overrides: Partial<Band> = {}): Promise<Band> => {
     const repo = handle.dataSource.getRepository(Band);
-    return repo.save(
-      repo.create({ name: 'Ride', slug: 'ride', authorId, ...overrides }),
-    );
+    return repo.save(repo.create({ name: "Ride", slug: "ride", authorId, ...overrides }));
   };
 
-  describe('GET /bands/:id/edit', () => {
-    it('redirects anonymous users to /auth/login', async () => {
+  describe("GET /bands/:id/edit", () => {
+    it("redirects anonymous users to /auth/login", async () => {
       const { user } = await createUser(handle.dataSource, { admin: true });
       const band = await seedBand(user.id);
-      const res = await request(handle.app.getHttpServer()).get(
-        `/bands/${band.id}/edit`,
-      );
+      const res = await request(handle.app.getHttpServer()).get(`/bands/${band.id}/edit`);
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/auth/login');
+      expect(res.headers.location).toBe("/auth/login");
     });
 
-    it('returns 403 for non-admin users', async () => {
+    it("returns 403 for non-admin users", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: false,
       });
@@ -376,24 +353,22 @@ describe('Bands create (integration)', () => {
       expect(res.status).toBe(403);
     });
 
-    it('returns 404 for an unknown id', async () => {
+    it("returns 404 for an unknown id", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent.get(
-        '/bands/00000000-0000-0000-0000-000000000000/edit',
-      );
+      const res = await agent.get("/bands/00000000-0000-0000-0000-000000000000/edit");
       expect(res.status).toBe(404);
     });
 
-    it('renders the edit form pre-filled for admins', async () => {
+    it("renders the edit form pre-filled for admins", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const band = await seedBand(user.id, {
-        name: 'Slowdive',
-        slug: 'slowdive',
+        name: "Slowdive",
+        slug: "slowdive",
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent.get(`/bands/${band.id}/edit`);
@@ -403,230 +378,202 @@ describe('Bands create (integration)', () => {
     });
   });
 
-  describe('POST /bands/:id', () => {
-    it('redirects anonymous users to /auth/login', async () => {
+  describe("POST /bands/:id", () => {
+    it("redirects anonymous users to /auth/login", async () => {
       const { user } = await createUser(handle.dataSource, { admin: true });
       const band = await seedBand(user.id);
       const res = await request(handle.app.getHttpServer())
         .post(`/bands/${band.id}`)
-        .type('form')
-        .send({ name: 'Ride' });
+        .type("form")
+        .send({ name: "Ride" });
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/auth/login');
+      expect(res.headers.location).toBe("/auth/login");
     });
 
-    it('returns 403 for non-admin users', async () => {
+    it("returns 403 for non-admin users", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: false,
       });
       const band = await seedBand(user.id);
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent
-        .post(`/bands/${band.id}`)
-        .type('form')
-        .send({ name: 'Ride' });
+      const res = await agent.post(`/bands/${band.id}`).type("form").send({ name: "Ride" });
       expect(res.status).toBe(403);
     });
 
-    it('returns 404 for an unknown id', async () => {
+    it("returns 404 for an unknown id", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent
-        .post('/bands/00000000-0000-0000-0000-000000000000')
-        .type('form')
-        .send({ name: 'Ride' });
+        .post("/bands/00000000-0000-0000-0000-000000000000")
+        .type("form")
+        .send({ name: "Ride" });
       expect(res.status).toBe(404);
     });
 
-    it('re-renders the edit form with an error when name is missing', async () => {
+    it("re-renders the edit form with an error when name is missing", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const band = await seedBand(user.id);
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent
-        .post(`/bands/${band.id}`)
-        .type('form')
-        .send({ name: '' });
+      const res = await agent.post(`/bands/${band.id}`).type("form").send({ name: "" });
       expect(res.status).toBe(200);
-      expect(res.text).toContain('Band name is required');
+      expect(res.text).toContain("Band name is required");
       expect(res.text).toContain(`action="/bands/${band.id}"`);
     });
 
-    it('updates fields and redirects to the detail page', async () => {
+    it("updates fields and redirects to the detail page", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const band = await seedBand(user.id, {
-        name: 'Ride',
-        slug: 'ride',
-        description: 'old',
+        name: "Ride",
+        slug: "ride",
+        description: "old",
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent.post(`/bands/${band.id}`).type('form').send({
-        name: 'Ride',
-        description: 'Oxford shoegaze',
-        personnel: 'Mark Gardener, Andy Bell',
+      const res = await agent.post(`/bands/${band.id}`).type("form").send({
+        name: "Ride",
+        description: "Oxford shoegaze",
+        personnel: "Mark Gardener, Andy Bell",
       });
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/band/ride');
+      expect(res.headers.location).toBe("/band/ride");
 
-      const row = await handle.dataSource
-        .getRepository(Band)
-        .findOne({ where: { id: band.id } });
-      expect(row!.description).toBe('Oxford shoegaze');
-      expect(row!.personnel).toEqual(['Mark Gardener', 'Andy Bell']);
+      const row = await handle.dataSource.getRepository(Band).findOne({ where: { id: band.id } });
+      expect(row!.description).toBe("Oxford shoegaze");
+      expect(row!.personnel).toEqual(["Mark Gardener", "Andy Bell"]);
     });
 
-    it('recomputes the slug when the name changes', async () => {
+    it("recomputes the slug when the name changes", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
-      const band = await seedBand(user.id, { name: 'Ride', slug: 'ride' });
+      const band = await seedBand(user.id, { name: "Ride", slug: "ride" });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent
-        .post(`/bands/${band.id}`)
-        .type('form')
-        .send({ name: 'Ride UK' });
+      const res = await agent.post(`/bands/${band.id}`).type("form").send({ name: "Ride UK" });
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/band/ride-uk');
+      expect(res.headers.location).toBe("/band/ride-uk");
 
-      const row = await handle.dataSource
-        .getRepository(Band)
-        .findOne({ where: { id: band.id } });
-      expect(row!.slug).toBe('ride-uk');
+      const row = await handle.dataSource.getRepository(Band).findOne({ where: { id: band.id } });
+      expect(row!.slug).toBe("ride-uk");
     });
 
-    it('preserves the existing image when no file is uploaded', async () => {
+    it("preserves the existing image when no file is uploaded", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const band = await seedBand(user.id, {
-        imageFileId: 'existing-id',
-        imagePath: '/bands/existing.jpg',
+        imageFileId: "existing-id",
+        imagePath: "/bands/existing.jpg",
       });
       const agent = await loginAs(handle.app, user.email, password);
-      await agent.post(`/bands/${band.id}`).type('form').send({ name: 'Ride' });
+      await agent.post(`/bands/${band.id}`).type("form").send({ name: "Ride" });
       expect(handle.imageKit.upload).not.toHaveBeenCalled();
 
-      const row = await handle.dataSource
-        .getRepository(Band)
-        .findOne({ where: { id: band.id } });
-      expect(row!.imageFileId).toBe('existing-id');
-      expect(row!.imagePath).toBe('/bands/existing.jpg');
+      const row = await handle.dataSource.getRepository(Band).findOne({ where: { id: band.id } });
+      expect(row!.imageFileId).toBe("existing-id");
+      expect(row!.imagePath).toBe("/bands/existing.jpg");
     });
 
-    it('uploads a new image and deletes the old one when a file is supplied', async () => {
+    it("uploads a new image and deletes the old one when a file is supplied", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const band = await seedBand(user.id, {
-        name: 'Ride',
-        slug: 'ride',
-        imageFileId: 'old-id',
-        imagePath: '/bands/old.jpg',
+        name: "Ride",
+        slug: "ride",
+        imageFileId: "old-id",
+        imagePath: "/bands/old.jpg",
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent
         .post(`/bands/${band.id}`)
-        .field('name', 'Ride')
-        .attach('image', await jpegFixture(), {
-          filename: 'new.jpg',
-          contentType: 'image/jpeg',
+        .field("name", "Ride")
+        .attach("image", await jpegFixture(), {
+          filename: "new.jpg",
+          contentType: "image/jpeg",
         });
       expect(res.status).toBe(302);
       expect(handle.imageKit.upload).toHaveBeenCalledTimes(1);
-      expect(handle.imageKit.delete).toHaveBeenCalledWith('old-id');
+      expect(handle.imageKit.delete).toHaveBeenCalledWith("old-id");
 
-      const row = await handle.dataSource
-        .getRepository(Band)
-        .findOne({ where: { id: band.id } });
-      expect(row!.imageFileId).toBe('test-file-id');
+      const row = await handle.dataSource.getRepository(Band).findOne({ where: { id: band.id } });
+      expect(row!.imageFileId).toBe("test-file-id");
     });
 
-    it('preserves existing spotifyId when form fields are blank', async () => {
+    it("preserves existing spotifyId when form fields are blank", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const band = await seedBand(user.id, {
-        name: 'Ride',
-        slug: 'ride',
-        spotifyId: 'existing-sp-id',
-        spotifyUrl: 'https://open.spotify.com/artist/existing-sp-id',
+        name: "Ride",
+        slug: "ride",
+        spotifyId: "existing-sp-id",
+        spotifyUrl: "https://open.spotify.com/artist/existing-sp-id",
       });
       const agent = await loginAs(handle.app, user.email, password);
       await agent
         .post(`/bands/${band.id}`)
-        .type('form')
-        .send({ name: 'Ride', description: 'Updated' });
+        .type("form")
+        .send({ name: "Ride", description: "Updated" });
       expect(handle.spotify.searchArtist).not.toHaveBeenCalled();
 
-      const row = await handle.dataSource
-        .getRepository(Band)
-        .findOne({ where: { id: band.id } });
-      expect(row!.spotifyId).toBe('existing-sp-id');
-      expect(row!.spotifyUrl).toBe('https://open.spotify.com/artist/existing-sp-id');
+      const row = await handle.dataSource.getRepository(Band).findOne({ where: { id: band.id } });
+      expect(row!.spotifyId).toBe("existing-sp-id");
+      expect(row!.spotifyUrl).toBe("https://open.spotify.com/artist/existing-sp-id");
     });
 
-    it('runs Spotify lookup on update when band has no existing spotifyId', async () => {
+    it("runs Spotify lookup on update when band has no existing spotifyId", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
-      const band = await seedBand(user.id, { name: 'Ride', slug: 'ride' });
+      const band = await seedBand(user.id, { name: "Ride", slug: "ride" });
       const agent = await loginAs(handle.app, user.email, password);
-      await agent
-        .post(`/bands/${band.id}`)
-        .type('form')
-        .send({ name: 'Ride' });
-      expect(handle.spotify.searchArtist).toHaveBeenCalledWith('Ride');
+      await agent.post(`/bands/${band.id}`).type("form").send({ name: "Ride" });
+      expect(handle.spotify.searchArtist).toHaveBeenCalledWith("Ride");
 
-      const row = await handle.dataSource
-        .getRepository(Band)
-        .findOne({ where: { id: band.id } });
-      expect(row!.spotifyId).toBe('sp-artist-1');
+      const row = await handle.dataSource.getRepository(Band).findOne({ where: { id: band.id } });
+      expect(row!.spotifyId).toBe("sp-artist-1");
     });
 
-    it('appends uploaded gallery files to the existing gallery', async () => {
+    it("appends uploaded gallery files to the existing gallery", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const band = await seedBand(user.id, {
-        name: 'Ride',
-        slug: 'ride',
-        gallery: [{ fileId: 'g0', filePath: '/bands/g0.jpg' }],
+        name: "Ride",
+        slug: "ride",
+        gallery: [{ fileId: "g0", filePath: "/bands/g0.jpg" }],
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent
         .post(`/bands/${band.id}`)
-        .field('name', 'Ride')
-        .attach('gallery', await jpegFixture(), {
-          filename: 'g1.jpg',
-          contentType: 'image/jpeg',
+        .field("name", "Ride")
+        .attach("gallery", await jpegFixture(), {
+          filename: "g1.jpg",
+          contentType: "image/jpeg",
         });
       expect(res.status).toBe(302);
 
-      const row = await handle.dataSource
-        .getRepository(Band)
-        .findOne({ where: { id: band.id } });
+      const row = await handle.dataSource.getRepository(Band).findOne({ where: { id: band.id } });
       expect(row!.gallery).toHaveLength(2);
-      expect(row!.gallery[0].fileId).toBe('g0');
+      expect(row!.gallery[0].fileId).toBe("g0");
     });
   });
 
-  describe('POST /bands/:id/delete', () => {
-    it('redirects anonymous users to /auth/login', async () => {
+  describe("POST /bands/:id/delete", () => {
+    it("redirects anonymous users to /auth/login", async () => {
       const { user } = await createUser(handle.dataSource, { admin: true });
       const band = await seedBand(user.id);
-      const res = await request(handle.app.getHttpServer()).post(
-        `/bands/${band.id}/delete`,
-      );
+      const res = await request(handle.app.getHttpServer()).post(`/bands/${band.id}/delete`);
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/auth/login');
+      expect(res.headers.location).toBe("/auth/login");
     });
 
-    it('returns 403 for non-admin users', async () => {
+    it("returns 403 for non-admin users", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: false,
       });
@@ -636,36 +583,32 @@ describe('Bands create (integration)', () => {
       expect(res.status).toBe(403);
     });
 
-    it('returns 404 for an unknown id', async () => {
+    it("returns 404 for an unknown id", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent.post(
-        '/bands/00000000-0000-0000-0000-000000000000/delete',
-      );
+      const res = await agent.post("/bands/00000000-0000-0000-0000-000000000000/delete");
       expect(res.status).toBe(404);
     });
 
-    it('deletes the band and its images, then redirects to /bands', async () => {
+    it("deletes the band and its images, then redirects to /bands", async () => {
       const { user, password } = await createUser(handle.dataSource, {
         admin: true,
       });
       const band = await seedBand(user.id, {
-        imageFileId: 'square-id',
-        imagePath: '/bands/square.jpg',
-        gallery: [{ fileId: 'gal-id', filePath: '/bands/gal.jpg' }],
+        imageFileId: "square-id",
+        imagePath: "/bands/square.jpg",
+        gallery: [{ fileId: "gal-id", filePath: "/bands/gal.jpg" }],
       });
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent.post(`/bands/${band.id}/delete`);
       expect(res.status).toBe(302);
-      expect(res.headers.location).toBe('/bands');
-      expect(handle.imageKit.delete).toHaveBeenCalledWith('square-id');
-      expect(handle.imageKit.delete).toHaveBeenCalledWith('gal-id');
+      expect(res.headers.location).toBe("/bands");
+      expect(handle.imageKit.delete).toHaveBeenCalledWith("square-id");
+      expect(handle.imageKit.delete).toHaveBeenCalledWith("gal-id");
 
-      const row = await handle.dataSource
-        .getRepository(Band)
-        .findOne({ where: { id: band.id } });
+      const row = await handle.dataSource.getRepository(Band).findOne({ where: { id: band.id } });
       expect(row).toBeNull();
     });
   });
