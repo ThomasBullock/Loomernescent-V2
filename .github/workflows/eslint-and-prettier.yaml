@@ -5,7 +5,7 @@ on:
   push:
 
 jobs:
-  eslint:
+  eslint-and-prettier:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
