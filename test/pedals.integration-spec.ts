@@ -249,7 +249,7 @@ describe("Pedals CRUD (integration)", () => {
         pedalType: "Fuzz",
         yearsManufactured: [new Date("1969-01-01T00:00:00Z")],
         comments: "A classic",
-      } as Pedal);
+      });
       const res = await agent.get(`/pedals/${pedal.id}/edit`);
       expect(res.status).toBe(200);
       expect(res.text).toContain('value="Big Muff"');
@@ -269,7 +269,7 @@ describe("Pedals CRUD (integration)", () => {
         pedalType: "Fuzz",
         yearsManufactured: [new Date("1969-01-01T00:00:00Z")],
         comments: "original",
-      } as Pedal);
+      });
     }
 
     it("redirects anonymous users to /auth/login", async () => {
@@ -378,7 +378,7 @@ describe("Pedals CRUD (integration)", () => {
         yearsManufactured: [],
         imageFileId: "old-file-id",
         imagePath: "/pedals/old.jpg",
-      } as Pedal);
+      });
 
       const res = await agent
         .post(`/pedals/${pedal.id}`)
@@ -411,7 +411,7 @@ describe("Pedals CRUD (integration)", () => {
         yearsManufactured: [],
         imageFileId: "keep-file-id",
         imagePath: "/pedals/keep.jpg",
-      } as Pedal);
+      });
 
       const res = await agent
         .post(`/pedals/${pedal.id}`)
@@ -438,7 +438,7 @@ describe("Pedals CRUD (integration)", () => {
         name: "Pi",
         slug: "big-muff-pi",
         yearsManufactured: [],
-      } as Pedal);
+      });
     }
 
     it("redirects anonymous users to /auth/login", async () => {
@@ -491,7 +491,7 @@ describe("Pedals CRUD (integration)", () => {
         yearsManufactured: [],
         imageFileId: "del-file-id",
         imagePath: "/pedals/del.jpg",
-      } as Pedal);
+      });
 
       const res = await agent.post(`/pedals/${pedal.id}/delete`);
       expect(res.status).toBe(302);

@@ -122,6 +122,7 @@ describe("processImage", () => {
           width: 1000,
           height: 1000,
           channels: 3,
+          background: { r: 128, g: 128, b: 128 },
           noise: { type: "gaussian", mean: 128, sigma: 60 },
         },
       })
