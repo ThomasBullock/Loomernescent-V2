@@ -25,7 +25,7 @@ import { AdminGuard } from "../auth/guards/admin.guard";
 import { ImageKitService } from "../common/images/image-kit.service";
 import { processImage } from "../common/images/process-image";
 import { SpotifyService } from "../spotify/spotify.service";
-import { BAND_IMAGE_OPTS, MAX_GALLERY_FILES, MAX_UPLOAD_BYTES } from "src/common/constants/image";
+import { BAND_IMAGE_OPTS, MAX_GALLERY_FILES, MAX_UPLOAD_BYTES } from "../common/constants/image";
 
 const bandImageFields = [
   { name: "image", maxCount: 1 },
