@@ -17,6 +17,7 @@
     "js:build": "esbuild src/client/main.ts --bundle --outfile=public/dist/app.js --target=es2020 --minify",
     "js:watch": "esbuild src/client/main.ts --bundle --outfile=public/dist/app.js --target=es2020 --sourcemap --watch",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix && prettier --write .",
+    "lint:check": "eslint \"{src,test}/**/*.ts\" && prettier --check .",
     "test": "jest",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
