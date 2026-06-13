@@ -34,8 +34,14 @@ export class Album {
   @Column({ name: "band_id" })
   bandId: string;
 
-  @Column({ nullable: true })
-  cover: string;
+  // @Column({ nullable: true })
+  // cover: string;
+
+  @Column({ name: "image_file_id", type: "text", nullable: true })
+  imageFileId: string | null;
+
+  @Column({ name: "image_path", type: "text", nullable: true })
+  imagePath: string | null;
 
   @Column("text", { array: true, default: "{}" })
   producer: string[];
