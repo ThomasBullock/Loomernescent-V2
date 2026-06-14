@@ -188,7 +188,26 @@ Testids use Pug interpolation with a `mode` param (`'add'` or `'edit'`). Caller 
 
 | Test ID | Element |
 |---|---|
+| `albums.add-form.error-message` | Error list `<ul>` (add mode) |
+| `albums.edit-form.error-message` | Error list `<ul>` (edit mode) |
 | `albums.edit-form.delete-btn` | Delete album submit button (edit mode) |
+
+### Albums — `views/mixins/_albumCard.pug`
+
+| Test ID | Element |
+|---|---|
+| `albums.list.edit-link` | Edit icon anchor (admin only) |
+
+### Albums — `views/mixins/_albumForm.pug`
+
+Testids use Pug interpolation with a `mode` param (`'add'` or `'edit'`). Caller always passes a literal — see exception rule above.
+
+| Test ID | Element |
+|---|---|
+| `albums.add-form.title-input` | Title input (add form) |
+| `albums.add-form.submit-btn` | Submit button (add form) |
+| `albums.edit-form.title-input` | Title input (edit form) |
+| `albums.edit-form.submit-btn` | Save changes button (edit form) |
 
 ### Add hub — `views/add.pug`
 

@@ -119,6 +119,46 @@ export async function createBand(
   return rows[0];
 }
 
+export interface CreateAlbumOptions {
+  title?: string;
+  slug?: string;
+  artist?: string;
+  bandId?: string;
+}
+
+export interface CreatedAlbum {
+  id: string;
+  title: string;
+  slug: string;
+  artist: string;
+  band_id: string;
+}
+
+export async function createAlbum(
+  ds: DataSource,
+  opts: CreateAlbumOptions = {},
+): Promise<CreatedAlbum> {
+  counter += 1;
+  const title = opts.title ?? `E2E Album ${counter}`;
+  const slug = opts.slug ?? `e2e-album-${counter}`;
+  const artist = opts.artist ?? `E2E Band ${counter}`;
+
+  let bandId = opts.bandId;
+  if (!bandId) {
+    const band = await createBand(ds, { name: artist });
+    bandId = band.id;
+  }
+
+  const rows = await ds.query<CreatedAlbum[]>(
+    `INSERT INTO "albums" (title, slug, artist, band_id)
+     VALUES ($1, $2, $3, $4)
+     RETURNING id, title, slug, artist, band_id`,
+    [title, slug, artist, bandId],
+  );
+
+  return rows[0];
+}
+
 export async function createUser(
   ds: DataSource,
   opts: CreateUserOptions = {},

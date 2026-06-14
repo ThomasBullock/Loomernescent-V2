@@ -15,7 +15,8 @@ import {
   BadRequestException,
   Body,
 } from "@nestjs/common";
-import { AlbumsService, CreateAlbumInput } from "./albums.service";
+import { AlbumsService, CreateAlbumInput, UpdateAlbumInput } from "./albums.service";
+import { Album } from "../entities/album.entity";
 import { AdminGuard } from "../auth/guards/admin.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { processImage } from "../common/images/process-image";
@@ -49,8 +50,9 @@ interface AlbumFormBody {
   tracks?: string;
   releaseDate?: string;
   label?: string;
-  spotifyURL?: string;
-  bandCampURL?: string;
+  spotifyUrl?: string;
+  bandcampUrl?: string;
+  comments?: string;
 }
 
 @Controller()
@@ -113,11 +115,7 @@ export class AlbumsController {
       });
     }
 
-    // tells the TypeScript compiler: "Hey, I know you think this value might be null or undefined, but I guarantee it exists at this exact moment.
-    // Trust me, skip the type check here."
     const cover = file ? await this.uploadAlbumImage(file, body.title!, body.artist!) : {};
-
-    // Todo fetch artist from spotify API, find album and add its track names to tracks (if not supplied in body)
 
     const album = await this.albumsService.create({
       ...(body as CreateAlbumInput),
@@ -128,6 +126,71 @@ export class AlbumsController {
       success: [`${album.title} by ${album.artist} added`],
     };
     req.session.save(() => res.redirect(`/album/${album.slug}`));
+  }
+
+  @Get("/albums/:id/edit")
+  @UseGuards(AdminGuard)
+  @Render("editAlbum")
+  async editForm(@Param("id") id: string) {
+    const album = await this.albumsService.getAlbumById(id);
+    if (!album) {
+      throw new NotFoundException("Album not found");
+    }
+    return { title: `Edit ${album.title}`, album: albumForForm(album) };
+  }
+
+  @Post("/albums/:id")
+  @UseGuards(AdminGuard)
+  @UseInterceptors(FileInterceptor("cover", albumImageMulterOptions))
+  async update(
+    @Param("id") id: string,
+    @Body() body: AlbumFormBody,
+    @UploadedFile() file: Express.Multer.File | undefined,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
+    const existing = await this.albumsService.getAlbumById(id);
+    if (!existing) {
+      throw new NotFoundException("Album not found");
+    }
+
+    const errors = validateAlbumBody(body);
+    if (errors.length) {
+      return res.status(200).render("editAlbum", {
+        title: `Edit ${existing.title}`,
+        errors,
+        album: { ...body, id },
+      });
+    }
+
+    const oldFileId = existing.imageFileId;
+    const cover = file
+      ? await this.uploadAlbumImage(file, body.title!, body.artist ?? existing.artist)
+      : {};
+
+    try {
+      const album = await this.albumsService.update(id, {
+        ...(body as UpdateAlbumInput),
+        ...cover,
+      });
+      if (!album) {
+        throw new NotFoundException("Album not found");
+      }
+      if (file && oldFileId) {
+        void this.deleteImage(oldFileId);
+      }
+      req.session["flash"] = { success: [`${album.title} updated`] };
+      req.session.save(() => res.redirect(`/album/${album.slug}`));
+    } catch (err: unknown) {
+      if (isUniqueViolation(err)) {
+        return res.status(200).render("editAlbum", {
+          title: `Edit ${existing.title}`,
+          errors: ["An album with that title already exists"],
+          album: { ...body, id },
+        });
+      }
+      throw err;
+    }
   }
 
   @Post("/albums/:id/delete")
@@ -183,4 +246,22 @@ function validateAlbumBody(body: AlbumFormBody): string[] {
     errors.push("Album title is required");
   }
   return errors;
+}
+
+function albumForForm(album: Album): Record<string, unknown> {
+  return {
+    ...album,
+    producer: album.producer.join(", "),
+    engineer: album.engineer.join(", "),
+    mixedBy: album.mixedBy.join(", "),
+    tracks: album.tracks.join(", "),
+    releaseDate: album.releaseDate
+      ? new Date(album.releaseDate).toISOString().split("T")[0]
+      : "",
+  };
+}
+
+function isUniqueViolation(err: unknown): boolean {
+  const e = err as { code?: string; driverError?: { code?: string } };
+  return e?.code === "23505" || e?.driverError?.code === "23505";
 }

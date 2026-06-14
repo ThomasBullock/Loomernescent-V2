@@ -7,6 +7,27 @@ type AlbumRepoMock = jest.Mocked<
   Pick<Repository<Album>, "create" | "save" | "find" | "findOne" | "findAndCount" | "delete">
 >;
 
+const mockAlbum = (overrides: Partial<Album> = {}): Album =>
+  ({
+    id: "album-uuid",
+    title: "Nowhere",
+    slug: "nowhere",
+    artist: "Ride",
+    bandId: "band-uuid",
+    producer: [],
+    engineer: [],
+    mixedBy: [],
+    tracks: [],
+    releaseDate: null as unknown as Date,
+    label: null as unknown as string,
+    spotifyUrl: null as unknown as string,
+    bandcampUrl: null as unknown as string,
+    comments: null as unknown as string,
+    imageFileId: null,
+    imagePath: null,
+    ...overrides,
+  }) as Album;
+
 type BandRepoMock = jest.Mocked<Pick<Repository<Band>, "findOne">>;
 
 const mockBand = {
@@ -94,6 +115,102 @@ describe("AlbumsService", () => {
       const result = await service.delete("album-uuid");
 
       expect(result).toBe(false);
+    });
+  });
+
+  describe("update", () => {
+    it("returns null when the album is not found", async () => {
+      albumRepo.findOne.mockResolvedValue(null);
+
+      const result = await service.update("missing-uuid", { title: "Nowhere" });
+
+      expect(result).toBeNull();
+    });
+
+    it("updates title and recomputes slug when title changes", async () => {
+      albumRepo.findOne.mockResolvedValue(mockAlbum());
+      albumRepo.find.mockResolvedValue([]);
+
+      await service.update("album-uuid", { title: "Going Blank Again", artist: "Ride" });
+
+      expect(albumRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({ title: "Going Blank Again", slug: "going-blank-again" }),
+      );
+    });
+
+    it("preserves slug when title is unchanged", async () => {
+      albumRepo.findOne.mockResolvedValue(mockAlbum());
+
+      await service.update("album-uuid", { title: "Nowhere", artist: "Ride" });
+
+      expect(albumRepo.find).not.toHaveBeenCalled();
+      expect(albumRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({ slug: "nowhere" }),
+      );
+    });
+
+    it("re-resolves band when artist changes", async () => {
+      albumRepo.findOne.mockResolvedValue(mockAlbum({ artist: "Ride" }));
+      bandRepo.findOne.mockResolvedValue({ id: "mbv-uuid", name: "My Bloody Valentine" } as Band);
+
+      await service.update("album-uuid", { title: "Nowhere", artist: "My Bloody Valentine" });
+
+      expect(bandRepo.findOne).toHaveBeenCalledWith({
+        where: { name: "My Bloody Valentine" },
+      });
+      expect(albumRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({ artist: "My Bloody Valentine", bandId: "mbv-uuid" }),
+      );
+    });
+
+    it("preserves image when no new image supplied", async () => {
+      albumRepo.findOne.mockResolvedValue(
+        mockAlbum({ imageFileId: "existing-id", imagePath: "/albums/existing.jpg" }),
+      );
+
+      await service.update("album-uuid", { title: "Nowhere", artist: "Ride" });
+
+      expect(albumRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          imageFileId: "existing-id",
+          imagePath: "/albums/existing.jpg",
+        }),
+      );
+    });
+
+    it("updates image when new values are supplied", async () => {
+      albumRepo.findOne.mockResolvedValue(
+        mockAlbum({ imageFileId: "old-id", imagePath: "/albums/old.jpg" }),
+      );
+
+      await service.update("album-uuid", {
+        title: "Nowhere",
+        artist: "Ride",
+        imageFileId: "new-id",
+        imagePath: "/albums/new.jpg",
+      });
+
+      expect(albumRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({ imageFileId: "new-id", imagePath: "/albums/new.jpg" }),
+      );
+    });
+
+    it("parses comma-separated lists into arrays", async () => {
+      albumRepo.findOne.mockResolvedValue(mockAlbum());
+
+      await service.update("album-uuid", {
+        title: "Nowhere",
+        artist: "Ride",
+        producer: "Alan Moulder, Flood",
+        tracks: "Seagull, Polar Bear, Kaleidoscope",
+      });
+
+      expect(albumRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          producer: ["Alan Moulder", "Flood"],
+          tracks: ["Seagull", "Polar Bear", "Kaleidoscope"],
+        }),
+      );
     });
   });
 
