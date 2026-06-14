@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Logger,
   Param,
   Query,
   Render,
@@ -15,14 +16,12 @@ import {
   Body,
 } from "@nestjs/common";
 import { AlbumsService, CreateAlbumInput } from "./albums.service";
-import { AdminGuard } from "src/auth/guards/admin.guard";
+import { AdminGuard } from "../auth/guards/admin.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
-import { processImage } from "src/common/images/process-image";
-
-// Gives TypeScript the type for the constructor param
+import { processImage } from "../common/images/process-image";
 import { ImageKitService } from "../common/images/image-kit.service";
 import { memoryStorage } from "multer";
-import { MAX_UPLOAD_BYTES } from "src/common/constants/image";
+import { MAX_UPLOAD_BYTES } from "../common/constants/image";
 import type { Request, Response } from "express";
 
 const albumImageMulterOptions = {
@@ -56,9 +55,11 @@ interface AlbumFormBody {
 
 @Controller()
 export class AlbumsController {
+  private readonly logger = new Logger(AlbumsController.name);
+
   constructor(
     private readonly albumsService: AlbumsService,
-    private readonly imageKit: ImageKitService, // Actually requests the injection
+    private readonly imageKit: ImageKitService,
   ) {}
 
   @Get("/albums")
@@ -129,6 +130,23 @@ export class AlbumsController {
     req.session.save(() => res.redirect(`/album/${album.slug}`));
   }
 
+  @Post("/albums/:id/delete")
+  @UseGuards(AdminGuard)
+  async destroy(@Param("id") id: string, @Req() req: Request, @Res() res: Response) {
+    const existing = await this.albumsService.getAlbumById(id);
+    if (!existing) {
+      throw new NotFoundException("Album not found");
+    }
+
+    await this.albumsService.delete(id);
+    if (existing.imageFileId) {
+      void this.deleteImage(existing.imageFileId);
+    }
+
+    req.session["flash"] = { success: [`${existing.title} deleted`] };
+    req.session.save(() => res.redirect("/albums"));
+  }
+
   private async uploadAlbumImage(
     file: Express.Multer.File,
     title: string,
@@ -147,6 +165,15 @@ export class AlbumsController {
     });
 
     return { imageFileId: fileId, imagePath: filePath };
+  }
+
+  // Best-effort cleanup — orphaned ImageKit asset must never fail the request
+  private async deleteImage(fileId: string): Promise<void> {
+    try {
+      await this.imageKit.delete(fileId);
+    } catch (err) {
+      this.logger.error(`Failed to delete ImageKit file ${fileId}`, err);
+    }
   }
 }
 

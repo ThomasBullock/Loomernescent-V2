@@ -42,7 +42,61 @@ describe("AlbumsService", () => {
     albumRepo.save.mockImplementation(async (entity) => entity as Album);
   });
 
-  // TODO needs more coverage
+  describe("getAlbumById", () => {
+    it("returns the album when found", async () => {
+      const album = { id: "album-uuid", title: "Nowhere" } as Album;
+      albumRepo.findOne.mockResolvedValue(album);
+
+      const result = await service.getAlbumById("album-uuid");
+
+      expect(albumRepo.findOne).toHaveBeenCalledWith({ where: { id: "album-uuid" } });
+      expect(result).toBe(album);
+    });
+
+    it("returns null when not found", async () => {
+      albumRepo.findOne.mockResolvedValue(null);
+
+      const result = await service.getAlbumById("missing-uuid");
+
+      expect(result).toBeNull();
+    });
+
+    it("returns null on repository error", async () => {
+      albumRepo.findOne.mockRejectedValue(new Error("db error"));
+
+      const result = await service.getAlbumById("album-uuid");
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe("delete", () => {
+    it("returns true when the album is deleted", async () => {
+      albumRepo.delete.mockResolvedValue({ affected: 1, raw: [] });
+
+      const result = await service.delete("album-uuid");
+
+      expect(albumRepo.delete).toHaveBeenCalledWith("album-uuid");
+      expect(result).toBe(true);
+    });
+
+    it("returns false when the album does not exist", async () => {
+      albumRepo.delete.mockResolvedValue({ affected: 0, raw: [] });
+
+      const result = await service.delete("missing-uuid");
+
+      expect(result).toBe(false);
+    });
+
+    it("returns false on repository error", async () => {
+      albumRepo.delete.mockRejectedValue(new Error("db error"));
+
+      const result = await service.delete("album-uuid");
+
+      expect(result).toBe(false);
+    });
+  });
+
   describe("create", () => {
     it("generates a slug from title", async () => {
       albumRepo.find.mockResolvedValue([]);

@@ -3,8 +3,8 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Album } from "../entities/album.entity";
 import { AlbumsController } from "./albums.controller";
 import { AlbumsService } from "./albums.service";
-import { ImagesModule } from "src/common/images/images.module";
-import { Band } from "src/entities";
+import { ImagesModule } from "../common/images/images.module";
+import { Band } from "../entities";
 
 @Module({
   // Makes ImageKitService injectable in this module | NestJS, Runtime Dependency Injection

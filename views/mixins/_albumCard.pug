@@ -14,6 +14,6 @@ mixin albumCard(album = {})
             != h.icon("pencil")
     a(href=`/album/${album.slug}`)
       img.album__cover(
-        src=`/uploads/covers/${album.cover || 'band.jpg'}`,
+        src=album.imagePath ? imageUrl(album.imagePath, { w: 400, h: 400, fo: "auto" }) : imageUrl("/bands/band.jpg"),
         alt=`cover artwork for ${album.title} by ${album.artist}`
       )

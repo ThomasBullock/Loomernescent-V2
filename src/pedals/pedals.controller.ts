@@ -23,7 +23,7 @@ import { Pedal } from "../entities/pedal.entity";
 import { AdminGuard } from "../auth/guards/admin.guard";
 import { ImageKitService } from "../common/images/image-kit.service";
 import { processImage } from "../common/images/process-image";
-import { MAX_UPLOAD_BYTES } from "src/common/constants/image";
+import { MAX_UPLOAD_BYTES } from "../common/constants/image";
 
 const pedalImageMulterOptions = {
   storage: memoryStorage(),

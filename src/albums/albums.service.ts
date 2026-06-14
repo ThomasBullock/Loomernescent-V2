@@ -43,11 +43,28 @@ export class AlbumsService {
     return { albums, page, pages, count };
   }
 
+  async getAlbumById(id: string): Promise<Album | null> {
+    try {
+      return await this.albumRepo.findOne({ where: { id } });
+    } catch {
+      return null;
+    }
+  }
+
   async getAlbumBySlug(slug: string): Promise<Album | null> {
     return this.albumRepo.findOne({
       where: { slug },
       relations: ["band"],
     });
+  }
+
+  async delete(id: string): Promise<boolean> {
+    try {
+      const result = await this.albumRepo.delete(id);
+      return (result.affected ?? 0) > 0;
+    } catch {
+      return false;
+    }
   }
 
   async create(input: CreateAlbumInput): Promise<Album> {

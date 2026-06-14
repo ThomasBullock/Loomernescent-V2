@@ -184,6 +184,12 @@ Testids use Pug interpolation with a `mode` param (`'add'` or `'edit'`). Caller 
 |---|---|
 | `albums.detail.title` | Album title heading |
 
+### Albums — `views/editAlbum.pug`
+
+| Test ID | Element |
+|---|---|
+| `albums.edit-form.delete-btn` | Delete album submit button (edit mode) |
+
 ### Add hub — `views/add.pug`
 
 | Test ID | Element |

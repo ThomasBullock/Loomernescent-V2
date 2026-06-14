@@ -6,3 +6,6 @@ block content
   .inner
     h2 #{ title }
     +albumForm(album)
+    if album.id
+      form(action=`/albums/${album.id}/delete`, method="post")
+        button.btn.btn--delete(type="submit", data-testid="albums.edit-form.delete-btn") Delete Album
