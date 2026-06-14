@@ -145,7 +145,7 @@ export class BandsService {
       select: ["id", "name", "slug", "imagePath"],
     });
     const albums = await this.albumRepo.find({
-      select: ["id", "title", "slug", "cover"],
+      select: ["id", "title", "slug", "imagePath"],
     });
 
     const bandTiles: HeroTile[] = bands.map((b) => ({
@@ -160,7 +160,7 @@ export class BandsService {
       name: a.title,
       slug: a.slug,
       imagePath: null,
-      cover: a.cover || null,
+      cover: a.imagePath || null,
     }));
 
     const all = [...bandTiles, ...albumTiles];

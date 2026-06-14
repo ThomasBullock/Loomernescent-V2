@@ -4,7 +4,7 @@ import { Album } from "../entities/album.entity";
 import { Band } from "../entities/band.entity";
 
 type AlbumRepoMock = jest.Mocked<
-  Pick<Repository<Album>, "save" | "find" | "findOne" | "findAndCount" | "delete">
+  Pick<Repository<Album>, "create" | "save" | "find" | "findOne" | "findAndCount" | "delete">
 >;
 
 type BandRepoMock = jest.Mocked<Pick<Repository<Band>, "findOne">>;
@@ -21,6 +21,7 @@ describe("AlbumsService", () => {
 
   beforeEach(() => {
     albumRepo = {
+      create: jest.fn(),
       save: jest.fn(),
       find: jest.fn(),
       findOne: jest.fn(),
@@ -37,9 +38,11 @@ describe("AlbumsService", () => {
     );
 
     bandRepo.findOne.mockResolvedValue(mockBand);
+    albumRepo.create.mockImplementation((data) => data as Album);
     albumRepo.save.mockImplementation(async (entity) => entity as Album);
   });
 
+  // TODO needs more coverage
   describe("create", () => {
     it("generates a slug from title", async () => {
       albumRepo.find.mockResolvedValue([]);
@@ -88,6 +91,28 @@ describe("AlbumsService", () => {
           slug: "going-blank-again-3",
         }),
       );
+    });
+
+    it("parses comma-separated lists into arrays", async () => {
+      albumRepo.find.mockResolvedValue([]);
+
+      await service.create({
+        title: "Loveless",
+        artist: "My Bloody Valentine",
+        producer: "Kevin Shields",
+        engineer: "Dick Meaney, Anjali Dutt, Guy Fixsen, Harold Burgon, Nick Robbins, Ingo Vauk",
+        label: "Creation",
+      });
+      const saved = albumRepo.save.mock.calls[0][0];
+      expect(saved.producer).toEqual(["Kevin Shields"]);
+      expect(saved.engineer).toEqual([
+        "Dick Meaney",
+        "Anjali Dutt",
+        "Guy Fixsen",
+        "Harold Burgon",
+        "Nick Robbins",
+        "Ingo Vauk",
+      ]);
     });
   });
 });

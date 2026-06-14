@@ -34,9 +34,6 @@ export class Album {
   @Column({ name: "band_id" })
   bandId: string;
 
-  // @Column({ nullable: true })
-  // cover: string;
-
   @Column({ name: "image_file_id", type: "text", nullable: true })
   imageFileId: string | null;
 

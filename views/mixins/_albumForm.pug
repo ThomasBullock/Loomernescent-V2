@@ -1,9 +1,6 @@
 mixin albumForm(album = {})
-  form.add-band.card(
-    action=`/addalbum/${album._id || ''}`,
-    method="post",
-    enctype="multipart/form-data"
-  )
+  - const action = album.id ? "/albums/" + album.id : "/albums";
+  form.add-band.card(action=action, method="post", enctype="multipart/form-data")
     label(for="title") Title
     input#title(type="text", name="title", value=album.title)
     label(for="artist") Artist
@@ -45,9 +42,9 @@ mixin albumForm(album = {})
       placeholder="list tracks seperated by comma",
       value=album.tracks && album.tracks.join(",")
     )
-    - const date = h.moment(album.releaseDate).format("YYYY-MM-DD");
+    //- - const date = h.moment(album.releaseDate).format("YYYY-MM-DD");
     label(for="releaseDate") Release Date
-    input(type="date", name="releaseDate", value=date)
+    input(type="date", name="releaseDate", value=album.releaseDate)
     label(for="label") Label
     input(type="text", name="label", placeholder="label", value=album.label)
     label(for="spotifyURL") Spotify URL

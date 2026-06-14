@@ -14,7 +14,7 @@ import {
   BadRequestException,
   Body,
 } from "@nestjs/common";
-import { AlbumsService } from "./albums.service";
+import { AlbumsService, CreateAlbumInput } from "./albums.service";
 import { AdminGuard } from "src/auth/guards/admin.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { processImage } from "src/common/images/process-image";
@@ -23,12 +23,13 @@ import { processImage } from "src/common/images/process-image";
 import { ImageKitService } from "../common/images/image-kit.service";
 import { memoryStorage } from "multer";
 import { MAX_UPLOAD_BYTES } from "src/common/constants/image";
+import type { Request, Response } from "express";
 
 const albumImageMulterOptions = {
   storage: memoryStorage(),
   limits: { fileSize: MAX_UPLOAD_BYTES },
   fileFilter: (
-    _req: Request,
+    _req: Express.Request,
     file: Express.Multer.File,
     cb: (error: Error | null, accept: boolean) => void,
   ) => {
@@ -76,6 +77,13 @@ export class AlbumsController {
     return { title: "Albums", ...result };
   }
 
+  @Get("/album/new")
+  @UseGuards(AdminGuard)
+  @Render("editAlbum")
+  addForm() {
+    return { title: "Add Album", album: {} };
+  }
+
   @Get("/album/:slug")
   @Render("album")
   async getAlbumBySlug(@Param("slug") slug: string) {
@@ -97,7 +105,7 @@ export class AlbumsController {
   ) {
     const errors = validateAlbumBody(body);
     if (errors.length) {
-      return res.status(200).render("editBand", {
+      return res.status(200).render("editAlbum", {
         title: "Add Album",
         errors,
         album: body,
@@ -107,6 +115,18 @@ export class AlbumsController {
     // tells the TypeScript compiler: "Hey, I know you think this value might be null or undefined, but I guarantee it exists at this exact moment.
     // Trust me, skip the type check here."
     const cover = file ? await this.uploadAlbumImage(file, body.title!, body.artist!) : {};
+
+    // Todo fetch artist from spotify API, find album and add its track names to tracks (if not supplied in body)
+
+    const album = await this.albumsService.create({
+      ...(body as CreateAlbumInput),
+      ...cover,
+    });
+
+    req.session["flash"] = {
+      success: [`${album.title} by ${album.artist} added`],
+    };
+    req.session.save(() => res.redirect(`/album/${album.slug}`));
   }
 
   private async uploadAlbumImage(

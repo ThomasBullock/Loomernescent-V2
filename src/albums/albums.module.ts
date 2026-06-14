@@ -4,9 +4,11 @@ import { Album } from "../entities/album.entity";
 import { AlbumsController } from "./albums.controller";
 import { AlbumsService } from "./albums.service";
 import { ImagesModule } from "src/common/images/images.module";
+import { Band } from "src/entities";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Album]), ImagesModule], // Makes ImageKitService injectable in this module | NestJS, Runtime Dependency Injection
+  // Makes ImageKitService injectable in this module | NestJS, Runtime Dependency Injection
+  imports: [TypeOrmModule.forFeature([Album, Band]), ImagesModule],
   controllers: [AlbumsController],
   providers: [AlbumsService],
 })

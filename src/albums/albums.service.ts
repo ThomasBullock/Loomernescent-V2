@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { DeepPartial, ILike, Repository } from "typeorm";
+import { ILike, Repository } from "typeorm";
 import { Album } from "../entities/album.entity";
 import slugify from "slugify";
 import { Band } from "../entities/band.entity";
 
-interface CreateAlbumInput {
+export interface CreateAlbumInput {
   title?: string;
   artist?: string;
   producer?: string;
@@ -81,7 +81,7 @@ export class AlbumsService {
       throw new Error("Artist not found");
     }
 
-    const data: DeepPartial<Album> = {
+    const album = this.albumRepo.create({
       title: input.title,
       slug,
       releaseDate: input.releaseDate ? new Date(input.releaseDate) : undefined,
@@ -89,15 +89,25 @@ export class AlbumsService {
       bandId: band.id,
       imageFileId: input.imageFileId,
       imagePath: input.imagePath,
-      producer: input.producer?.split(",") ?? [],
-      engineer: input.engineer?.split(",") ?? [],
-      mixedBy: input.mixedBy?.split(",") ?? [],
+      producer: parseList(input.producer),
+      engineer: parseList(input.engineer),
+      mixedBy: parseList(input.mixedBy),
       label: input.label,
-      tracks: input.tracks?.split(",") ?? [],
+      tracks: parseList(input.tracks),
       spotifyUrl: input.spotifyURL,
       bandcampUrl: input.bandCampURL,
       comments: input.comments,
-    };
-    return this.albumRepo.save(data);
+    });
+    return this.albumRepo.save(album);
   }
+}
+
+function parseList(csv?: string): string[] {
+  if (!csv) {
+    return [];
+  }
+  return csv
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
 }
