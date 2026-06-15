@@ -163,9 +163,7 @@ export class AlbumsService {
     album.engineer = parseList(input.engineer);
     album.mixedBy = parseList(input.mixedBy);
     album.tracks = parseList(input.tracks);
-    album.releaseDate = (
-      input.releaseDate ? new Date(input.releaseDate) : null
-    ) as Date;
+    album.releaseDate = (input.releaseDate ? new Date(input.releaseDate) : null) as Date;
     album.label = (input.label || null) as string;
     album.spotifyUrl = (input.spotifyUrl || null) as string;
     album.bandcampUrl = (input.bandcampUrl || null) as string;

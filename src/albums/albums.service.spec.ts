@@ -144,9 +144,7 @@ describe("AlbumsService", () => {
       await service.update("album-uuid", { title: "Nowhere", artist: "Ride" });
 
       expect(albumRepo.find).not.toHaveBeenCalled();
-      expect(albumRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ slug: "nowhere" }),
-      );
+      expect(albumRepo.save).toHaveBeenCalledWith(expect.objectContaining({ slug: "nowhere" }));
     });
 
     it("re-resolves band when artist changes", async () => {

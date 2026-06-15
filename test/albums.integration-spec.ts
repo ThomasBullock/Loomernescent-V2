@@ -68,7 +68,10 @@ describe("Albums (integration)", () => {
     it("returns 403 for non-admin users", async () => {
       const { user, password } = await createUser(handle.dataSource, { admin: false });
       const agent = await loginAs(handle.app, user.email, password);
-      const res = await agent.post("/albums").type("form").send({ title: "Nowhere", artist: "Ride" });
+      const res = await agent
+        .post("/albums")
+        .type("form")
+        .send({ title: "Nowhere", artist: "Ride" });
       expect(res.status).toBe(403);
     });
 
@@ -239,9 +242,7 @@ describe("Albums (integration)", () => {
       expect(res.status).toBe(302);
       expect(res.headers.location).toBe("/album/nowhere");
 
-      const row = await handle.dataSource
-        .getRepository(Album)
-        .findOne({ where: { id: album.id } });
+      const row = await handle.dataSource.getRepository(Album).findOne({ where: { id: album.id } });
       expect(row!.producer).toEqual(["Alan Moulder", "Flood"]);
       expect(row!.label).toBe("Creation");
     });
@@ -257,9 +258,7 @@ describe("Albums (integration)", () => {
       expect(res.status).toBe(302);
       expect(res.headers.location).toBe("/album/going-blank-again");
 
-      const row = await handle.dataSource
-        .getRepository(Album)
-        .findOne({ where: { id: album.id } });
+      const row = await handle.dataSource.getRepository(Album).findOne({ where: { id: album.id } });
       expect(row!.slug).toBe("going-blank-again");
     });
 
@@ -276,9 +275,7 @@ describe("Albums (integration)", () => {
         .send({ title: "Nowhere", artist: "Ride" });
       expect(handle.imageKit.upload).not.toHaveBeenCalled();
 
-      const row = await handle.dataSource
-        .getRepository(Album)
-        .findOne({ where: { id: album.id } });
+      const row = await handle.dataSource.getRepository(Album).findOne({ where: { id: album.id } });
       expect(row!.imageFileId).toBe("existing-id");
       expect(row!.imagePath).toBe("/albums/existing.jpg");
     });
@@ -304,9 +301,7 @@ describe("Albums (integration)", () => {
       expect(handle.imageKit.upload).toHaveBeenCalledTimes(1);
       expect(handle.imageKit.delete).toHaveBeenCalledWith("old-id");
 
-      const row = await handle.dataSource
-        .getRepository(Album)
-        .findOne({ where: { id: album.id } });
+      const row = await handle.dataSource.getRepository(Album).findOne({ where: { id: album.id } });
       expect(row!.imageFileId).toBe("test-file-id");
     });
   });
@@ -349,9 +344,7 @@ describe("Albums (integration)", () => {
       expect(res.headers.location).toBe("/albums");
       expect(handle.imageKit.delete).toHaveBeenCalledWith("cover-file-id");
 
-      const row = await handle.dataSource
-        .getRepository(Album)
-        .findOne({ where: { id: album.id } });
+      const row = await handle.dataSource.getRepository(Album).findOne({ where: { id: album.id } });
       expect(row).toBeNull();
     });
   });

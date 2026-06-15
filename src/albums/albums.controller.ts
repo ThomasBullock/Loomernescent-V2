@@ -255,9 +255,7 @@ function albumForForm(album: Album): Record<string, unknown> {
     engineer: album.engineer.join(", "),
     mixedBy: album.mixedBy.join(", "),
     tracks: album.tracks.join(", "),
-    releaseDate: album.releaseDate
-      ? new Date(album.releaseDate).toISOString().split("T")[0]
-      : "",
+    releaseDate: album.releaseDate ? new Date(album.releaseDate).toISOString().split("T")[0] : "",
   };
 }
 
