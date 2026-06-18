@@ -28,7 +28,7 @@ block content
     .album-info
       .album-info__cover
         img(
-          src=`/uploads/covers/${album.cover}`,
+          src=imageUrl(album.imagePath, { w: 600, h: 600, fo: "auto" }),
           alt=`cover artwork for ${album.title} by ${album.artist}`
         )
       .album-info__content

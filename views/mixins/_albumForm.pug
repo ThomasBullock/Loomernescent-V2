@@ -1,57 +1,58 @@
-mixin albumForm(album = {})
-  form.add-band.card(
-    action=`/addalbum/${album._id || ''}`,
-    method="post",
-    enctype="multipart/form-data"
-  )
+mixin albumForm(album = {}, mode = "add")
+  //- testid uses interpolation intentionally: mode is always 'add' or 'edit',
+  //- never user-derived data. Rendered value is a fixed static string per page.
+  - const p = `albums.${mode}-form`;
+  - const action = album.id ? "/albums/" + album.id : "/albums";
+  form.add-album.card(action=action, method="post", enctype="multipart/form-data")
     label(for="title") Title
-    input#title(type="text", name="title", value=album.title)
+    input#title(type="text", name="title", data-testid=`${p}.title-input`, value=album.title)
     label(for="artist") Artist
     input#artist(type="text", name="artist", value=album.artist)
-    label(for="bandID") BandID
-    input#bandID(type="text", name="bandID", placeholder="Leave blank", value=album.bandID)
     label(for="comments") Comments
     textarea(name="comments")= album.comments
-    //- Image upload
+    //- Cover image upload
     label(for="cover") Cover
+    if album.imagePath
+      img.album-form__preview(
+        src=imageUrl(album.imagePath, { w: 200, h: 200, fo: "auto" }),
+        alt=album.title,
+        width=200
+      )
     input#cover(type="file", name="cover", accept="image/png, image/jpeg")
-    if album.cover
-      img(src=`/uploads/covers/${album.cover}`, alt=album.title, width=200)
     label(for="producer") Producer
     input(
       type="text",
       name="producer",
-      placeholder="list personnel seperated by comma",
-      value=album.producer && album.producer.join(",")
+      placeholder="list personnel separated by comma",
+      value=album.producer
     )
-    label(for="mixedBy") mixed By
+    label(for="mixedBy") Mixed By
     input(
       type="text",
       name="mixedBy",
-      placeholder="list personnel seperated by comma",
-      value=album.mixedBy && album.mixedBy.join(",")
+      placeholder="list personnel separated by comma",
+      value=album.mixedBy
     )
     label(for="engineer") Engineers
     input(
       type="text",
       name="engineer",
-      placeholder="list personnel seperated by comma",
-      value=album.engineer && album.engineer.join(",")
+      placeholder="list personnel separated by comma",
+      value=album.engineer
     )
-    label(for="tracks") Track Listing (Fallback if not on spotify)
+    label(for="tracks") Track Listing (Fallback if not on Spotify)
     input(
       type="text",
       name="tracks",
-      placeholder="list tracks seperated by comma",
-      value=album.tracks && album.tracks.join(",")
+      placeholder="list tracks separated by comma",
+      value=album.tracks
     )
-    - const date = h.moment(album.releaseDate).format("YYYY-MM-DD");
     label(for="releaseDate") Release Date
-    input(type="date", name="releaseDate", value=date)
+    input(type="date", name="releaseDate", value=album.releaseDate)
     label(for="label") Label
     input(type="text", name="label", placeholder="label", value=album.label)
-    label(for="spotifyURL") Spotify URL
-    input#spotifyURL(type="text", name="spotifyURL", value=album.spotifyURL)
-    label(for="bandcampURL") Bandcamp URL
-    input#bandcampURL(type="text", name="bandcampURL", value=album.bandcampURL)
-    input.button(type="submit", value="Save -<")
+    label(for="spotifyUrl") Spotify URL
+    input#spotifyUrl(type="text", name="spotifyUrl", value=album.spotifyUrl)
+    label(for="bandcampUrl") Bandcamp URL
+    input#bandcampUrl(type="text", name="bandcampUrl", value=album.bandcampUrl)
+    input.button(type="submit", value="Save -<", data-testid=`${p}.submit-btn`)
