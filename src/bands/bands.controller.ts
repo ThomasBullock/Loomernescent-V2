@@ -15,10 +15,11 @@ import {
   UseInterceptors,
   NotFoundException,
 } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { memoryStorage } from "multer";
 import type { Request, Response } from "express";
-import { BandsService, CreateBandInput, GalleryImage, UpdateBandInput } from "./bands.service";
+import { BandsService, BandMapItem, CreateBandInput, GalleryImage, UpdateBandInput } from "./bands.service";
 import { Band } from "../entities/band.entity";
 import { User } from "../entities/user.entity";
 import { AdminGuard } from "../auth/guards/admin.guard";
@@ -78,6 +79,7 @@ export class BandsController {
     private readonly bandsService: BandsService,
     private readonly imageKit: ImageKitService,
     private readonly spotify: SpotifyService,
+    private readonly config: ConfigService,
   ) {}
 
   @Get("/")
@@ -107,7 +109,7 @@ export class BandsController {
   @UseGuards(AdminGuard)
   @Render("editBand")
   addForm() {
-    return { title: "Add Band", band: {} };
+    return { title: "Add Band", band: {}, mapKey: this.config.get<string>("GOOGLE_MAPS_KEY") ?? "" };
   }
 
   @Post("/bands")
@@ -119,12 +121,14 @@ export class BandsController {
     @Req() req: Request,
     @Res() res: Response,
   ) {
+    const mapKey = this.config.get<string>("GOOGLE_MAPS_KEY") ?? "";
     const errors = validateBandBody(body);
     if (errors.length) {
       return res.status(200).render("editBand", {
         title: "Add Band",
         errors,
         band: body,
+        mapKey,
       });
     }
 
@@ -152,6 +156,7 @@ export class BandsController {
           title: "Add Band",
           errors: ["A band with that name already exists"],
           band: body,
+          mapKey,
         });
       }
       throw err;
@@ -166,7 +171,11 @@ export class BandsController {
     if (!band) {
       throw new NotFoundException("Band not found");
     }
-    return { title: `Edit ${band.name}`, band: bandForForm(band) };
+    return {
+      title: `Edit ${band.name}`,
+      band: bandForForm(band),
+      mapKey: this.config.get<string>("GOOGLE_MAPS_KEY") ?? "",
+    };
   }
 
   @Post("/bands/:id")
@@ -184,12 +193,14 @@ export class BandsController {
       throw new NotFoundException("Band not found");
     }
 
+    const mapKey = this.config.get<string>("GOOGLE_MAPS_KEY") ?? "";
     const errors = validateBandBody(body);
     if (errors.length) {
       return res.status(200).render("editBand", {
         title: `Edit ${existing.name}`,
         errors,
         band: { ...body, id },
+        mapKey,
       });
     }
 
@@ -222,6 +233,7 @@ export class BandsController {
           title: `Edit ${existing.name}`,
           errors: ["A band with that name already exists"],
           band: { ...body, id },
+          mapKey,
         });
       }
       throw err;
@@ -247,6 +259,11 @@ export class BandsController {
       success: [`${existing.name} deleted`],
     };
     req.session.save(() => res.redirect("/bands"));
+  }
+
+  @Get("/api/bands/map")
+  async mapData(): Promise<BandMapItem[]> {
+    return this.bandsService.getBandsForMap();
   }
 
   @Get("/band/:slug")

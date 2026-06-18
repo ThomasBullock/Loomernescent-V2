@@ -110,4 +110,83 @@ describe("BandsService", () => {
       expect(saved.locationLat).toBeCloseTo(53.8008);
     });
   });
+
+  describe("getBandsForMap", () => {
+    let service: BandsService;
+    let bandRepo: { createQueryBuilder: jest.Mock };
+
+    const makeQb = (results: unknown[]) => ({
+      select: jest.fn().mockReturnThis(),
+      where: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockResolvedValue(results),
+    });
+
+    beforeEach(async () => {
+      bandRepo = { createQueryBuilder: jest.fn() };
+      const moduleRef = await Test.createTestingModule({
+        providers: [
+          BandsService,
+          { provide: getRepositoryToken(Band), useValue: bandRepo },
+          { provide: getRepositoryToken(Album), useValue: {} },
+        ],
+      }).compile();
+      service = moduleRef.get(BandsService);
+    });
+
+    it("returns only bands with both lat and lng set", async () => {
+      const located = {
+        name: "Slowdive",
+        slug: "slowdive",
+        locationLat: 51.45,
+        locationLng: -1.0,
+        locationAddress: "Reading, UK",
+        imagePath: "/bands/slowdive.jpg",
+      };
+      const qb = makeQb([located]);
+      bandRepo.createQueryBuilder.mockReturnValue(qb);
+
+      const result = await service.getBandsForMap();
+
+      expect(result).toHaveLength(1);
+      expect(result[0].name).toBe("Slowdive");
+      expect(result[0].locationLat).toBe(51.45);
+      expect(result[0].locationLng).toBe(-1.0);
+    });
+
+    it("applies the null-coordinate WHERE clause", async () => {
+      const qb = makeQb([]);
+      bandRepo.createQueryBuilder.mockReturnValue(qb);
+
+      await service.getBandsForMap();
+
+      expect(qb.where).toHaveBeenCalledWith(
+        "b.locationLat IS NOT NULL AND b.locationLng IS NOT NULL",
+      );
+    });
+
+    it("returns an empty array when no bands have location data", async () => {
+      const qb = makeQb([]);
+      bandRepo.createQueryBuilder.mockReturnValue(qb);
+
+      const result = await service.getBandsForMap();
+
+      expect(result).toEqual([]);
+    });
+
+    it("selects only the map projection fields", async () => {
+      const qb = makeQb([]);
+      bandRepo.createQueryBuilder.mockReturnValue(qb);
+
+      await service.getBandsForMap();
+
+      expect(qb.select).toHaveBeenCalledWith([
+        "b.name",
+        "b.slug",
+        "b.locationLat",
+        "b.locationLng",
+        "b.locationAddress",
+        "b.imagePath",
+      ]);
+    });
+  });
 });

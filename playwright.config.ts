@@ -37,6 +37,7 @@ export default defineConfig({
       MAILGUN_SMTP_PORT: process.env.MAILGUN_SMTP_PORT ?? "1025",
       MAILGUN_SMTP_LOGIN: process.env.MAILGUN_SMTP_LOGIN ?? "",
       MAILGUN_SMTP_PASSWORD: process.env.MAILGUN_SMTP_PASSWORD ?? "",
+      GOOGLE_MAPS_KEY: process.env.GOOGLE_MAPS_KEY ?? "",
     },
   },
 });

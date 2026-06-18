@@ -260,3 +260,10 @@ Testids use Pug interpolation with a `mode` param (`'add'` or `'edit'`). Caller 
 | `pedals.edit-form.brand-input` | Brand input (edit form) |
 | `pedals.edit-form.name-input` | Name input (edit form) |
 | `pedals.edit-form.submit-btn` | Save changes button (edit form) |
+
+### Map — `views/map.pug`
+
+| Test ID | Element |
+|---|---|
+| `map.page.map-container` | `#map` div (Google Maps mount point) |
+| `map.page.city-search-input` | City search autocomplete input |

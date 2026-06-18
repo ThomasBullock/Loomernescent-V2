@@ -2,6 +2,9 @@ extends layout
 
 include mixins/_bandForm
 
+block scripts
+  script(src="/dist/band-form.js", defer)
+
 block content
   .inner
     h2 #{ title }

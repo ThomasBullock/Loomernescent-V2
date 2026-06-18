@@ -41,6 +41,15 @@ export interface HeroTile {
   cover: string | null;
 }
 
+export interface BandMapItem {
+  name: string;
+  slug: string;
+  locationLat: number;
+  locationLng: number;
+  locationAddress: string | null;
+  imagePath: string | null;
+}
+
 @Injectable()
 export class BandsService {
   constructor(
@@ -183,6 +192,25 @@ export class BandsService {
     });
     const pages = Math.ceil(count / perPage) || 1;
     return { bands, page, pages, count };
+  }
+
+  /**
+   * Returns all bands with known coordinates, projected to the minimal fields
+   * needed for map markers.
+   */
+  async getBandsForMap(): Promise<BandMapItem[]> {
+    return this.bandRepo
+      .createQueryBuilder("b")
+      .select([
+        "b.name",
+        "b.slug",
+        "b.locationLat",
+        "b.locationLng",
+        "b.locationAddress",
+        "b.imagePath",
+      ])
+      .where("b.locationLat IS NOT NULL AND b.locationLng IS NOT NULL")
+      .getMany() as Promise<BandMapItem[]>;
   }
 
   async getBandBySlug(slug: string): Promise<{ band: Band | null; albums: Album[] }> {
