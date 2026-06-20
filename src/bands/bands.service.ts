@@ -41,6 +41,15 @@ export interface HeroTile {
   cover: string | null;
 }
 
+export interface BandMapItem {
+  name: string;
+  slug: string;
+  locationLat: number;
+  locationLng: number;
+  locationAddress: string | null;
+  imagePath: string | null;
+}
+
 @Injectable()
 export class BandsService {
   constructor(
@@ -183,6 +192,37 @@ export class BandsService {
     });
     const pages = Math.ceil(count / perPage) || 1;
     return { bands, page, pages, count };
+  }
+
+  /**
+   * Returns all bands with known coordinates, projected to the minimal fields
+   * needed for map markers.
+   */
+  async getBandsForMap(location_lng?: string, location_lat?: string): Promise<BandMapItem[]> {
+    const qb = this.bandRepo
+      .createQueryBuilder("b")
+      .select([
+        "b.name",
+        "b.slug",
+        "b.locationLat",
+        "b.locationLng",
+        "b.locationAddress",
+        "b.imagePath",
+      ])
+      .where("b.locationLat IS NOT NULL AND b.locationLng IS NOT NULL");
+
+    if (location_lng && location_lat) {
+      qb.andWhere(
+        `(6371 * acos(LEAST(1.0,
+            cos(radians(:lat)) * cos(radians(b.locationLat)) *
+            cos(radians(b.locationLng) - radians(:lng)) +
+            sin(radians(:lat)) * sin(radians(b.locationLat))
+          ))) <= :radius`,
+        { lat: parseFloat(location_lat), lng: parseFloat(location_lng), radius: 50 },
+      );
+    }
+
+    return qb.getMany() as Promise<BandMapItem[]>;
   }
 
   async getBandBySlug(slug: string): Promise<{ band: Band | null; albums: Album[] }> {

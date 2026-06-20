@@ -14,8 +14,8 @@
     "start:prod": "node dist/main",
     "sass:build": "sass src/styles/style.scss public/dist/style.css --load-path=src/styles --quiet-deps --silence-deprecation=import --silence-deprecation=global-builtin --silence-deprecation=color-functions --silence-deprecation=slash-div --silence-deprecation=if-function",
     "sass:watch": "sass --watch src/styles/style.scss:public/dist/style.css --load-path=src/styles --quiet-deps --silence-deprecation=import --silence-deprecation=global-builtin --silence-deprecation=color-functions --silence-deprecation=slash-div --silence-deprecation=if-function",
-    "js:build": "esbuild src/client/main.ts --bundle --outfile=public/dist/app.js --target=es2020 --minify",
-    "js:watch": "esbuild src/client/main.ts --bundle --outfile=public/dist/app.js --target=es2020 --sourcemap --watch",
+    "js:build": "node esbuild.config.mjs",
+    "js:watch": "node esbuild.config.mjs --watch",
     "lint": "eslint \"{src,test}/**/*.ts\" --fix && prettier --write .",
     "lint:check": "eslint \"{src,test}/**/*.ts\" && prettier --check .",
     "test": "jest",
@@ -35,6 +35,7 @@
     "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
+    "@googlemaps/js-api-loader": "^2.1.1",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.1",

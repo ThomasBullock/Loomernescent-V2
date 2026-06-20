@@ -1,7 +1,10 @@
 import { Controller, Get, Render } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 @Controller()
 export class AppController {
+  constructor(private readonly config: ConfigService) {}
+
   @Get("add")
   @Render("add")
   add() {
@@ -28,6 +31,9 @@ export class AppController {
   map() {
     return {
       title: "Map of Shoegaze bands",
+      mapKey: this.config.get<string>("GOOGLE_MAPS_KEY") ?? "",
+      mapId: this.config.get<string>("GOOGLE_MAP_ID") ?? "DEMO_MAP_ID",
+      ikUrl: this.config.get<string>("IMAGEKIT_URL_ENDPOINT") ?? "",
     };
   }
 }

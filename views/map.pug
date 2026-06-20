@@ -17,14 +17,17 @@ block meta
   )
   meta(property="og:image", content="http://loomernescent.com/images/loomernescent_site.jpeg")
 
+block scripts
+  script(src="/dist/map.js", defer)
+
 block content
   .fullwidth
     .map
       .autocomplete
-        input.autocomplete__input(
-          type="text",
-          placeholder="Search cities for bands",
-          name="geolocate"
-        )
-      #map
+      #map(
+        data-map-key=mapKey,
+        data-map-id=mapId,
+        data-ik-url=ikUrl,
+        data-testid="map.page.map-container"
+      )
         p Loading Map...

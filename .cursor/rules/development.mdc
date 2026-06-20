@@ -29,6 +29,8 @@ If you write it, something must call it. If nothing calls it, don't write it.
 
 After every code change run `npm run build` (compiles SCSS then NestJS) before considering the task complete.
 
+Type-check client code (esbuild skips it, `nest build` excludes `src/client`): `npx tsc --noEmit`
+
 Lint: `npm run lint` — ESLint with Prettier enforced.
 
 After any changes that come from a plan, run the full test suite before considering the task complete:
