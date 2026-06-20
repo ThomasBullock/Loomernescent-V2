@@ -2,11 +2,11 @@ import type { Page, Locator } from "@playwright/test";
 
 export class MapPage {
   readonly mapContainer: Locator;
-  readonly citySearchInput: Locator;
+  readonly autocompleteContainer: Locator;
 
   constructor(private readonly page: Page) {
     this.mapContainer = page.getByTestId("map.page.map-container");
-    this.citySearchInput = page.getByTestId("map.page.city-search-input");
+    this.autocompleteContainer = page.locator(".autocomplete");
   }
 
   async goto(): Promise<void> {

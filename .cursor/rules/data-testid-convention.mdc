@@ -266,4 +266,3 @@ Testids use Pug interpolation with a `mode` param (`'add'` or `'edit'`). Caller 
 | Test ID | Element |
 |---|---|
 | `map.page.map-container` | `#map` div (Google Maps mount point) |
-| `map.page.city-search-input` | City search autocomplete input |

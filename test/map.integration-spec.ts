@@ -27,10 +27,10 @@ describe("Map (integration)", () => {
       expect(res.text).toContain('data-testid="map.page.map-container"');
     });
 
-    it("renders the city search input", async () => {
+    it("renders the autocomplete search container", async () => {
       const res = await request(handle.app.getHttpServer()).get("/map");
       expect(res.status).toBe(200);
-      expect(res.text).toContain('data-testid="map.page.city-search-input"');
+      expect(res.text).toContain('class="autocomplete"');
     });
 
     it("includes data-map-key attribute when GOOGLE_MAPS_KEY is set", async () => {
