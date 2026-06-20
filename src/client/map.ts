@@ -17,7 +17,9 @@ async function loadBands(lat?: number, lng?: number): Promise<BandMapItem[]> {
   }
   console.log(url);
   const res = await fetch(url.toString());
-  if (!res.ok) return [];
+  if (!res.ok) {
+    return [];
+  }
   return res.json() as Promise<BandMapItem[]>;
 }
 
@@ -45,9 +47,11 @@ function buildPopupElement(band: BandMapItem, ikUrl: string): HTMLElement {
 
 async function initMap(): Promise<void> {
   const mapDiv = document.getElementById("map");
-  if (!mapDiv) return;
+  if (!mapDiv) {
+    return;
+  }
 
-  const { mapKey = "", mapId = "DEMO_MAP_ID", ikUrl = "" } = (mapDiv as HTMLElement).dataset;
+  const { mapKey = "", mapId = "DEMO_MAP_ID", ikUrl = "" } = mapDiv.dataset;
 
   setOptions({ key: mapKey, v: "weekly" });
 
@@ -77,7 +81,9 @@ async function initMap(): Promise<void> {
     activeMarkers = [];
     infoWindow.close();
 
-    if (bands.length === 0) return;
+    if (bands.length === 0) {
+      return;
+    }
 
     const bounds = new LatLngBounds();
     bands.forEach((band) => {
@@ -94,7 +100,9 @@ async function initMap(): Promise<void> {
     });
 
     map.fitBounds(bounds);
-    if (bands.length === 1) map.setZoom(6);
+    if (bands.length === 1) {
+      map.setZoom(6);
+    }
   }
 
   drawMarkers(await loadBands());
@@ -105,18 +113,20 @@ async function initMap(): Promise<void> {
     autocomplete.placeholder = "Search cities for Shoegaze bands...";
     searchContainer.appendChild(autocomplete);
 
-    autocomplete.addEventListener("gmp-select", async ({ placePrediction }) => {
-      const place = placePrediction.toPlace();
-      await place.fetchFields({ fields: ["location"] });
-      if (!place.location) {
-        return;
-      }
-      const lat = place.location.lat();
-      const lng = place.location.lng();
-      map.setCenter({ lat, lng });
-      map.setZoom(8);
-      const bands = await loadBands(lat, lng);
-      drawMarkers(bands);
+    autocomplete.addEventListener("gmp-select", ({ placePrediction }) => {
+      void (async () => {
+        const place = placePrediction.toPlace();
+        await place.fetchFields({ fields: ["location"] });
+        if (!place.location) {
+          return;
+        }
+        const lat = place.location.lat();
+        const lng = place.location.lng();
+        map.setCenter({ lat, lng });
+        map.setZoom(8);
+        const bands = await loadBands(lat, lng);
+        drawMarkers(bands);
+      })();
     });
   }
 }

@@ -33,7 +33,12 @@ mixin bandForm(band = {}, mode = "add")
       data-testid=`${p}.gallery-input`
     )
     label(for="address") Origin
-    input#address(type="text", name="locationAddress", value=band.locationAddress, data-map-key=mapKey)
+    input#address(
+      type="text",
+      name="locationAddress",
+      value=band.locationAddress,
+      data-map-key=mapKey
+    )
     label(for="lng") Origin Lng
     input#lng.half(type="text", name="locationLng", value=band.locationLng)
     label(for="lat") Origin Lat

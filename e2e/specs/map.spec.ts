@@ -2,9 +2,7 @@ import { test, expect } from "@playwright/test";
 import { MapPage } from "../pages/MapPage";
 
 test.describe("/map page", () => {
-  test("Google Maps initialises — map application div is injected", async ({
-    page,
-  }) => {
+  test("Google Maps initialises — map application div is injected", async ({ page }) => {
     const mapPage = new MapPage(page);
     await mapPage.goto();
 
@@ -22,9 +20,7 @@ test.describe("/map page", () => {
     await expect(mapPage.citySearchInput).toBeVisible();
   });
 
-  test("city search input accepts text without submitting the form", async ({
-    page,
-  }) => {
+  test("city search input accepts text without submitting the form", async ({ page }) => {
     const mapPage = new MapPage(page);
     await mapPage.goto();
     await mapPage.citySearchInput.fill("London");
