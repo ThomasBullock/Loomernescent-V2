@@ -19,7 +19,13 @@ import { ConfigService } from "@nestjs/config";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { memoryStorage } from "multer";
 import type { Request, Response } from "express";
-import { BandsService, BandMapItem, CreateBandInput, GalleryImage, UpdateBandInput } from "./bands.service";
+import {
+  BandsService,
+  BandMapItem,
+  CreateBandInput,
+  GalleryImage,
+  UpdateBandInput,
+} from "./bands.service";
 import { Band } from "../entities/band.entity";
 import { User } from "../entities/user.entity";
 import { AdminGuard } from "../auth/guards/admin.guard";
@@ -109,7 +115,11 @@ export class BandsController {
   @UseGuards(AdminGuard)
   @Render("editBand")
   addForm() {
-    return { title: "Add Band", band: {}, mapKey: this.config.get<string>("GOOGLE_MAPS_KEY") ?? "" };
+    return {
+      title: "Add Band",
+      band: {},
+      mapKey: this.config.get<string>("GOOGLE_MAPS_KEY") ?? "",
+    };
   }
 
   @Post("/bands")
@@ -262,8 +272,11 @@ export class BandsController {
   }
 
   @Get("/api/bands/map")
-  async mapData(): Promise<BandMapItem[]> {
-    return this.bandsService.getBandsForMap();
+  async mapData(
+    @Query("location_lng") location_lng?: string,
+    @Query("location_lat") location_lat?: string,
+  ): Promise<BandMapItem[]> {
+    return this.bandsService.getBandsForMap(location_lng, location_lat);
   }
 
   @Get("/band/:slug")

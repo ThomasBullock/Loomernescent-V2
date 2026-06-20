@@ -9,22 +9,38 @@ interface BandMapItem {
   imagePath: string | null;
 }
 
-async function loadBands(): Promise<BandMapItem[]> {
-  const res = await fetch("/api/bands/map");
+async function loadBands(lat?: number, lng?: number): Promise<BandMapItem[]> {
+  const url = new URL("/api/bands/map", location.origin);
+  if (lat !== undefined && lng !== undefined) {
+    url.searchParams.set("location_lat", String(lat));
+    url.searchParams.set("location_lng", String(lng));
+  }
+  console.log(url);
+  const res = await fetch(url.toString());
   if (!res.ok) return [];
   return res.json() as Promise<BandMapItem[]>;
 }
 
-function buildPopupHtml(band: BandMapItem, ikUrl: string): string {
-  const img = band.imagePath
-    ? `<img src="${ikUrl}${band.imagePath}" alt="${band.name}" />`
-    : "";
-  return `<div class="popup">
-    <a href="/band/${band.slug}">
-      ${img}
-      <p><strong>${band.name}</strong></p>
-    </a>
-  </div>`;
+function buildPopupElement(band: BandMapItem, ikUrl: string): HTMLElement {
+  const wrapper = document.createElement("div");
+  wrapper.className = "popup";
+
+  const link = document.createElement("a");
+  link.href = `/band/${band.slug}`;
+
+  if (band.imagePath) {
+    const img = document.createElement("img");
+    img.src = `${ikUrl}${band.imagePath}`;
+    img.alt = ""; // decorative — link text below is the accessible name
+    link.appendChild(img);
+  }
+
+  const name = document.createElement("strong");
+  name.textContent = band.name;
+  link.appendChild(name);
+
+  wrapper.appendChild(link);
+  return wrapper;
 }
 
 async function initMap(): Promise<void> {
@@ -35,12 +51,17 @@ async function initMap(): Promise<void> {
 
   setOptions({ key: mapKey, v: "weekly" });
 
-  const [{ Map, InfoWindow }, { AdvancedMarkerElement }, { Autocomplete }] =
-    await Promise.all([
-      importLibrary("maps"),
-      importLibrary("marker"),
-      importLibrary("places"),
-    ]);
+  const [
+    { Map, InfoWindow },
+    { LatLngBounds },
+    { AdvancedMarkerElement },
+    { PlaceAutocompleteElement },
+  ] = await Promise.all([
+    importLibrary("maps"),
+    importLibrary("core"),
+    importLibrary("marker"),
+    importLibrary("places"),
+  ]);
 
   const map = new Map(mapDiv, {
     center: { lat: 43.2, lng: 0 },
@@ -49,42 +70,53 @@ async function initMap(): Promise<void> {
   });
 
   const infoWindow = new InfoWindow();
-  const bands = await loadBands();
+  let activeMarkers: InstanceType<typeof AdvancedMarkerElement>[] = [];
 
-  if (bands.length > 0) {
-    const bounds = new google.maps.LatLngBounds();
+  function drawMarkers(bands: BandMapItem[]) {
+    activeMarkers.forEach((m) => (m.map = null));
+    activeMarkers = [];
+    infoWindow.close();
 
+    if (bands.length === 0) return;
+
+    const bounds = new LatLngBounds();
     bands.forEach((band) => {
       const position = { lat: band.locationLat, lng: band.locationLng };
       bounds.extend(position);
 
       const marker = new AdvancedMarkerElement({ map, position });
+      activeMarkers.push(marker);
 
       marker.addListener("click", () => {
-        infoWindow.setContent(buildPopupHtml(band, ikUrl));
+        infoWindow.setContent(buildPopupElement(band, ikUrl));
         infoWindow.open(map, marker);
       });
     });
 
     map.fitBounds(bounds);
-
-    if (bands.length === 1) {
-      map.setZoom(6);
-    }
+    if (bands.length === 1) map.setZoom(6);
   }
 
-  const searchInput = document.querySelector<HTMLInputElement>('[name="geolocate"]');
-  if (searchInput) {
-    const autocomplete = new Autocomplete(searchInput, { types: ["(cities)"] });
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      if (!place.geometry?.location) return;
-      map.setCenter(place.geometry.location);
-      map.setZoom(8);
-    });
+  drawMarkers(await loadBands());
 
-    searchInput.addEventListener("keydown", (e: KeyboardEvent) => {
-      if (e.key === "Enter") e.preventDefault();
+  const searchContainer = document.querySelector<HTMLElement>(".autocomplete");
+  if (searchContainer) {
+    const autocomplete = new PlaceAutocompleteElement({ includedPrimaryTypes: ["locality"] });
+    autocomplete.placeholder = "Search cities for Shoegaze bands...";
+    searchContainer.appendChild(autocomplete);
+
+    autocomplete.addEventListener("gmp-select", async ({ placePrediction }) => {
+      const place = placePrediction.toPlace();
+      await place.fetchFields({ fields: ["location"] });
+      if (!place.location) {
+        return;
+      }
+      const lat = place.location.lat();
+      const lng = place.location.lng();
+      map.setCenter({ lat, lng });
+      map.setZoom(8);
+      const bands = await loadBands(lat, lng);
+      drawMarkers(bands);
     });
   }
 }
