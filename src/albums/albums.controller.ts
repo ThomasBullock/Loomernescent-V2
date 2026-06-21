@@ -24,6 +24,7 @@ import { ImageKitService } from "../common/images/image-kit.service";
 import { memoryStorage } from "multer";
 import { MAX_UPLOAD_BYTES } from "../common/constants/image";
 import type { Request, Response } from "express";
+import { error } from "console";
 
 const albumImageMulterOptions = {
   storage: memoryStorage(),
@@ -115,17 +116,40 @@ export class AlbumsController {
       });
     }
 
-    const cover = file ? await this.uploadAlbumImage(file, body.title!, body.artist!) : {};
+    // let + reassignment forces you to declare the type upfront.
+    let cover: { imageFileId?: string; imagePath?: string } = {};
+    if (file) {
+      try {
+        cover = await this.uploadAlbumImage(file, body.title!, body.artist!);
+      } catch {
+        return res.status(200).render("editAlbum", {
+          title: "Add Album",
+          errors: ["Image upload failed — please try again"],
+          album: body,
+        });
+      }
+    }
 
-    const album = await this.albumsService.create({
-      ...(body as CreateAlbumInput),
-      ...cover,
-    });
+    try {
+      const album = await this.albumsService.create({
+        ...(body as CreateAlbumInput),
+        ...cover,
+      });
 
-    req.session["flash"] = {
-      success: [`${album.title} by ${album.artist} added`],
-    };
-    req.session.save(() => res.redirect(`/album/${album.slug}`));
+      req.session["flash"] = {
+        success: [`${album.title} by ${album.artist} added`],
+      };
+      req.session.save(() => res.redirect(`/album/${album.slug}`));
+    } catch (err: unknown) {
+      if (err instanceof Error && err.message === "Artist not found") {
+        return res.status(200).render("editAlbum", {
+          title: "Add Album",
+          errors: ["Artist not found — check the band name"],
+          album: body,
+        });
+      }
+      throw err;
+    }
   }
 
   @Get("/albums/:id/edit")
@@ -164,9 +188,18 @@ export class AlbumsController {
     }
 
     const oldFileId = existing.imageFileId;
-    const cover = file
-      ? await this.uploadAlbumImage(file, body.title!, body.artist ?? existing.artist)
-      : {};
+    let cover: { imageFileId?: string; imagePath?: string } = {};
+    if (file) {
+      try {
+        cover = await this.uploadAlbumImage(file, body.title!, body.artist ?? existing.artist);
+      } catch {
+        return res.status(200).render("editAlbum", {
+          title: `Edit ${existing.title}`,
+          errors: ["Image upload failed — please try again"],
+          album: { ...body, id },
+        });
+      }
+    }
 
     try {
       const album = await this.albumsService.update(id, {

@@ -70,6 +70,14 @@ export class AlbumsService {
   }
 
   async create(input: CreateAlbumInput): Promise<Album> {
+    /* Artist */
+    const band = await this.bandRepo.findOne({
+      where: { name: input.artist },
+    });
+    if (!band) {
+      throw new Error("Artist not found");
+    }
+
     /* Slug */
     const baseSlug = slugify(`${input.title}`, {
       lower: true,
@@ -90,14 +98,6 @@ export class AlbumsService {
     while (existingSlugs.has(slug)) {
       slug = `${baseSlug}-${suffix}`;
       suffix++;
-    }
-
-    /* Artist */
-    const band = await this.bandRepo.findOne({
-      where: { name: input.artist },
-    });
-    if (!band) {
-      throw new Error("Artist not found");
     }
 
     const album = this.albumRepo.create({

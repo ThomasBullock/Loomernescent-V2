@@ -243,6 +243,18 @@ describe("AlbumsService", () => {
       );
     });
 
+    it("throws if the artist band does not exist", async () => {
+      // override the beforeEach default so we dont get findOne.mockResolvedValue(mockBand)
+      bandRepo.findOne.mockResolvedValue(null);
+
+      expect(
+        service.create({
+          title: "Barry Manilow II",
+          artist: "Barry Manilow",
+        }),
+      ).rejects.toThrow("Artist not found");
+    });
+
     it("increments suffix until a free slug is found", async () => {
       albumRepo.find.mockResolvedValue([
         { slug: "going-blank-again" } as Album,
@@ -258,6 +270,23 @@ describe("AlbumsService", () => {
       expect(albumRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({
           slug: "going-blank-again-3",
+        }),
+      );
+    });
+
+    it("saves image fields when cover data is supplied", async () => {
+      albumRepo.find.mockResolvedValue([]);
+      await service.create({
+        title: "Tarantula",
+        artist: "Ride",
+        imageFileId: "new-uuid",
+        imagePath: "/albums/Tarantula.jpg",
+      });
+      // ...
+      expect(albumRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          imageFileId: "new-uuid",
+          imagePath: "/albums/Tarantula.jpg",
         }),
       );
     });
