@@ -150,9 +150,7 @@ describe("AlbumsService", () => {
 
       await service.update("album-uuid", { title: "Nowhere", artist: "Ride" });
 
-      expect(albumRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ bandId: "ride-uuid" }),
-      );
+      expect(albumRepo.save).toHaveBeenCalledWith(expect.objectContaining({ bandId: "ride-uuid" }));
     });
 
     it("preserves image when no new image supplied", async () => {
@@ -308,9 +306,7 @@ describe("AlbumsService", () => {
         bandId: "band-uuid",
       });
 
-      expect(albumRepo.save).toHaveBeenCalledWith(
-        expect.objectContaining({ bandId: "band-uuid" }),
-      );
+      expect(albumRepo.save).toHaveBeenCalledWith(expect.objectContaining({ bandId: "band-uuid" }));
     });
   });
 });
