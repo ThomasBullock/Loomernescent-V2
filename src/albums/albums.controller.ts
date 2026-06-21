@@ -16,6 +16,7 @@ import {
   Body,
 } from "@nestjs/common";
 import { AlbumsService, CreateAlbumInput, UpdateAlbumInput } from "./albums.service";
+import { BandsService } from "../bands/bands.service";
 import { Album } from "../entities/album.entity";
 import { AdminGuard } from "../auth/guards/admin.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
@@ -24,7 +25,6 @@ import { ImageKitService } from "../common/images/image-kit.service";
 import { memoryStorage } from "multer";
 import { MAX_UPLOAD_BYTES } from "../common/constants/image";
 import type { Request, Response } from "express";
-import { error } from "console";
 
 const albumImageMulterOptions = {
   storage: memoryStorage(),
@@ -62,6 +62,7 @@ export class AlbumsController {
 
   constructor(
     private readonly albumsService: AlbumsService,
+    private readonly bandsService: BandsService,
     private readonly imageKit: ImageKitService,
   ) {}
 
@@ -116,6 +117,15 @@ export class AlbumsController {
       });
     }
 
+    const band = await this.bandsService.getBandByName(body.artist!);
+    if (!band) {
+      return res.status(200).render("editAlbum", {
+        title: "Add Album",
+        errors: ["Artist not found — check the band name"],
+        album: body,
+      });
+    }
+
     // let + reassignment forces you to declare the type upfront.
     let cover: { imageFileId?: string; imagePath?: string } = {};
     if (file) {
@@ -133,6 +143,7 @@ export class AlbumsController {
     try {
       const album = await this.albumsService.create({
         ...(body as CreateAlbumInput),
+        bandId: band.id,
         ...cover,
       });
 
@@ -141,10 +152,10 @@ export class AlbumsController {
       };
       req.session.save(() => res.redirect(`/album/${album.slug}`));
     } catch (err: unknown) {
-      if (err instanceof Error && err.message === "Artist not found") {
+      if (isUniqueViolation(err)) {
         return res.status(200).render("editAlbum", {
           title: "Add Album",
-          errors: ["Artist not found — check the band name"],
+          errors: ["An album with that title already exists"],
           album: body,
         });
       }
@@ -187,6 +198,20 @@ export class AlbumsController {
       });
     }
 
+    // Resolve band when artist has changed; otherwise keep existing bandId
+    let bandId = existing.bandId;
+    if (body.artist && body.artist !== existing.artist) {
+      const band = await this.bandsService.getBandByName(body.artist);
+      if (!band) {
+        return res.status(200).render("editAlbum", {
+          title: `Edit ${existing.title}`,
+          errors: ["Artist not found — check the band name"],
+          album: { ...body, id },
+        });
+      }
+      bandId = band.id;
+    }
+
     const oldFileId = existing.imageFileId;
     let cover: { imageFileId?: string; imagePath?: string } = {};
     if (file) {
@@ -204,6 +229,7 @@ export class AlbumsController {
     try {
       const album = await this.albumsService.update(id, {
         ...(body as UpdateAlbumInput),
+        bandId,
         ...cover,
       });
       if (!album) {

@@ -111,6 +111,41 @@ describe("BandsService", () => {
     });
   });
 
+  describe("getBandByName", () => {
+    let service: BandsService;
+    let bandRepo: { findOne: jest.Mock };
+
+    beforeEach(async () => {
+      bandRepo = { findOne: jest.fn() };
+      const moduleRef = await Test.createTestingModule({
+        providers: [
+          BandsService,
+          { provide: getRepositoryToken(Band), useValue: bandRepo },
+          { provide: getRepositoryToken(Album), useValue: {} },
+        ],
+      }).compile();
+      service = moduleRef.get(BandsService);
+    });
+
+    it("returns the band when found by name", async () => {
+      const band = { id: "band-1", name: "Ride" } as Band;
+      bandRepo.findOne.mockResolvedValue(band);
+
+      const result = await service.getBandByName("Ride");
+
+      expect(bandRepo.findOne).toHaveBeenCalledWith({ where: { name: "Ride" } });
+      expect(result).toBe(band);
+    });
+
+    it("returns null when no band matches the name", async () => {
+      bandRepo.findOne.mockResolvedValue(null);
+
+      const result = await service.getBandByName("Unknown Artist");
+
+      expect(result).toBeNull();
+    });
+  });
+
   describe("getBandsForMap", () => {
     let service: BandsService;
     let bandRepo: { createQueryBuilder: jest.Mock };

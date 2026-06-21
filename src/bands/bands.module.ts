@@ -10,5 +10,6 @@ import { ImagesModule } from "../common/images/images.module";
   imports: [TypeOrmModule.forFeature([Band, Album]), ImagesModule],
   controllers: [BandsController],
   providers: [BandsService],
+  exports: [BandsService],
 })
 export class BandsModule {}
