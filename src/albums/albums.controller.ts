@@ -125,6 +125,11 @@ export class AlbumsController {
     try {
       band = await this.bandsService.getBandByName(body.artist!);
     } catch (err) {
+      return res.status(200).render("editAlbum", {
+        title: "Add Album",
+        errors: ["Something went wrong — please try again"],
+        album: body,
+      });
       throw err; // or log + render a generic "something went wrong" message
     }
     if (!band) {
@@ -139,7 +144,7 @@ export class AlbumsController {
     let cover: { imageFileId?: string; imagePath?: string } = {};
     if (file) {
       try {
-        cover = await this.uploadAlbumImage(file, body.title!, body.artist!);
+        cover = await this.uploadAlbumImage(file, body.title, body.artist!);
       } catch {
         return res.status(200).render("editAlbum", {
           title: "Add Album",
@@ -233,7 +238,7 @@ export class AlbumsController {
     let cover: { imageFileId?: string; imagePath?: string } = {};
     if (file) {
       try {
-        cover = await this.uploadAlbumImage(file, body.title!, body.artist ?? existing.artist);
+        cover = await this.uploadAlbumImage(file, body.title, body.artist ?? existing.artist);
       } catch {
         return res.status(200).render("editAlbum", {
           title: `Edit ${existing.title}`,
