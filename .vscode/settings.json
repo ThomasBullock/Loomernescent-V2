@@ -1,0 +1,8 @@
+{
+  // Always generate relative import paths from auto-import / `cmd .` quick fixes
+  // (e.g. "../common/helpers/utils" instead of "src/common/helpers/utils").
+  // The default "shortest" prefers non-relative specifiers when a baseUrl/paths
+  // mapping exists, which produced unresolved `src/...` imports.
+  "typescript.preferences.importModuleSpecifier": "relative",
+  "javascript.preferences.importModuleSpecifier": "relative"
+}

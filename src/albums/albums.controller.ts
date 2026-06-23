@@ -27,7 +27,7 @@ import { memoryStorage } from "multer";
 import { MAX_UPLOAD_BYTES } from "../common/constants/image";
 import type { Request, Response } from "express";
 import { SpotifyService } from "../spotify/spotify.service";
-import { normalize } from "src/common/helpers/utils";
+import { normalize } from "../common/helpers/utils";
 
 const albumImageMulterOptions = {
   storage: memoryStorage(),
