@@ -18,6 +18,7 @@ import {
 import { AlbumsService, CreateAlbumInput, UpdateAlbumInput } from "./albums.service";
 import { BandsService } from "../bands/bands.service";
 import { Album } from "../entities/album.entity";
+import { Band } from "../entities/band.entity";
 import { AdminGuard } from "../auth/guards/admin.guard";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { processImage } from "../common/images/process-image";
@@ -25,6 +26,8 @@ import { ImageKitService } from "../common/images/image-kit.service";
 import { memoryStorage } from "multer";
 import { MAX_UPLOAD_BYTES } from "../common/constants/image";
 import type { Request, Response } from "express";
+import { SpotifyService } from "../spotify/spotify.service";
+import { normalize } from "src/common/helpers/utils";
 
 const albumImageMulterOptions = {
   storage: memoryStorage(),
@@ -43,7 +46,7 @@ const albumImageMulterOptions = {
 };
 
 interface AlbumFormBody {
-  title?: string;
+  title: string;
   artist?: string;
   producer?: string;
   mixedBy?: string;
@@ -64,6 +67,7 @@ export class AlbumsController {
     private readonly albumsService: AlbumsService,
     private readonly bandsService: BandsService,
     private readonly imageKit: ImageKitService,
+    private readonly spotify: SpotifyService,
   ) {}
 
   @Get("/albums")
@@ -117,7 +121,12 @@ export class AlbumsController {
       });
     }
 
-    const band = await this.bandsService.getBandByName(body.artist!);
+    let band: Band | null;
+    try {
+      band = await this.bandsService.getBandByName(body.artist!);
+    } catch (err) {
+      throw err; // or log + render a generic "something went wrong" message
+    }
     if (!band) {
       return res.status(200).render("editAlbum", {
         title: "Add Album",
@@ -137,6 +146,14 @@ export class AlbumsController {
           errors: ["Image upload failed — please try again"],
           album: body,
         });
+      }
+    }
+
+    // tracks
+    if (!body.tracks) {
+      const tracks = await this.fetchAlbumTracksFromSpotify(band.spotifyId, body.title);
+      if (tracks.length) {
+        body.tracks = tracks.join(", ");
       }
     }
 
@@ -296,6 +313,26 @@ export class AlbumsController {
     } catch (err) {
       this.logger.error(`Failed to delete ImageKit file ${fileId}`, err);
     }
+  }
+
+  private async fetchAlbumTracksFromSpotify(
+    artistId: string,
+    albumTitle: string,
+  ): Promise<string[]> {
+    // get albums
+    const albums = await this.spotify.getArtistAlbums(artistId);
+
+    // iterate through albums and find albumTitle and retrieve albumId
+    const target = normalize(albumTitle);
+    const album = albums.find((a) => normalize(a.name) === target);
+
+    if (!album) {
+      return [];
+    }
+
+    const tracks = await this.spotify.getAlbumTracks(album.id);
+
+    return tracks.map((track) => normalize(track, false));
   }
 }
 
