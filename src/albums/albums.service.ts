@@ -3,11 +3,11 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { ILike, Repository } from "typeorm";
 import { Album } from "../entities/album.entity";
 import slugify from "slugify";
-import { Band } from "../entities/band.entity";
 
 export interface CreateAlbumInput {
   title?: string;
   artist?: string;
+  bandId: string;
   producer?: string;
   mixedBy?: string;
   engineer?: string;
@@ -21,15 +21,28 @@ export interface CreateAlbumInput {
   comments?: string;
 }
 
-export type UpdateAlbumInput = CreateAlbumInput;
+export interface UpdateAlbumInput {
+  title?: string;
+  artist?: string;
+  bandId?: string;
+  producer?: string;
+  mixedBy?: string;
+  engineer?: string;
+  tracks?: string;
+  releaseDate?: string;
+  label?: string;
+  spotifyUrl?: string;
+  bandcampUrl?: string;
+  imageFileId?: string;
+  imagePath?: string;
+  comments?: string;
+}
 
 @Injectable()
 export class AlbumsService {
   constructor(
     @InjectRepository(Album)
     private readonly albumRepo: Repository<Album>,
-    @InjectRepository(Band)
-    private readonly bandRepo: Repository<Band>,
   ) {}
 
   async getAlbums(
@@ -70,19 +83,15 @@ export class AlbumsService {
   }
 
   async create(input: CreateAlbumInput): Promise<Album> {
-    /* Slug */
     const baseSlug = slugify(`${input.title}`, {
       lower: true,
       strict: true,
     });
-    // 1. Find all slugs that start with the base slug
-    // Example: If base is "my-album", this finds "my-album", "my-album-1", "my-album-photo", etc.
     const albumsWithSlug = await this.albumRepo.find({
       where: { slug: ILike(`${baseSlug}%`) },
-      select: ["slug"], // Performance optimization: only select the slug column
+      select: ["slug"],
     });
 
-    // 2. Put existing slugs into a Set for O(1) lookups
     const existingSlugs = new Set(albumsWithSlug.map((a) => a.slug));
     let slug = baseSlug;
     let suffix = 1;
@@ -92,20 +101,12 @@ export class AlbumsService {
       suffix++;
     }
 
-    /* Artist */
-    const band = await this.bandRepo.findOne({
-      where: { name: input.artist },
-    });
-    if (!band) {
-      throw new Error("Artist not found");
-    }
-
     const album = this.albumRepo.create({
       title: input.title,
       slug,
       releaseDate: input.releaseDate ? new Date(input.releaseDate) : undefined,
       artist: input.artist,
-      bandId: band.id,
+      bandId: input.bandId,
       imageFileId: input.imageFileId,
       imagePath: input.imagePath,
       producer: parseList(input.producer),
@@ -122,7 +123,8 @@ export class AlbumsService {
 
   /**
    * Updates an existing album. Slug is recomputed only when the title changes.
-   * Band is re-resolved only when the artist name changes.
+   * bandId is updated only when explicitly supplied (i.e. when the artist changed
+   * and the controller has already resolved the new band).
    * Image columns are preserved when no new value is supplied.
    */
   async update(id: string, input: UpdateAlbumInput): Promise<Album | null> {
@@ -150,13 +152,11 @@ export class AlbumsService {
       album.slug = slug;
     }
 
-    if (input.artist && input.artist !== album.artist) {
-      const band = await this.bandRepo.findOne({ where: { name: input.artist } });
-      if (!band) {
-        throw new Error("Artist not found");
-      }
+    if (input.artist !== undefined) {
       album.artist = input.artist;
-      album.bandId = band.id;
+    }
+    if (input.bandId !== undefined) {
+      album.bandId = input.bandId;
     }
 
     album.producer = parseList(input.producer);

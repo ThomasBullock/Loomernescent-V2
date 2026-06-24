@@ -7,11 +7,13 @@ describe("Map (integration)", () => {
   let handle: TestAppHandle;
 
   beforeAll(async () => {
+    process.env.GOOGLE_MAPS_KEY = "test-google-maps-key";
     handle = await createTestApp();
   });
 
   afterAll(async () => {
     await handle.app.close();
+    delete process.env.GOOGLE_MAPS_KEY;
   });
 
   beforeEach(async () => {

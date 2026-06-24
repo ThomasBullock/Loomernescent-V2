@@ -93,6 +93,10 @@ export class BandsService {
     }
   }
 
+  async getBandByName(name: string): Promise<Band | null> {
+    return this.bandRepo.findOne({ where: { name } }) ?? null;
+  }
+
   /**
    * Updates an existing band. Slug is recomputed only when the name changes.
    * Image columns are preserved when no new value is supplied; a supplied

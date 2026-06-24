@@ -119,13 +119,14 @@ export class SpotifyService {
   async getArtistAlbums(artistId: string): Promise<SpotifyAlbumResult[]> {
     try {
       const token = await this.getAccessToken();
-      const url = `${SPOTIFY_API_BASE}/artists/${encodeURIComponent(artistId)}/albums?include_groups=album&limit=50`;
+      const url = `${SPOTIFY_API_BASE}/artists/${encodeURIComponent(artistId)}/albums?include_groups=album&limit=10`;
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
       if (!res.ok) {
-        this.logger.warn(`Spotify artist albums failed: ${res.status}`);
+        const detail = await res.text();
+        this.logger.warn(`Spotify artist albums failed: ${res.status} ${detail}`);
         return [];
       }
 

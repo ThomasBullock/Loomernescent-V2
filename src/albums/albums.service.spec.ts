@@ -1,7 +1,6 @@
 import { Repository } from "typeorm";
 import { AlbumsService } from "./albums.service";
 import { Album } from "../entities/album.entity";
-import { Band } from "../entities/band.entity";
 
 type AlbumRepoMock = jest.Mocked<
   Pick<Repository<Album>, "create" | "save" | "find" | "findOne" | "findAndCount" | "delete">
@@ -28,17 +27,9 @@ const mockAlbum = (overrides: Partial<Album> = {}): Album =>
     ...overrides,
   }) as Album;
 
-type BandRepoMock = jest.Mocked<Pick<Repository<Band>, "findOne">>;
-
-const mockBand = {
-  id: "band-uuid",
-  name: "Ride",
-} as Band;
-
 describe("AlbumsService", () => {
   let service: AlbumsService;
   let albumRepo: AlbumRepoMock;
-  let bandRepo: BandRepoMock;
 
   beforeEach(() => {
     albumRepo = {
@@ -49,16 +40,9 @@ describe("AlbumsService", () => {
       findAndCount: jest.fn(),
       delete: jest.fn(),
     };
-    bandRepo = {
-      findOne: jest.fn(),
-    };
 
-    service = new AlbumsService(
-      albumRepo as unknown as Repository<Album>,
-      bandRepo as unknown as Repository<Band>,
-    );
+    service = new AlbumsService(albumRepo as unknown as Repository<Album>);
 
-    bandRepo.findOne.mockResolvedValue(mockBand);
     albumRepo.create.mockImplementation((data) => data as Album);
     albumRepo.save.mockImplementation(async (entity) => entity as Album);
   });
@@ -147,18 +131,26 @@ describe("AlbumsService", () => {
       expect(albumRepo.save).toHaveBeenCalledWith(expect.objectContaining({ slug: "nowhere" }));
     });
 
-    it("re-resolves band when artist changes", async () => {
-      albumRepo.findOne.mockResolvedValue(mockAlbum({ artist: "Ride" }));
-      bandRepo.findOne.mockResolvedValue({ id: "mbv-uuid", name: "My Bloody Valentine" } as Band);
+    it("updates bandId when supplied", async () => {
+      albumRepo.findOne.mockResolvedValue(mockAlbum({ artist: "Ride", bandId: "ride-uuid" }));
 
-      await service.update("album-uuid", { title: "Nowhere", artist: "My Bloody Valentine" });
-
-      expect(bandRepo.findOne).toHaveBeenCalledWith({
-        where: { name: "My Bloody Valentine" },
+      await service.update("album-uuid", {
+        title: "Nowhere",
+        artist: "My Bloody Valentine",
+        bandId: "mbv-uuid",
       });
+
       expect(albumRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({ artist: "My Bloody Valentine", bandId: "mbv-uuid" }),
       );
+    });
+
+    it("preserves existing bandId when none is supplied", async () => {
+      albumRepo.findOne.mockResolvedValue(mockAlbum({ bandId: "ride-uuid" }));
+
+      await service.update("album-uuid", { title: "Nowhere", artist: "Ride" });
+
+      expect(albumRepo.save).toHaveBeenCalledWith(expect.objectContaining({ bandId: "ride-uuid" }));
     });
 
     it("preserves image when no new image supplied", async () => {
@@ -219,6 +211,7 @@ describe("AlbumsService", () => {
       await service.create({
         title: "Going Blank Again",
         artist: "Ride",
+        bandId: "band-uuid",
       });
 
       expect(albumRepo.save).toHaveBeenCalledWith(
@@ -234,6 +227,7 @@ describe("AlbumsService", () => {
       await service.create({
         title: "Going Blank Again",
         artist: "Ride",
+        bandId: "band-uuid",
       });
 
       expect(albumRepo.save).toHaveBeenCalledWith(
@@ -253,11 +247,29 @@ describe("AlbumsService", () => {
       await service.create({
         title: "Going Blank Again",
         artist: "Ride",
+        bandId: "band-uuid",
       });
 
       expect(albumRepo.save).toHaveBeenCalledWith(
         expect.objectContaining({
           slug: "going-blank-again-3",
+        }),
+      );
+    });
+
+    it("saves image fields when cover data is supplied", async () => {
+      albumRepo.find.mockResolvedValue([]);
+      await service.create({
+        title: "Tarantula",
+        artist: "Ride",
+        bandId: "band-uuid",
+        imageFileId: "new-uuid",
+        imagePath: "/albums/Tarantula.jpg",
+      });
+      expect(albumRepo.save).toHaveBeenCalledWith(
+        expect.objectContaining({
+          imageFileId: "new-uuid",
+          imagePath: "/albums/Tarantula.jpg",
         }),
       );
     });
@@ -268,6 +280,7 @@ describe("AlbumsService", () => {
       await service.create({
         title: "Loveless",
         artist: "My Bloody Valentine",
+        bandId: "mbv-uuid",
         producer: "Kevin Shields",
         engineer: "Dick Meaney, Anjali Dutt, Guy Fixsen, Harold Burgon, Nick Robbins, Ingo Vauk",
         label: "Creation",
@@ -282,6 +295,18 @@ describe("AlbumsService", () => {
         "Nick Robbins",
         "Ingo Vauk",
       ]);
+    });
+
+    it("persists bandId on the saved entity", async () => {
+      albumRepo.find.mockResolvedValue([]);
+
+      await service.create({
+        title: "Nowhere",
+        artist: "Ride",
+        bandId: "band-uuid",
+      });
+
+      expect(albumRepo.save).toHaveBeenCalledWith(expect.objectContaining({ bandId: "band-uuid" }));
     });
   });
 });

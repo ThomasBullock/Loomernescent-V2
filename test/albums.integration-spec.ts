@@ -105,6 +105,17 @@ describe("Albums (integration)", () => {
       expect(row!.label).toBe("Creation");
     });
 
+    it("re-renders form with error when artist band does not exist", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      const agent = await loginAs(handle.app, user.email, password);
+      const res = await agent.post("/albums").type("form").send({
+        title: "Nowhere",
+        artist: "Unknown Band",
+      });
+      expect(res.status).toBe(200);
+      expect(res.text).toContain("Artist not found");
+    });
+
     it("creates with no file: image columns are NULL", async () => {
       const { user, password } = await createUser(handle.dataSource, { admin: true });
       await seedBand(user.id);
@@ -245,6 +256,18 @@ describe("Albums (integration)", () => {
       const row = await handle.dataSource.getRepository(Album).findOne({ where: { id: album.id } });
       expect(row!.producer).toEqual(["Alan Moulder", "Flood"]);
       expect(row!.label).toBe("Creation");
+    });
+
+    it("re-renders form with error when artist is changed to an unknown band", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      const album = await seedAlbum(user.id);
+      const agent = await loginAs(handle.app, user.email, password);
+      const res = await agent.post(`/albums/${album.id}`).type("form").send({
+        title: "Nowhere",
+        artist: "Unknown Band",
+      });
+      expect(res.status).toBe(200);
+      expect(res.text).toContain("Artist not found");
     });
 
     it("recomputes the slug when the title changes", async () => {
