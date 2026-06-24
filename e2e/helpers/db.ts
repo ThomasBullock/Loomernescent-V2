@@ -159,6 +159,31 @@ export async function createAlbum(
   return rows[0];
 }
 
+export interface CreateFavouriteOptions {
+  userId: string;
+  bandId?: string;
+  albumId?: string;
+  pedalId?: string;
+}
+
+export interface CreatedFavourite {
+  id: string;
+  user_id: string;
+}
+
+export async function createFavourite(
+  ds: DataSource,
+  opts: CreateFavouriteOptions,
+): Promise<CreatedFavourite> {
+  const rows = await ds.query<CreatedFavourite[]>(
+    `INSERT INTO "favourites" (user_id, band_id, album_id, pedal_id)
+     VALUES ($1, $2, $3, $4)
+     RETURNING id, user_id`,
+    [opts.userId, opts.bandId ?? null, opts.albumId ?? null, opts.pedalId ?? null],
+  );
+  return rows[0];
+}
+
 export async function createUser(
   ds: DataSource,
   opts: CreateUserOptions = {},

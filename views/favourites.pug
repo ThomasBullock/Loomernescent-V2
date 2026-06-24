@@ -7,16 +7,16 @@ include mixins/_pagination
 
 block content
   .inner
-    h2 Favourite Bands
+    h2(data-testid="favourites.page.bands-section") Favourite Bands
     .bands
       each band in bands
         +bandCard(band)
     //- +pagination(page, pages, count, 'bands')
-    h2 Favourite Albums
+    h2(data-testid="favourites.page.albums-section") Favourite Albums
     .albums
       each album in albums
         +albumCard(album)
-    h2 Favourite Pedals
+    h2(data-testid="favourites.page.pedals-section") Favourite Pedals
     .pedals
       each pedal in pedals
         +pedalCard(pedal)

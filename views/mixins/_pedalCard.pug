@@ -7,7 +7,12 @@ mixin pedalCard(pedal = {})
             form.heart(method="POST", action=`/api/v1/pedals/${pedal.id}/loves`)
               - const heartStrings = user.favourites ? user.favourites.map((obj) => obj.pedalId) : [];
               - const heartClass = heartStrings.includes(pedal.id) ? "heart__button--hearted" : "";
-              button.heart__button(type="submit", name="heart", class=heartClass)
+              button.heart__button(
+                type="submit",
+                name="heart",
+                class=heartClass,
+                data-testid="pedals.list.heart-btn"
+              )
                 != h.icon("heart")
         if user && user.admin
           .pedal__action.pedal__action--edit

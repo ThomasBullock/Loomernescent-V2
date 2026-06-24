@@ -18,7 +18,7 @@ export class SessionSerializer extends PassportSerializer {
   }
 
   async deserializeUser(id: string, done: (err: Error | null, user: User | null) => void) {
-    const user = await this.userRepo.findOneBy({ id });
+    const user = await this.userRepo.findOne({ where: { id }, relations: ["favourites"] });
     done(null, user ?? null);
   }
 }

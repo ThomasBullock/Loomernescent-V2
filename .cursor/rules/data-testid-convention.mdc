@@ -266,3 +266,29 @@ Testids use Pug interpolation with a `mode` param (`'add'` or `'edit'`). Caller 
 | Test ID | Element |
 |---|---|
 | `map.page.map-container` | `#map` div (Google Maps mount point) |
+
+### Bands — `views/mixins/_bandCard.pug` (heart button)
+
+| Test ID | Element |
+|---|---|
+| `bands.list.heart-btn` | Heart toggle button (authenticated users only) |
+
+### Albums — `views/mixins/_albumCard.pug` (heart button)
+
+| Test ID | Element |
+|---|---|
+| `albums.list.heart-btn` | Heart toggle button (authenticated users only) |
+
+### Pedals — `views/mixins/_pedalCard.pug` (heart button)
+
+| Test ID | Element |
+|---|---|
+| `pedals.list.heart-btn` | Heart toggle button (authenticated users only) |
+
+### Favourites — `views/favourites.pug`
+
+| Test ID | Element |
+|---|---|
+| `favourites.page.bands-section` | "Favourite Bands" heading |
+| `favourites.page.albums-section` | "Favourite Albums" heading |
+| `favourites.page.pedals-section` | "Favourite Pedals" heading |

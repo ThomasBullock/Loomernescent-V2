@@ -7,6 +7,7 @@ import { User, Band, Album, Pedal, Favourite } from "./entities";
 import { BandsModule } from "./bands/bands.module";
 import { AlbumsModule } from "./albums/albums.module";
 import { PedalsModule } from "./pedals/pedals.module";
+import { FavouritesModule } from "./favourites/favourites.module";
 import { TemplateLocalsMiddleware } from "./common/middleware/template-locals.middleware";
 import { ImagesModule } from "./common/images/images.module";
 import { AuthModule } from "./auth/auth.module";
@@ -32,6 +33,7 @@ import { shouldUseSsl } from "./configure-app";
     BandsModule,
     AlbumsModule,
     PedalsModule,
+    FavouritesModule,
     AuthModule,
     MailModule,
     SpotifyModule,
