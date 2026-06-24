@@ -120,7 +120,6 @@ export class SpotifyService {
     try {
       const token = await this.getAccessToken();
       const url = `${SPOTIFY_API_BASE}/artists/${encodeURIComponent(artistId)}/albums?include_groups=album&limit=10`;
-      console.log("URL|||", url);
       const res = await fetch(url, {
         headers: { Authorization: `Bearer ${token}` },
       });

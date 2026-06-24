@@ -130,7 +130,7 @@ export class AlbumsController {
         errors: ["Something went wrong — please try again"],
         album: body,
       });
-      throw err; // or log + render a generic "something went wrong" message
+      throw err;
     }
     if (!band) {
       return res.status(200).render("editAlbum", {
