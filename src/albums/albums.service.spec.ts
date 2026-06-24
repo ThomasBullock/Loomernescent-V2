@@ -47,6 +47,8 @@ describe("AlbumsService", () => {
     albumRepo.save.mockImplementation(async (entity) => entity as Album);
   });
 
+  // TODO getAlbums tests page, count etc
+
   describe("getAlbumById", () => {
     it("returns the album when found", async () => {
       const album = { id: "album-uuid", title: "Nowhere" } as Album;
