@@ -27,6 +27,15 @@ const mockAlbum = (overrides: Partial<Album> = {}): Album =>
     ...overrides,
   }) as Album;
 
+const albums = [
+  mockAlbum(),
+  mockAlbum({ id: "a2", title: "Loveless", slug: "loveless" }),
+  mockAlbum({ id: "a1", title: "Souvlaki", slug: "souvlaki" }),
+  mockAlbum({ id: "a5", title: "Whirlpool", slug: "whirlpool" }),
+  mockAlbum({ id: "a7", title: "Going Blank Again", slug: "going-blank-again" }),
+  mockAlbum({ id: "a9", title: "Colour Trip", slug: "colour-trip" }),
+];
+
 describe("AlbumsService", () => {
   let service: AlbumsService;
   let albumRepo: AlbumRepoMock;
@@ -45,6 +54,23 @@ describe("AlbumsService", () => {
 
     albumRepo.create.mockImplementation((data) => data as Album);
     albumRepo.save.mockImplementation(async (entity) => entity as Album);
+  });
+
+  describe("getAlbums", () => {
+    it("returns correct pages total", async () => {
+      albumRepo.findAndCount.mockResolvedValue([albums, 6]);
+
+      const result = await service.getAlbums(1, 4);
+      expect(result.count).toBe(6);
+      expect(result.pages).toBe(2);
+    });
+
+    it("returns skips page with page param", async () => {
+      albumRepo.findAndCount.mockResolvedValue([albums, 6]);
+
+      const result = await service.getAlbums(2, 4);
+      expect(result.page).toBe(2);
+    });
   });
 
   describe("getAlbumById", () => {

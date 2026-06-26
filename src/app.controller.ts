@@ -13,17 +13,6 @@ export class AppController {
     };
   }
 
-  @Get("favourites")
-  @Render("favourites")
-  favourites() {
-    return {
-      title: "My Favourites",
-      bands: [],
-      albums: [],
-      pedals: [],
-    };
-  }
-
   // TODO tags
 
   @Get("map")
