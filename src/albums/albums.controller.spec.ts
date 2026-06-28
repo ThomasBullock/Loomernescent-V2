@@ -75,7 +75,7 @@ describe("AlbumsController", () => {
     it("Returns title and empty pedal object", async () => {
       const svc = mockService();
       const controller = await buildController(svc);
-      const result = await controller.addForm();
+      const result = controller.addForm();
       expect(result).toEqual({
         title: "Add Album",
         album: {},
