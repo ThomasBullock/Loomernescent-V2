@@ -101,7 +101,18 @@ export class PedalsController {
       });
     }
 
-    const image = file ? await this.uploadPedalImage(file, body.brand!, body.name!) : {};
+    let image = {};
+    try {
+      if (file) {
+        image = await this.uploadPedalImage(file, body.brand!, body.name!);
+      }
+    } catch {
+      return res.status(200).render("addPedal", {
+        title: "Add Pedal",
+        errors: ["Image upload failed — please try again"],
+        album: body,
+      });
+    }
 
     try {
       const pedal = await this.pedalsService.create({

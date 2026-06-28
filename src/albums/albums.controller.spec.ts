@@ -70,4 +70,16 @@ describe("AlbumsController", () => {
       expect(svc.getAlbums).toHaveBeenCalledWith(1);
     });
   });
+
+  describe("addForm", () => {
+    it("Returns title and empty pedal object", async () => {
+      const svc = mockService();
+      const controller = await buildController(svc);
+      const result = await controller.addForm();
+      expect(result).toEqual({
+        title: "Add Album",
+        album: {},
+      });
+    });
+  });
 });
