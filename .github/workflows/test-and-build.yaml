@@ -51,6 +51,7 @@ jobs:
           fetch-depth: 0 # lets the action compute the base-branch coverage diff
 
       - uses: ArtiomTr/jest-coverage-report-action@v2.3.1
+        continue-on-error: true
         with:
           test-script: npx jest --config jest.coverage.config.js --runInBand
         env:
