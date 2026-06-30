@@ -9,6 +9,7 @@ function makeTokenResponse(expiresIn = 3600) {
   return {
     ok: true,
     json: () => Promise.resolve({ access_token: "test-token", expires_in: expiresIn }),
+    text: () => Promise.resolve(""),
   } as Response;
 }
 
@@ -24,6 +25,7 @@ function makeSearchResponse(artists: Array<{ id: string; spotify: string }>) {
           })),
         },
       }),
+    text: () => Promise.resolve(""),
   } as Response;
 }
 
@@ -38,6 +40,7 @@ function makeAlbumsResponse(albums: Array<{ id: string; name: string; spotify: s
           external_urls: { spotify: a.spotify },
         })),
       }),
+    text: () => Promise.resolve(""),
   } as Response;
 }
 
@@ -45,11 +48,12 @@ function makeTracksResponse(trackNames: string[]) {
   return {
     ok: true,
     json: () => Promise.resolve({ items: trackNames.map((name) => ({ name })) }),
+    text: () => Promise.resolve(""),
   } as Response;
 }
 
 function errorResponse(status = 500) {
-  return { ok: false, status } as Response;
+  return { ok: false, status, text: () => Promise.resolve("Error response") } as Response;
 }
 
 async function createService(): Promise<SpotifyService> {

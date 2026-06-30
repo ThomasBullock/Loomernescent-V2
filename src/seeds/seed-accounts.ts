@@ -13,22 +13,22 @@ interface SeedAccount {
 
 const ACCOUNTS: SeedAccount[] = [
   {
-    email: "motbollox@gmail.com",
-    name: "Thomas Bullock",
+    email: process.env.SEED_ADMIN_EMAIL ?? "admin@example.com",
+    name: process.env.SEED_ADMIN_NAME ?? "Admin",
     admin: true,
-    passwordEnv: "SEED_PASSWORD_MOTBOLLOX",
+    passwordEnv: "SEED_PASSWORD_ADMIN",
   },
   {
-    email: "cochlear@gmail.com",
-    name: "Cochlear",
+    email: process.env.SEED_USER1_EMAIL ?? "user1@example.com",
+    name: process.env.SEED_USER1_NAME ?? "User One",
     admin: false,
-    passwordEnv: "SEED_PASSWORD_COCHLEAR",
+    passwordEnv: "SEED_PASSWORD_USER1",
   },
   {
-    email: "cochlearkill@gmail.com",
-    name: "Cochlear Kill",
+    email: process.env.SEED_USER2_EMAIL ?? "user2@example.com",
+    name: process.env.SEED_USER2_NAME ?? "User Two",
     admin: false,
-    passwordEnv: "SEED_PASSWORD_COCHLEARKILL",
+    passwordEnv: "SEED_PASSWORD_USER2",
   },
 ];
 
