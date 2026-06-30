@@ -5,7 +5,7 @@ import { Band } from "../entities/band.entity";
 import * as fs from "fs";
 import * as path from "path";
 
-const DEFAULT_AUTHOR_EMAIL = "motbollox@gmail.com";
+const DEFAULT_AUTHOR_EMAIL = "admin@example.com";
 
 /** Shape of a row exported from Neon (snake_case column names). */
 interface BandRecord {

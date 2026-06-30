@@ -20,10 +20,10 @@ export class User {
   @Column()
   name: string;
 
-  @Column({ name: "password_hash", nullable: true })
+  @Column({ name: "password_hash", nullable: true, select: false })
   passwordHash: string;
 
-  @Column({ name: "reset_password_token", nullable: true })
+  @Column({ name: "reset_password_token", nullable: true, select: false })
   resetPasswordToken: string;
 
   @Column({ type: "timestamp", name: "reset_password_expires", nullable: true })

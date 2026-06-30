@@ -19,7 +19,12 @@ export class AuthService {
   }
 
   async validateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.userRepo.findOneBy({ email });
+    // passwordHash is select:false on the entity; load it explicitly for comparison.
+    const user = await this.userRepo
+      .createQueryBuilder("user")
+      .addSelect("user.passwordHash")
+      .where("user.email = :email", { email })
+      .getOne();
     if (!user) {
       return null;
     }
