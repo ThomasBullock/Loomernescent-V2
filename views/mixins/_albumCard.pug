@@ -7,7 +7,7 @@ mixin albumCard(album = {})
           alt=`cover artwork for ${album.title} by ${album.artist}`
         )
       h2.title
-        a(href=`/album/${album.slug}`) #{album.title}
+        a(href=`/album/${album.slug}`) #{ album.title }
       .album__actions
         if user
           .album__action.album__action--heart

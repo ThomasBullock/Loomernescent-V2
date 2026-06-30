@@ -15,7 +15,13 @@ jest.mock("../common/images/process-image", () => ({
 // ─── Fixtures ────────────────────────────────────────────────────────────────
 
 const mockHero = [
-  { type: "band", name: "Slowdive", slug: "slowdive", imagePath: "/bands/slowdive.jpg", cover: null },
+  {
+    type: "band",
+    name: "Slowdive",
+    slug: "slowdive",
+    imagePath: "/bands/slowdive.jpg",
+    cover: null,
+  },
 ];
 const mockAlbums = [{ id: "a1", title: "Souvlaki", slug: "souvlaki" }];
 const mockBand = {
@@ -306,9 +312,7 @@ describe("BandsController", () => {
       await controller.create(validBody, undefined, req, res as unknown as Response);
 
       expect(spotify.searchArtist).toHaveBeenCalledWith("Slowdive");
-      expect(svc.create).toHaveBeenCalledWith(
-        expect.objectContaining({ spotifyId: "sp-auto" }),
-      );
+      expect(svc.create).toHaveBeenCalledWith(expect.objectContaining({ spotifyId: "sp-auto" }));
     });
   });
 
