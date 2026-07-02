@@ -4,7 +4,16 @@ mixin loginForm
   form.form(action="/auth/login", method="POST")
     h2 Login
     label(for="login-email") Email Address
-    input#login-email(type="email", name="email", value=email, data-testid="auth.login-form.email-input")
+    input#login-email(
+      type="email",
+      name="email",
+      value=email,
+      data-testid="auth.login-form.email-input"
+    )
     label(for="login-password") Password
-    input#login-password(type="password", name="password", data-testid="auth.login-form.password-input")
+    input#login-password(
+      type="password",
+      name="password",
+      data-testid="auth.login-form.password-input"
+    )
     input.button(type="submit", value="Log In -<", data-testid="auth.login-form.sign-in-btn")

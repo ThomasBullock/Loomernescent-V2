@@ -58,7 +58,12 @@ block content
       if band.youtubePl
         .single__video
           .single__video-wrapper
-            iframe(src=band.youtubePl, frameborder="0", allowfullscreen, title=`YouTube playlist for ${band.name}`)
+            iframe(
+              src=band.youtubePl,
+              frameborder="0",
+              allowfullscreen,
+              title=`YouTube playlist for ${band.name}`
+            )
   if albums.length
     .single__fullwidth.single__fullwidth
       h2.section-heading Albums by #{ band.name }

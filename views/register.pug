@@ -9,11 +9,25 @@ block content
     form.form(action="/auth/register", method="POST")
       h2 Register
       label(for="reg-name") Name
-      input#reg-name(type="text", name="name", required, data-testid="auth.register-form.name-input")
+      input#reg-name(
+        type="text",
+        name="name",
+        required,
+        data-testid="auth.register-form.name-input"
+      )
       label(for="reg-email") Email
-      input#reg-email(type="text", name="email", required, data-testid="auth.register-form.email-input")
+      input#reg-email(
+        type="text",
+        name="email",
+        required,
+        data-testid="auth.register-form.email-input"
+      )
       label(for="reg-password") Password
-      input#reg-password(type="password", name="password", data-testid="auth.register-form.password-input")
+      input#reg-password(
+        type="password",
+        name="password",
+        data-testid="auth.register-form.password-input"
+      )
       label(for="reg-password-confirm") Confirm Password
       input#reg-password-confirm(type="password", name="password-confirm")
       input(type="text", name="stratosphere")

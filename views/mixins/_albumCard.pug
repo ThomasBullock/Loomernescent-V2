@@ -24,5 +24,9 @@ mixin albumCard(album = {})
                 != h.icon("heart")
         if user && user.admin
           .album__action.album__action--edit
-            a(href=`/albums/${album.id}/edit`, aria-label=`Edit ${album.title}`, data-testid="albums.list.edit-link")
+            a(
+              href=`/albums/${album.id}/edit`,
+              aria-label=`Edit ${album.title}`,
+              data-testid="albums.list.edit-link"
+            )
               != h.icon("pencil")

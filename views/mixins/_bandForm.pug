@@ -93,7 +93,7 @@ mixin bandForm(band = {}, mode = "add")
     - const tags = [].concat(band.tags || []);
     ul.tags
       each tag in choices
-        - const tagId = tag.toLowerCase().replace(/\s+/g, '-')
+        - const tagId = tag.toLowerCase().replace(/\s+/g, "-");
         li.tag.tag__choice
           input(type="checkbox", id=tagId, value=tag, name="tags", checked=tags.includes(tag))
           label(for=tagId) #{ tag }

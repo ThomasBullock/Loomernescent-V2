@@ -19,7 +19,11 @@ mixin bandCard(band = {})
                 != h.icon("heart")
         if user && user.admin
           .band__action.band__action--edit
-            a(href=`/bands/${band.id}/edit`, aria-label=`Edit ${band.name}`, data-testid="bands.list.edit-link")
+            a(
+              href=`/bands/${band.id}/edit`,
+              aria-label=`Edit ${band.name}`,
+              data-testid="bands.list.edit-link"
+            )
               != h.icon("pencil")
       img(
         src=band.imagePath ? imageUrl(band.imagePath, { w: 400, h: 400, fo: "auto" }) : imageUrl("/bands/band.jpg"),

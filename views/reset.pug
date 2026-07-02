@@ -10,7 +10,11 @@ block content
           each err in errors
             li.error(data-testid="auth.reset-form.error-message")= err
       label(for="reset-password") Password
-      input#reset-password(type="password", name="password", data-testid="auth.reset-form.password-input")
+      input#reset-password(
+        type="password",
+        name="password",
+        data-testid="auth.reset-form.password-input"
+      )
       label(for="reset-password-confirm") Confirm Password
       input#reset-password-confirm(type="password", name="password-confirm")
       input.button(

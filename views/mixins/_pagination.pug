@@ -7,4 +7,7 @@ mixin pagination(page, pages, count, link)
       p Page #{ page } of #{ pages } - #{ count } total results
     .pagination__next
       if page < pages
-        a(href=`/${link}/page/${parseFloat(page) + 1}`, aria-label=`Go to page ${parseFloat(page) + 1}`) Next page
+        a(
+          href=`/${link}/page/${parseFloat(page) + 1}`,
+          aria-label=`Go to page ${parseFloat(page) + 1}`
+        ) Next page

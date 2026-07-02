@@ -19,7 +19,11 @@ mixin pedalCard(pedal = {})
                 != h.icon("heart")
         if user && user.admin
           .pedal__action.pedal__action--edit
-            a(href=`/pedals/${pedal.id}/edit`, aria-label=`Edit ${pedal.name}`, data-testid="pedals.list.edit-link")
+            a(
+              href=`/pedals/${pedal.id}/edit`,
+              aria-label=`Edit ${pedal.name}`,
+              data-testid="pedals.list.edit-link"
+            )
               != h.icon("pencil")
       img(
         src=pedal.imagePath ? imageUrl(pedal.imagePath, { w: 400, h: 400, fo: "auto" }) : imageUrl("/pedals/Pedal.jpg"),

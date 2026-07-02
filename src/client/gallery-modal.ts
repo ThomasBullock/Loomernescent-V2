@@ -26,7 +26,9 @@ export function initGalleryModal(): void {
 
   const trapFocus = (event: KeyboardEvent): void => {
     const focusable = getFocusable();
-    if (focusable.length === 0) return;
+    if (focusable.length === 0) {
+      return;
+    }
     const first = focusable[0];
     const last = focusable[focusable.length - 1];
     if (event.key === "Tab") {
