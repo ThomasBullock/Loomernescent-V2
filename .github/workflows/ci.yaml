@@ -66,8 +66,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # lets the coverage action compute the base-branch diff
 
       - uses: actions/setup-node@v4
         with:
@@ -82,7 +80,19 @@ jobs:
       - name: Integration tests
         run: npm run test:integration
 
+      # Blocking: runs unit + integration together and writes report.json.
+      # This step is what gates the check — if any test fails, the job fails.
       - name: Coverage (unit + integration)
+        run: npx jest --config jest.coverage.config.js --runInBand --ci --json --coverage --testLocationInResults --outputFile="report.json"
+
+      # Best-effort: posts the coverage comment on PRs by reading the report.json
+      # generated above (skip-step: all => it never re-runs tests). continue-on-error
+      # keeps a flaky GitHub comment API call ("Premature close") from failing the check.
+      - name: Coverage PR comment
+        if: github.event_name == 'pull_request'
+        continue-on-error: true
         uses: ArtiomTr/jest-coverage-report-action@v2.3.1
         with:
-          test-script: npx jest --config jest.coverage.config.js --runInBand
+          skip-step: all
+          coverage-file: report.json
+          annotations: none
