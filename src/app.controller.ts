@@ -13,8 +13,6 @@ export class AppController {
     };
   }
 
-  // TODO tags
-
   @Get("map")
   @Render("map")
   map() {

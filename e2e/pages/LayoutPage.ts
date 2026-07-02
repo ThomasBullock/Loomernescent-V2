@@ -6,6 +6,7 @@ export class LayoutPage {
   readonly accountLink: Locator;
   readonly loginLink: Locator;
   readonly registerLink: Locator;
+  readonly tagsLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -13,6 +14,7 @@ export class LayoutPage {
     this.accountLink = page.getByTestId("nav.header.account-link");
     this.loginLink = page.getByTestId("nav.header.login-link");
     this.registerLink = page.getByTestId("nav.header.register-link");
+    this.tagsLink = page.getByTestId("nav.header.tags-link");
   }
 
   async expectFlash(type: "success" | "error", text: string): Promise<void> {

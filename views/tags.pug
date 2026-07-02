@@ -10,7 +10,7 @@ block meta
   )
   meta(
     name="keywords",
-    content=`${tag ? tag : tags.map(v => v._id).join(", ")}, shoegaze, guitar, fx, pedals, effects, noise, distortion, dreampop, loomer, loomernescent, indie, rock, reverb`
+    content=`${tag ? tag : tags.map(v => v.name).join(", ")}, shoegaze, guitar, fx, pedals, effects, noise, distortion, dreampop, loomer, loomernescent, indie, rock, reverb`
   )
   meta(property="og:url", content="http://loomernescent.com/tags")
   meta(property="og:title", content="Music on the effected side of indie")
@@ -22,16 +22,17 @@ block meta
 
 block content
   .inner
-    h2.title--tags.nexa-rust Bands tagged with #{ tag || 'Tags' }
-    ul.tags.tags--list
+    h2.title--tags.nexa-rust(data-testid="tags.browse.heading") Bands tagged with #{ tag || 'Tags' }
+    ul.tags.tags--list(data-testid="tags.browse.tags-list")
       each t in tags
         li.tag
           a.tag__link(
-            href=`/tags/${t._id}`,
-            class=t._id === tag ? "tag__link--active" : "",
-            aria-current=t._id === tag ? "page" : false
+            href=`/tags/${t.name}`,
+            class=t.name === tag ? "tag__link--active" : "",
+            aria-current=t.name === tag ? "page" : false,
+            data-testid="tags.browse.tag-link"
           )
-            +pick(t._id, t.count)
-    .bands
+            +pick(t.name, t.count)
+    .bands(data-testid="tags.browse.bands-container")
       each band in bands
         +bandCard(band)

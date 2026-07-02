@@ -87,6 +87,7 @@ export interface CreateBandOptions {
   name?: string;
   slug?: string;
   authorId?: string;
+  tags?: string[];
 }
 
 export interface CreatedBand {
@@ -102,6 +103,7 @@ export async function createBand(
   counter += 1;
   const name = opts.name ?? `E2E Band ${counter}`;
   const slug = opts.slug ?? `e2e-band-${counter}`;
+  const tags = opts.tags ?? [];
 
   let authorId = opts.authorId;
   if (!authorId) {
@@ -110,10 +112,10 @@ export async function createBand(
   }
 
   const rows = await ds.query<CreatedBand[]>(
-    `INSERT INTO "bands" (name, slug, author_id)
-     VALUES ($1, $2, $3)
+    `INSERT INTO "bands" (name, slug, author_id, tags)
+     VALUES ($1, $2, $3, $4)
      RETURNING id, name, slug`,
-    [name, slug, authorId],
+    [name, slug, authorId, tags],
   );
 
   return rows[0];
