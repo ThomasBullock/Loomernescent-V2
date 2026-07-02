@@ -292,3 +292,12 @@ Testids use Pug interpolation with a `mode` param (`'add'` or `'edit'`). Caller 
 | `favourites.page.bands-section` | "Favourite Bands" heading |
 | `favourites.page.albums-section` | "Favourite Albums" heading |
 | `favourites.page.pedals-section` | "Favourite Pedals" heading |
+
+### Tags — `views/tags.pug`
+
+| Test ID | Element |
+|---|---|
+| `tags.browse.heading` | `h2.title--tags` page heading |
+| `tags.browse.tags-list` | `ul.tags.tags--list` tag pick list |
+| `tags.browse.tag-link` | Each `a.tag__link` guitar-pick anchor |
+| `tags.browse.bands-container` | `.bands` filtered band card grid |
