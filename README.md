@@ -6,15 +6,15 @@ A server-side-rendered catalogue of shoegaze bands, albums, and gear — with ad
 
 ## Stack
 
-| Concern   | Tech                                                   |
-| --------- | ------------------------------------------------------ |
-| Framework | NestJS v11 on Express                                  |
-| Templates | Pug (SSR via `@Render()`)                              |
-| Database  | PostgreSQL on Neon (TypeORM)                           |
-| Auth      | Passport local strategy + `express-session`            |
-| Images    | ImageKit (upload/transform)                            |
-| Mail      | Nodemailer — Mailgun in prod, Mailpit locally          |
-| Styles    | SCSS via Dart Sass CLI                                 |
+| Concern   | Tech                                                                  |
+| --------- | --------------------------------------------------------------------- |
+| Framework | NestJS v11 on Express                                                 |
+| Templates | Pug (SSR via `@Render()`)                                             |
+| Database  | PostgreSQL on Neon (TypeORM)                                          |
+| Auth      | Passport local strategy + `express-session`                           |
+| Images    | ImageKit (upload/transform)                                           |
+| Mail      | Nodemailer — Mailgun in prod, Mailpit locally                         |
+| Styles    | SCSS via Dart Sass CLI                                                |
 | Tests     | Jest (unit + client/jsdom), Supertest (integration), Playwright (e2e) |
 
 ## Description
