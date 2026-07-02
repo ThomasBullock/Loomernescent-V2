@@ -41,6 +41,7 @@ flowchart LR
 ## SQL queries
 
 `getTagsList()` — PostgreSQL `unnest` equivalent of Mongo `$unwind + $group`:
+
 ```sql
 SELECT tag AS name, COUNT(*) AS count
 FROM bands, unnest(tags) AS tag
@@ -48,6 +49,7 @@ GROUP BY tag ORDER BY count DESC
 ```
 
 `getBandsByTag(tag)`:
+
 - Filtered: `WHERE $1 = ANY(tags)`
 - All (no tag param): `WHERE array_length(tags, 1) > 0`
 
@@ -69,12 +71,12 @@ GROUP BY tag ORDER BY count DESC
 
 ## New data-testid registrations
 
-| Test ID | Element |
-|---|---|
-| `tags.browse.heading` | `h2.title--tags` |
-| `tags.browse.tags-list` | `ul.tags.tags--list` |
-| `tags.browse.tag-link` | Each `a.tag__link` |
-| `tags.browse.bands-container` | `.bands` div |
+| Test ID                       | Element              |
+| ----------------------------- | -------------------- |
+| `tags.browse.heading`         | `h2.title--tags`     |
+| `tags.browse.tags-list`       | `ul.tags.tags--list` |
+| `tags.browse.tag-link`        | Each `a.tag__link`   |
+| `tags.browse.bands-container` | `.bands` div         |
 
 ---
 
@@ -83,21 +85,23 @@ GROUP BY tag ORDER BY count DESC
 Write `tags.service.spec.ts` first (red), then `tags.service.ts` (green).
 
 Unit test scaffold:
+
 ```typescript
-describe('TagsService', () => {
-  describe('getTagsList', () => {
-    it('returns tags ordered by count descending');
-    it('returns empty array when no tags exist');
+describe("TagsService", () => {
+  describe("getTagsList", () => {
+    it("returns tags ordered by count descending");
+    it("returns empty array when no tags exist");
   });
-  describe('getBandsByTag', () => {
-    it('returns all bands with tags when no tag param');
-    it('returns only bands matching the given tag');
-    it('returns empty array when tag matches nothing');
+  describe("getBandsByTag", () => {
+    it("returns all bands with tags when no tag param");
+    it("returns only bands matching the given tag");
+    it("returns empty array when tag matches nothing");
   });
 });
 ```
 
 Service method signatures:
+
 ```typescript
 async getTagsList(): Promise<TagCount[]>
 async getBandsByTag(tag?: string): Promise<Band[]>
@@ -110,21 +114,23 @@ Where `TagCount = { name: string; count: number }` — defined in the service fi
 Write `test/tags.integration-spec.ts` first, then implement.
 
 Integration tests:
+
 ```typescript
-describe('GET /tags', () => {
-  it('returns 200');
-  it('renders tags-list testid');
-  it('renders bands-container testid');
-  it('shows tag name from seeded band');
+describe("GET /tags", () => {
+  it("returns 200");
+  it("renders tags-list testid");
+  it("renders bands-container testid");
+  it("shows tag name from seeded band");
 });
-describe('GET /tags/:tag', () => {
-  it('returns 200');
-  it('renders only bands matching that tag');
-  it('active class on the matching tag link');
+describe("GET /tags/:tag", () => {
+  it("returns 200");
+  it("renders only bands matching that tag");
+  it("active class on the matching tag link");
 });
 ```
 
 Controller shape:
+
 ```typescript
 @Controller()
 export class TagsController {
@@ -153,6 +159,7 @@ Both handlers return `{ title, tags, bands, tag? }`.
 ## Validation
 
 After all phases are green:
+
 ```bash
 npm run lint
 npm run build
