@@ -7,7 +7,7 @@
     background: $white;
   }
   tr:nth-child(odd):not(:first-child) {
-    background: #f7f7f7;
+    background: $vapor;
   }
   thead tr {
     background: $black;

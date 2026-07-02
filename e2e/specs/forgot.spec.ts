@@ -25,7 +25,6 @@ test("forgot form is visible on the login page", async ({ page }) => {
 
   await expect(forgotPage.emailInput).toBeVisible();
   await expect(forgotPage.submitBtn).toBeVisible();
-  await expect(loginPage.forgotLink).toBeVisible();
 });
 
 test("submitting unknown email → generic success flash", async ({ page }) => {

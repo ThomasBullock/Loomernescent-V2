@@ -16,10 +16,10 @@
       top: 0;
       right: 0;
       background:
-        linear-gradient(45deg, #ffa949 0%, hsla(190, 95%, 43%, 0) 70%),
+        linear-gradient(45deg, $soundcloud-orange 0%, hsla(190, 95%, 43%, 0) 70%),
         linear-gradient(135deg, hsla(219, 93%, 48%, 1) 10%, hsla(219, 93%, 48%, 0) 80%),
         linear-gradient(225deg, hsla(293, 93%, 48%, 1) 10%, hsla(293, 93%, 48%, 0) 80%),
-        linear-gradient(315deg, #ff4f49 100%, hsla(130, 96%, 45%, 0) 70%);
+        linear-gradient(315deg, $red 100%, hsla(130, 96%, 45%, 0) 70%);
       opacity: 0.6;
       z-index: 1;
       clip-path: polygon(0 0, 100% 0, 100% 100%, 0% calc(100% - 3vw));
@@ -43,10 +43,9 @@
     flex-direction: column;
     justify-content: flex-start;
     padding: $base-spacing;
-    background: white;
+    background: $white;
     max-width: 1000px;
     margin: 0 auto;
-    // clip-path: polygon(0px 2vw, 100% 0, 100% calc(100% - 2vw), 0% 100%);
     position: relative;
     margin-top: -10rem;
     box-shadow: $big-shadow;
@@ -58,6 +57,11 @@
 
     @include mod("margin") {
       margin-bottom: $base-spacing;
+    }
+
+    @include mod("follow") {
+      margin-top: 0;
+      margin-bottom: $large-spacing;
     }
   }
 
@@ -79,11 +83,14 @@
   @include elem("detail") {
     margin-top: 0;
     margin-bottom: $base-spacing;
+
+    strong {
+      margin-right: $x-small-spacing;
+    }
   }
 
   @include elem("img-col") {
     flex: 1 1 30%;
-    // max-width: 100%;
   }
 
   @include elem("detail-img") {
@@ -93,7 +100,7 @@
   @include elem("fullwidth") {
     margin-top: -$base-spacing;
     width: 100%;
-    padding: $base-spacing * 2 $base-spacing;
+    padding: $large-spacing $base-spacing;
 
     @include mod("black") {
       background: $black;
@@ -125,7 +132,7 @@
   }
 
   @include elem("albums") {
-    max-width: 900px;
+    max-width: $large-screen;
     margin: 0 auto;
     margin-top: $base-spacing;
     display: flex;
@@ -137,10 +144,6 @@
     padding: $base-spacing;
     flex: 1 1 33.3%;
     max-width: 300px;
-
-    img {
-      // box-shadow: $small-shadow;
-    }
   }
 
   &__map {
@@ -151,12 +154,9 @@
   }
   &__location {
     margin: 0 auto;
-    // margin-top: -3rem;
-    // margin-right: -5rem;
     background: $black;
-    color: white;
+    color: $white;
     display: inline-block;
-    // float: right;
     position: relative;
     padding: 1rem;
     @media all and (max-width: 850px) {
@@ -170,7 +170,6 @@
   }
 
   @include elem("gallery-thumb") {
-    // flex: 1 1 auto;
     text-align: center;
   }
 
@@ -197,8 +196,6 @@
   @media all and (min-width: 768px) and (max-width: 1024px) {
     @include elem("video") {
       padding: $base-spacing 0;
-      // width: 95%;
-      // margin: 0 auto;
 
       embed,
       object,
@@ -215,7 +212,7 @@
   @media all and (min-width: 1025px) {
     @include elem("video") {
       padding: $base-spacing 0;
-      width: 900px;
+      width: $large-screen;
       margin: 0 auto;
 
       embed,

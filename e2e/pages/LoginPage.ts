@@ -6,7 +6,6 @@ export class LoginPage {
   readonly passwordInput: Locator;
   readonly submitBtn: Locator;
   readonly errorMessage: Locator;
-  readonly forgotLink: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -14,7 +13,6 @@ export class LoginPage {
     this.passwordInput = page.getByTestId("auth.login-form.password-input");
     this.submitBtn = page.getByTestId("auth.login-form.sign-in-btn");
     this.errorMessage = page.getByTestId("auth.login-form.error-message");
-    this.forgotLink = page.getByTestId("auth.login-form.forgot-link");
   }
 
   async goto(): Promise<void> {

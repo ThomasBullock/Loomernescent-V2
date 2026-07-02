@@ -19,7 +19,7 @@ mixin pedalCard(pedal = {})
             a(href=`/pedals/${pedal.id}/edit`, data-testid="pedals.list.edit-link")
               != h.icon("pencil")
       img(
-        src=pedal.imagePath ? imageUrl(pedal.imagePath) : imageUrl("/pedals/Pedal.jpg"),
+        src=pedal.imagePath ? imageUrl(pedal.imagePath, { w: 400, h: 400, fo: "auto" }) : imageUrl("/pedals/Pedal.jpg"),
         alt=`A photo of a ${pedal.brand} ${pedal.name}`
       )
       h2.title.title--pedals

@@ -151,6 +151,12 @@ export class AuthController {
       throw new BadRequestException();
     }
 
+    if (!body.email) {
+      return res.status(200).render("login", {
+        title: "Login",
+      });
+    }
+
     const user = await this.authService.findByEmail(body.email);
 
     // generic message regardless of whether the email exists (privacy)

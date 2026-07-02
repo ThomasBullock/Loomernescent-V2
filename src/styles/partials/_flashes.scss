@@ -13,25 +13,25 @@
 @keyframes neon1 {
   from {
     box-shadow:
-      0 0 10px #fff,
-      0 0 20px #fff,
-      0 0 30px #fff,
-      0 0 40px #ff1177,
-      0 0 70px #ff1177,
-      0 0 80px #ff1177,
-      0 0 100px #ff1177,
-      0 0 150px #ff1177;
+      0 0 10px $white,
+      0 0 20px $white,
+      0 0 30px $white,
+      0 0 40px $redNeon,
+      0 0 70px $redNeon,
+      0 0 80px $redNeon,
+      0 0 100px $redNeon,
+      0 0 150px $redNeon;
   }
   to {
     box-shadow:
-      0 0 5px #fff,
-      0 0 10px #fff,
-      0 0 15px #fff,
-      0 0 20px #ff1177,
-      0 0 35px #ff1177,
-      0 0 40px #ff1177,
-      0 0 50px #ff1177,
-      0 0 75px #ff1177;
+      0 0 5px $white,
+      0 0 10px $white,
+      0 0 15px $white,
+      0 0 20px $redNeon,
+      0 0 35px $redNeon,
+      0 0 40px $redNeon,
+      0 0 50px $redNeon,
+      0 0 75px $redNeon;
   }
 }
 
@@ -42,17 +42,17 @@
   bottom: 0;
   right: 0;
   width: 80%;
-  max-width: 800px;
+  max-width: $width;
   margin: 280px auto;
 }
 
 .flash {
-  background: white;
+  background: $white;
   margin-bottom: 2rem;
   padding: 2rem;
   position: relative;
   z-index: 400;
-  border-radius: 3px;
+  border-radius: $base-border-radius;
   display: flex;
   animation: slideIn forwards 0.1s ease-in-out 2;
   animation-timing-function: cubic-bezier(0.01, 1.68, 0.58, 1);
@@ -75,15 +75,15 @@
   &:after {
     content: "";
     display: block;
-    background: white;
+    background: $white;
     position: absolute;
     width: calc(100% - 16px);
     height: calc(100% - 16px);
     top: 8px;
     left: 8px;
     z-index: -1;
-    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.1);
-    border-radius: 3px;
+    box-shadow: $small-shadow;
+    border-radius: $base-border-radius;
   }
   @include mod("success") {
     background: linear-gradient(135deg, $magenta 0%, $purple 100%);

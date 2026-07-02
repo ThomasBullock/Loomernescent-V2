@@ -4,7 +4,7 @@
   border-bottom: 0;
   border-bottom: 1px solid $grey;
   margin-bottom: 2rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 10px rgba($black, 0.1);
   position: relative;
   padding-left: 5px;
   &:before {
@@ -21,7 +21,6 @@
     border-bottom: 1px solid $grey;
     display: flex;
     & > * {
-      // this is fine, don't email me about it
       border-right: 1px solid $grey;
       padding: 0.2rem;
       display: flex;
@@ -43,7 +42,7 @@
   }
   &__time {
     font-size: 1.2rem;
-    color: lighten(black, 60%);
+    color: lighten($black, 60%);
   }
   &__stars {
     color: $yellow;

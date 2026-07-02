@@ -59,11 +59,11 @@
     padding-left: 10px;
 
     &:hover {
-      fill: green;
+      fill: $green;
 
       .tag__body {
         transition: all $base-duration * 2 $base-timing;
-        fill: pink;
+        fill: $pink;
       }
     }
 
@@ -74,13 +74,13 @@
       }
 
       .tag__body {
-        fill: purple;
+        fill: $purple;
       }
     }
 
     svg {
-      stroke: #363171;
-      fill: #363171;
+      stroke: $purple;
+      fill: $purple;
     }
   }
 
@@ -96,7 +96,7 @@
     max-width: 150px;
 
     svg text {
-      fill: purple;
+      fill: $purple;
     }
   }
 
@@ -107,7 +107,7 @@
   @include elem("count") {
     padding: 1rem 1rem;
     background: $white;
-    border-left: 3px solid rgba(0, 0, 0, 0.1);
+    border-left: $focus-outline-width solid rgba($black, 0.1);
     margin-right: -1px; /* ugh */
     background-clip: padding-box;
   }

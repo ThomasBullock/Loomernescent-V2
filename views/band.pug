@@ -25,7 +25,7 @@ block content
       h2.title.title--single(data-testid="bands.detail.name") #{ band.name }
   .single__details
     - if (band.locationAddress)
-      - if (band.locationAddress.length > 30)
+      - if (band.locationAddress.length > 15)
         .ribbon__wrapper--long
           .ribbon.ribbon--long!= band.locationAddress
       - else
@@ -67,7 +67,7 @@ block content
           .single__album
             a(href=`/album/${album.slug}`)
               img(
-                src=`/uploads/covers/${album.cover}`,
+                src=album.imagePath ? imageUrl(album.imagePath, { w: 400, h: 400, fo: "auto" }) : imageUrl("/bands/band.jpg"),
                 alt=`cover artwork for ${album.title} by ${album.artist}`
               )
   if band.gallery && band.gallery.length

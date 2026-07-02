@@ -4,7 +4,7 @@ html {
 
 body {
   background: $purple;
-  background: #efefef;
+  background: $silver;
   &:before {
     content: "";
     display: block;
@@ -20,7 +20,7 @@ body {
 
 .inner {
   position: relative;
-  max-width: 900px;
+  max-width: $large-screen;
   margin: 0 auto;
 }
 

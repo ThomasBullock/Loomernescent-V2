@@ -6,7 +6,7 @@
 
 .band {
   background: $white;
-  margin: $base-spacing / 2 0;
+  margin: $small-spacing 0;
   width: 30%;
   @include mod("edit") {
     width: 100%;
@@ -28,10 +28,10 @@
   @include elem("actions") {
     position: relative;
     z-index: 2;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid rgba($black, 0.2);
     box-shadow:
-      0 1px 0 rgba(0, 0, 0, 0.2),
-      0 1px 0 rgba(255, 255, 255, 0.2);
+      0 1px 0 rgba($black, 0.2),
+      0 1px 0 rgba($white, 0.2);
     margin-bottom: 100px;
     @media all and (max-width: 650px) {
       margin-bottom: 140px;
@@ -64,7 +64,7 @@
   flex-direction: column;
 
   @media all and (min-width: 768px) and (max-width: 1024px) {
-    max-width: 800px;
+    max-width: $width;
     margin: 0 auto;
     flex-direction: row;
     flex-wrap: wrap;
@@ -96,7 +96,6 @@
     display: flex;
     flex-direction: column;
     flex: 0 1 100%;
-    justify-content: space-around;
     margin-top: $base-spacing;
 
     @media all and (min-width: 768px) and (max-width: 1024px) {
@@ -150,10 +149,10 @@
     top: 0;
     right: 0;
     background:
-      linear-gradient(45deg, #ffa949 0%, hsla(190, 95%, 43%, 0) 70%),
+      linear-gradient(45deg, $soundcloud-orange 0%, hsla(190, 95%, 43%, 0) 70%),
       linear-gradient(135deg, hsla(219, 93%, 48%, 1) 10%, hsla(219, 93%, 48%, 0) 80%),
       linear-gradient(225deg, hsla(293, 93%, 48%, 1) 10%, hsla(293, 93%, 48%, 0) 80%),
-      linear-gradient(315deg, #ff4f49 100%, hsla(130, 96%, 45%, 0) 70%);
+      linear-gradient(315deg, $red 100%, hsla(130, 96%, 45%, 0) 70%);
     opacity: 0.6;
     z-index: 1;
     clip-path: polygon(0 0, 100% 0, 100% 90%, 0% 100%);

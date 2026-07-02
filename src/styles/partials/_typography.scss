@@ -67,7 +67,7 @@ strong {
   z-index: 2;
   line-height: 1.1;
   color: $vapor;
-  text-shadow: 1px 1px rgba(0, 0, 0, 0.5);
+  text-shadow: 1px 1px rgba($black, 0.5);
   &--long {
     font-size: 30px;
   }
@@ -106,14 +106,16 @@ strong {
 }
 
 .title--single {
-  max-width: 90%;
-  margin-top: -9rem;
-  font-size: 7rem;
+  max-width: 95%;
+  margin-top: $base-spacing-rem * -6; // -9rem
+  // modular-scale(9, 1rem) (~5.16rem) is numerically closer to the previous 5rem,
+  // but it causes "SWERVEDRIVER" to wrap at 375px; step 8 stays on one line.
+  font-size: modular-scale(8, 1rem); // ~4.30rem, flagged: ~14% below the previous 5rem
   text-align: center;
 
   @media all and (min-width: 1025px) {
-    max-width: 600px;
-    font-size: 9rem;
+    max-width: 1000px;
+    font-size: modular-scale(12, 1rem); // ~8.92rem, closest step to the previous 9rem
   }
 }
 
