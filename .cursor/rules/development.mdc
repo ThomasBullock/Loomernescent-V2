@@ -40,3 +40,17 @@ npm run test
 npm run test:integration
 npm run test:e2e
 ```
+
+## Client-side JS tests
+
+`src/client/*.spec.ts` files run under jsdom via a per-file docblock — no separate config needed:
+
+```typescript
+/**
+ * @jest-environment jsdom
+ */
+import { initFoo } from './foo';
+```
+
+They are included in `npm run test` automatically (rootDir is `src/`, testRegex `*.spec.ts`).
+`jest-environment-jsdom` is already in `devDependencies`.
