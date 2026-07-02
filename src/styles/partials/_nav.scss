@@ -23,7 +23,7 @@
     font-size: modular-scale(3);
     font-family: "nexarust", sans-serif;
     font-weight: normal;
-    text-shadow: 0 2px 2px rgba(0, 0, 0, 0.8);
+    text-shadow: 0 2px 2px rgba($black, 0.8);
   }
 
   @include elem("section") {
@@ -88,8 +88,8 @@
     }
     &:hover,
     &--active {
-      border-bottom-color: rgba(0, 0, 0, 0.2);
-      border-right-color: rgba(0, 0, 0, 0.05);
+      border-bottom-color: rgba($black, 0.2);
+      border-right-color: rgba($black, 0.05);
       svg {
         transform: scale(1.2);
       }

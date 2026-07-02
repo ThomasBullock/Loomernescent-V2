@@ -4,12 +4,14 @@ export class FavouritesPage {
   readonly page: Page;
   readonly bandsSection: Locator;
   readonly albumsSection: Locator;
+  readonly albumsContainer: Locator;
   readonly pedalsSection: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.bandsSection = page.getByTestId("favourites.page.bands-section");
     this.albumsSection = page.getByTestId("favourites.page.albums-section");
+    this.albumsContainer = page.getByTestId("favourites.page.albums-container");
     this.pedalsSection = page.getByTestId("favourites.page.pedals-section");
   }
 
@@ -28,7 +30,7 @@ export class FavouritesPage {
   }
 
   async expectAlbumVisible(title: string): Promise<void> {
-    await expect(this.page.locator(".albums").getByText(title)).toBeVisible();
+    await expect(this.albumsContainer.getByAltText(new RegExp(title))).toBeVisible();
   }
 
   async expectPedalVisible(name: string): Promise<void> {

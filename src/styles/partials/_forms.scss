@@ -9,10 +9,11 @@ textarea {
   width: 100%;
   flex: 1 1 100%;
   padding: 10px;
-  border: 1px solid $grey;
+  border: 1px solid $gainsboro;
+
   &.input {
     &--error {
-      border-color: red;
+      border-color: $red;
     }
   }
 }
@@ -59,7 +60,11 @@ label {
     font-size: 2rem;
     padding-bottom: 2rem;
     margin-bottom: 2rem;
-    border-bottom: 1px solid $grey;
+    border-bottom: 1px solid $gainsboro;
+  }
+
+  input {
+    margin-bottom: $small-spacing;
   }
 
   input[name="stratosphere"] {

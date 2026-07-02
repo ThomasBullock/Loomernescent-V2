@@ -21,7 +21,7 @@
 .card {
   background: $white;
   padding: 5rem;
-  box-shadow: 0 1px 10px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 10px rgba($black, 0.15);
 }
 
 pre.error {
@@ -43,7 +43,7 @@ p.error {
 
 .ribbon {
   background-color: $oil;
-  box-shadow: 0 0 3px rgba(#000, 0.3);
+  box-shadow: 0 0 3px rgba($black, 0.3);
   color: $white;
   font-size: 0.8em;
   left: 9px;
@@ -57,8 +57,6 @@ p.error {
   z-index: 999;
 
   @include elem("wrapper") {
-    $action-color: #477dca !default;
-    $ribbon-background: $action-color;
     $ribbon-size: 105px;
 
     @include size($ribbon-size);
@@ -69,16 +67,14 @@ p.error {
   }
 
   @include mod("long") {
-    width: 230px;
-    left: -18px;
-    top: 40px;
+    width: 260px;
+    left: -5px;
+    top: 74px;
   }
 }
 
 .ribbon__wrapper--long {
-  $action-color: #477dca !default;
-  $ribbon-background: $action-color;
-  $ribbon-size: 165px;
+  $ribbon-size: 210px;
   @include size($ribbon-size);
   overflow: hidden;
   position: absolute;

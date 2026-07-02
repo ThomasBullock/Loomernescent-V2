@@ -18,7 +18,7 @@ mixin albumForm(album = {}, mode = "add")
         alt=album.title,
         width=200
       )
-    input#cover(type="file", name="cover", accept="image/png, image/jpeg")
+    input#cover(type="file", name="cover", accept="image/png, image/jpeg, image/webp")
     label(for="producer") Producer
     input(
       type="text",

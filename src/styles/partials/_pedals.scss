@@ -6,15 +6,15 @@
 }
 
 .pedal {
-  flex: 0 1 50%;
-  margin: $base-spacing / 2 0;
+  flex: 0 1 30%;
+  margin: $small-spacing 0;
 
-  @media all and (min-width: 768px) and (max-width: 1024px) {
-    flex: 0 1 30%;
+  @media all and (max-width: 850px) {
+    flex: 0 1 48%;
   }
 
-  @media all and (min-width: 1025px) {
-    flex: 0 1 30%;
+  @media all and (max-width: 650px) {
+    flex: 0 1 100%;
   }
 
   @include elem("actions") {
@@ -58,10 +58,7 @@
     position: relative;
     padding: 0 10px 0 10px;
     text-align: right;
-    min-height: 200px;
-    @media all and (max-width: 650px) {
-      min-height: 240px;
-    }
+    aspect-ratio: 1 / 1;
     &:before {
       display: block;
       content: "";
@@ -97,7 +94,7 @@
 .pedal-info {
   display: flex;
   flex-wrap: wrap;
-  max-width: 800px;
+  max-width: $width;
 
   @include elem("image") {
     flex: 1 1 100%;
@@ -126,7 +123,11 @@
   @include elem("detail") {
     margin-right: $base-spacing;
     span.pedal-info__user ~ span.pedal-info__user {
-      margin-left: $base-spacing / 2;
+      margin-left: $small-spacing;
+    }
+
+    strong {
+      margin-right: $small-spacing;
     }
   }
 

@@ -73,5 +73,10 @@ block content
                 strong Buy It
               a.album-info__spotify(href=`${album.bandcampUrl}`, target="_blank")
                 +bandcamp
-        if album.comments
-          .album-info__comments #{ album.comments }
+  if album.comments
+    - const commentParagraphs = album.comments.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)
+    if commentParagraphs.length
+      .single__details.single__details--follow
+        .album-info__comments
+          each paragraph in commentParagraphs
+            p.album-info__comments-paragraph= paragraph

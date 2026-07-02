@@ -1,3 +1,7 @@
+$bourbon: (
+  "modular-scale-ratio": 1.2,
+);
+
 @import "plugins/bourbon/bourbon";
 // @import 'plugins/modular-scale';
 
@@ -22,8 +26,6 @@
 @import "partials/single";
 @import "partials/modal";
 @import "partials/heart";
-@import "partials/reviews";
-@import "partials/reviewer";
 @import "partials/pagination";
 @import "partials/map";
 @import "partials/helpers";

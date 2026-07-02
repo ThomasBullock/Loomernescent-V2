@@ -6,8 +6,6 @@ mixin albumCard(album = {})
           src=album.imagePath ? imageUrl(album.imagePath, { w: 400, h: 400, fo: "auto" }) : imageUrl("/bands/band.jpg"),
           alt=`cover artwork for ${album.title} by ${album.artist}`
         )
-      h2.title
-        a(href=`/album/${album.slug}`) #{ album.title }
       .album__actions
         if user
           .album__action.album__action--heart
