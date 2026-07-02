@@ -1,10 +1,13 @@
 mixin pagination(page, pages, count, link)
-  .pagination
+  nav.pagination(aria-label="Pagination")
     .pagination__prev
       if page > 1
-        a(href=`/${link}/page/${page - 1}`) Prev
+        a(href=`/${link}/page/${page - 1}`, aria-label=`Go to page ${page - 1}`) Previous page
     .pagination__text
       p Page #{ page } of #{ pages } - #{ count } total results
     .pagination__next
       if page < pages
-        a(href=`/${link}/page/${parseFloat(page) + 1}`) Next
+        a(
+          href=`/${link}/page/${parseFloat(page) + 1}`,
+          aria-label=`Go to page ${parseFloat(page) + 1}`
+        ) Next page

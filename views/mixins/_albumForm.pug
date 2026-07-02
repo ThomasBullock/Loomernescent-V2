@@ -8,8 +8,8 @@ mixin albumForm(album = {}, mode = "add")
     input#title(type="text", name="title", data-testid=`${p}.title-input`, value=album.title)
     label(for="artist") Artist
     input#artist(type="text", name="artist", value=album.artist)
-    label(for="comments") Comments
-    textarea(name="comments")= album.comments
+    label(for="album-comments") Comments
+    textarea#album-comments(name="comments")= album.comments
     //- Cover image upload
     label(for="cover") Cover
     if album.imagePath
@@ -19,38 +19,38 @@ mixin albumForm(album = {}, mode = "add")
         width=200
       )
     input#cover(type="file", name="cover", accept="image/png, image/jpeg, image/webp")
-    label(for="producer") Producer
-    input(
+    label(for="album-producer") Producer
+    input#album-producer(
       type="text",
       name="producer",
       placeholder="list personnel separated by comma",
       value=album.producer
     )
-    label(for="mixedBy") Mixed By
-    input(
+    label(for="album-mixed-by") Mixed By
+    input#album-mixed-by(
       type="text",
       name="mixedBy",
       placeholder="list personnel separated by comma",
       value=album.mixedBy
     )
-    label(for="engineer") Engineers
-    input(
+    label(for="album-engineer") Engineers
+    input#album-engineer(
       type="text",
       name="engineer",
       placeholder="list personnel separated by comma",
       value=album.engineer
     )
-    label(for="tracks") Track Listing (Fallback if not on Spotify)
-    input(
+    label(for="album-tracks") Track Listing (Fallback if not on Spotify)
+    input#album-tracks(
       type="text",
       name="tracks",
       placeholder="list tracks separated by comma",
       value=album.tracks
     )
-    label(for="releaseDate") Release Date
-    input(type="date", name="releaseDate", value=album.releaseDate)
-    label(for="label") Label
-    input(type="text", name="label", placeholder="label", value=album.label)
+    label(for="album-release-date") Release Date
+    input#album-release-date(type="date", name="releaseDate", value=album.releaseDate)
+    label(for="album-label") Label
+    input#album-label(type="text", name="label", placeholder="label", value=album.label)
     label(for="spotifyUrl") Spotify URL
     input#spotifyUrl(type="text", name="spotifyUrl", value=album.spotifyUrl)
     label(for="bandcampUrl") Bandcamp URL

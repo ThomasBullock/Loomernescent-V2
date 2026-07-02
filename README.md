@@ -6,16 +6,16 @@ A server-side-rendered catalogue of shoegaze bands, albums, and gear — with ad
 
 ## Stack
 
-| Concern   | Tech                                                   |
-| --------- | ------------------------------------------------------ |
-| Framework | NestJS v11 on Express                                  |
-| Templates | Pug (SSR via `@Render()`)                              |
-| Database  | PostgreSQL on Neon (TypeORM)                           |
-| Auth      | Passport local strategy + `express-session`            |
-| Images    | ImageKit (upload/transform)                            |
-| Mail      | Nodemailer — Mailgun in prod, Mailpit locally          |
-| Styles    | SCSS via Dart Sass CLI                                 |
-| Tests     | Jest (unit), Supertest (integration), Playwright (e2e) |
+| Concern   | Tech                                                                  |
+| --------- | --------------------------------------------------------------------- |
+| Framework | NestJS v11 on Express                                                 |
+| Templates | Pug (SSR via `@Render()`)                                             |
+| Database  | PostgreSQL on Neon (TypeORM)                                          |
+| Auth      | Passport local strategy + `express-session`                           |
+| Images    | ImageKit (upload/transform)                                           |
+| Mail      | Nodemailer — Mailgun in prod, Mailpit locally                         |
+| Styles    | SCSS via Dart Sass CLI                                                |
+| Tests     | Jest (unit + client/jsdom), Supertest (integration), Playwright (e2e) |
 
 ## Description
 
@@ -85,8 +85,11 @@ addresses listed as Authorized Recipients in the Mailgun dashboard.
 ## Run tests
 
 ```bash
-# unit tests
+# unit tests (NestJS services/controllers) + client DOM tests (jsdom)
 $ npm run test
+
+# integration tests (requires TEST_DATABASE_URL — see below)
+$ npm run test:integration
 
 # e2e tests (requires TEST_DATABASE_URL — see below)
 $ npm run test:e2e
@@ -94,6 +97,13 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+
+### Client-side JS tests
+
+`src/client/*.spec.ts` files use a per-file `@jest-environment jsdom` docblock to
+run in a DOM environment. They are picked up automatically by `npm run test` — no
+separate config or script is needed. Add `jest-environment-jsdom` (already in
+`devDependencies`) when authoring new client specs.
 
 ### E2E test database
 

@@ -4,10 +4,10 @@ mixin bandForm(band = {}, mode = "add")
   - const p = `bands.${mode}-form`;
   - const action = band.id ? "/bands/" + band.id : "/bands";
   form.add-band.card(action=action, method="post", enctype="multipart/form-data")
-    label(for="name") Name
+    label(for="band-name") Name
     input#band-name(type="text", name="name", data-testid=`${p}.name-input`, value=band.name)
-    label(for="description") Description
-    textarea(name="description")= band.description
+    label(for="band-description") Description
+    textarea#band-description(name="description")= band.description
     label(for="image") Band Image
     if band.imagePath
       img.band-form__preview(
@@ -43,29 +43,29 @@ mixin bandForm(band = {}, mode = "add")
     input#lng.half(type="text", name="locationLng", value=band.locationLng)
     label(for="lat") Origin Lat
     input#lat.half(type="text", name="locationLat", value=band.locationLat)
-    label(for="personnel") Personnel
-    input(
+    label(for="band-personnel") Personnel
+    input#band-personnel(
       type="text",
       name="personnel",
       placeholder="list personnel separated by comma",
       value=band.personnel
     )
-    label(for="pastPersonnel") Former Personnel
-    input(
+    label(for="band-past-personnel") Former Personnel
+    input#band-past-personnel(
       type="text",
       name="pastPersonnel",
       placeholder="list personnel separated by comma",
       value=band.pastPersonnel
     )
-    label(for="yearsActive") Years Active
-    input(
+    label(for="band-years-active") Years Active
+    input#band-years-active(
       type="text",
       name="yearsActive",
       placeholder="list years separated by a comma",
       value=band.yearsActive
     )
-    label(for="labels") Labels
-    input(
+    label(for="band-labels") Labels
+    input#band-labels(
       type="text",
       name="labels",
       placeholder="list labels separated by comma",
@@ -93,7 +93,8 @@ mixin bandForm(band = {}, mode = "add")
     - const tags = [].concat(band.tags || []);
     ul.tags
       each tag in choices
-        .tag.tag__choice
-          input(type="checkbox", id=tag, value=tag, name="tags", checked=tags.includes(tag))
-          label(for=tag) #{ tag }
+        - const tagId = tag.toLowerCase().replace(/\s+/g, "-");
+        li.tag.tag__choice
+          input(type="checkbox", id=tagId, value=tag, name="tags", checked=tags.includes(tag))
+          label(for=tagId) #{ tag }
     input.button(type="submit", value="Save -<", data-testid=`${p}.submit-btn`)

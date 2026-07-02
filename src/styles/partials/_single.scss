@@ -177,10 +177,6 @@
     max-height: 200px;
     box-shadow: $big-shadow;
     border: solid 1px $black;
-
-    &:hover {
-      cursor: pointer;
-    }
     // width: auto;
   }
 
@@ -222,5 +218,18 @@
         @include size(100%);
       }
     }
+  }
+}
+
+.gallery-thumb-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: block;
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
   }
 }

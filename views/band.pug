@@ -58,7 +58,12 @@ block content
       if band.youtubePl
         .single__video
           .single__video-wrapper
-            iframe(src=band.youtubePl, frameborder="0", allowfullscreen)
+            iframe(
+              src=band.youtubePl,
+              frameborder="0",
+              allowfullscreen,
+              title=`YouTube playlist for ${band.name}`
+            )
   if albums.length
     .single__fullwidth.single__fullwidth
       h2.section-heading Albums by #{ band.name }
@@ -75,16 +80,20 @@ block content
       .single__gallery
         each photo in band.gallery
           .single__gallery-thumb
-            img.single__gallery-thumb-img.js-gallery-thumb(
-              src=imageUrl(photo.filePath, { w: 600, h: 600, fo: "auto" }),
+            button.gallery-thumb-btn.js-gallery-thumb(
+              type="button",
               data-large=imageUrl(photo.filePath, { w: 1600 }),
-              alt=`gallery image for ${band.name}`
+              aria-label=`View photo for ${band.name}`
             )
-  #galleryModal.modal
+              img.single__gallery-thumb-img(
+                src=imageUrl(photo.filePath, { w: 600, h: 600, fo: "auto" }),
+                alt=""
+              )
+  #galleryModal.modal(role="dialog", aria-modal="true", aria-labelledby="gallery-modal-title")
     .modal__container
       .modal__header
-        h3.modal__title #{ band.name }
-        span.modal__close
+        h3#gallery-modal-title.modal__title #{ band.name }
+        button.modal__close(type="button", aria-label="Close gallery")
           +cross
       .modal__body
       .modal__footer

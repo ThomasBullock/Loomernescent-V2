@@ -7,66 +7,87 @@ html(lang="en")
     link(rel="shortcut icon", type="image/png", href="/images/icons/doughnut.png")
     meta(name="viewport", content="width=device-width, initial-scale=1")
   body
+    a.skip-link(href="#main-content") Skip to content
     block header
       header
-        video#bgvid(autoplay="", muted="", loop="")
+        video#bgvid(autoplay="", muted="", loop="", aria-hidden="true")
           source(src="/video/background.mp4", type="video/mp4")
         img.nav__background-img(src="/images/Lava.jpg", alt="A blurry closeup of a lava lamp")
         nav.nav
           .nav__section.nav__section--pages
-            li.nav__item.nav__item--home
-              a.nav__link.nav__link--logo(href="/", data-testid="nav.header.home-link")
-                h1 Loomernescent
-            each item in h.menu
-              li.nav__item
-                a.nav__link(
-                  href=item.slug,
-                  class=currentPath.startsWith(item.slug) ? "nav__link--active" : "",
-                  data-testid=item.testid
+            ul.nav__list
+              li.nav__item.nav__item--home
+                a.nav__link.nav__link--logo(
+                  href="/",
+                  data-testid="nav.header.home-link",
+                  aria-current=currentPath === "/" ? "page" : false
                 )
-                  != h.icon(item.icon)
-                  span #{ item.title }
+                  span Loomernescent
+              each item in h.menu
+                li.nav__item
+                  a.nav__link(
+                    href=item.slug,
+                    class=currentPath.startsWith(item.slug) ? "nav__link--active" : "",
+                    aria-current=currentPath.startsWith(item.slug) ? "page" : false,
+                    data-testid=item.testid
+                  )
+                    != h.icon(item.icon)
+                    span #{ item.title }
           .nav__section.nav__section--search
             .search
-              input.search__input(type="text", placeholder="Bands, Albums...", name="search")
+              input.search__input(
+                type="text",
+                placeholder="Bands, Albums...",
+                name="search",
+                aria-label="Search bands and albums"
+              )
               .search__results
           .nav__section.nav__section--user
             if user
-              if user.admin
+              ul.nav__list
+                if user.admin
+                  li.nav__item: a.nav__link(
+                    href="/add",
+                    class=currentPath.startsWith("/add") ? "nav__link--active" : "",
+                    aria-current=currentPath.startsWith("/add") ? "page" : false,
+                    aria-label="Add content"
+                  )
+                    != h.icon("add")
                 li.nav__item: a.nav__link(
-                  href="/add",
-                  class=currentPath.startsWith("/add") ? "nav__link--active" : ""
+                  href="/favourites",
+                  class=currentPath.startsWith("/favourites") ? "nav__link--active" : "",
+                  aria-current=currentPath.startsWith("/favourites") ? "page" : false,
+                  aria-label=`Favourites (${user.favourites ? user.favourites.length : 0})`,
+                  data-testid="nav.header.favourites-link"
                 )
-                  != h.icon("add")
-              li.nav__item: a.nav__link(
-                href="/favourites",
-                class=currentPath.startsWith("/favourites") ? "nav__link--active" : "",
-                data-testid="nav.header.favourites-link"
-              )
-                != h.icon("heart")
-                span.heart-count #{ user.favourites && user.favourites.length }
-              li.nav__item
-                form.nav__logout-form(action="/auth/logout", method="POST")
-                  button.nav__link(type="submit", data-testid="nav.header.logout-btn")
-                    != h.icon("logout")
-                    span Logout
-              li.nav__item: a.nav__link(
-                href="/account",
-                class=currentPath.startsWith("/account") ? "nav__link--active" : "",
-                data-testid="nav.header.account-link"
-              )
-                img.avatar(src=user.gravatar + "d=retro")
+                  != h.icon("heart")
+                  span.heart-count #{ user.favourites && user.favourites.length }
+                li.nav__item
+                  form.nav__logout-form(action="/auth/logout", method="POST")
+                    button.nav__link(type="submit", data-testid="nav.header.logout-btn")
+                      != h.icon("logout")
+                      span Logout
+                li.nav__item: a.nav__link(
+                  href="/account",
+                  class=currentPath.startsWith("/account") ? "nav__link--active" : "",
+                  aria-current=currentPath.startsWith("/account") ? "page" : false,
+                  data-testid="nav.header.account-link"
+                )
+                  img.avatar(src=user.gravatar + "d=retro", alt="Your account")
             else
-              li.nav__item.nav__item--user: a.nav__link(
-                href="/auth/register",
-                class=currentPath.startsWith("/register") ? "nav__link--active" : "",
-                data-testid="nav.header.register-link"
-              ) Sign Up
-              li.nav__item.nav__item--user: a.nav__link(
-                href="/auth/login",
-                class=currentPath.startsWith("/login") ? "nav__link--active" : "",
-                data-testid="nav.header.login-link"
-              ) Log In
+              ul.nav__list
+                li.nav__item.nav__item--user: a.nav__link(
+                  href="/auth/register",
+                  class=currentPath.startsWith("/register") ? "nav__link--active" : "",
+                  aria-current=currentPath.startsWith("/register") ? "page" : false,
+                  data-testid="nav.header.register-link"
+                ) Sign Up
+                li.nav__item.nav__item--user: a.nav__link(
+                  href="/auth/login",
+                  class=currentPath.startsWith("/login") ? "nav__link--active" : "",
+                  aria-current=currentPath.startsWith("/login") ? "page" : false,
+                  data-testid="nav.header.login-link"
+                ) Log In
     block messages
       if locals.flashes
         .inner
@@ -76,8 +97,8 @@ html(lang="en")
               each message in flashes[category]
                 .flash(class=`flash--${category}`)
                   p.flash__text!= message
-                  button.flash__remove(onClick="this.parentElement.remove()") &times;
-    .content
+                  button.flash__remove(onclick="this.parentElement.remove()", aria-label="Dismiss") &times;
+    main#main-content
       block content
 
     script(src="/dist/app.js", defer)

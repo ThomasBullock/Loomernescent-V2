@@ -84,7 +84,7 @@ strong {
 
   @include mod("pedals") {
     font-size: modular-scale(2);
-    color: $base;
+    color: $charcoal;
     text-align: center;
     margin-top: $base-spacing;
   }

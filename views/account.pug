@@ -8,10 +8,15 @@ block content
         each err in errors
           li.error(data-testid="account.edit-form.error-message")= err
     form.form(action="/account", method="POST")
-      label(for="name") Name
-      input(type="text", name="name", value=user.name, data-testid="account.edit-form.name-input")
-      label(for="email") Email Address
-      input(
+      label(for="account-name") Name
+      input#account-name(
+        type="text",
+        name="name",
+        value=user.name,
+        data-testid="account.edit-form.name-input"
+      )
+      label(for="account-email") Email Address
+      input#account-email(
         type="email",
         name="email",
         value=user.email,

@@ -5,11 +5,18 @@
 }
 
 input,
-textarea {
+textarea,
+select {
   width: 100%;
   flex: 1 1 100%;
   padding: 10px;
   border: 1px solid $gainsboro;
+
+  &:focus-visible {
+    outline: $focus-outline;
+    outline-offset: $focus-outline-offset;
+    border-color: $action-color;
+  }
 
   &.input {
     &--error {

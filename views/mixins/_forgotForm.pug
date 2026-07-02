@@ -1,7 +1,7 @@
 mixin forgotForm
   form#forgot.form(action="/auth/forgot", method="POST")
     h2 I forgot my password
-    label(for="email") Email
-    input(type="email", name="email", data-testid="auth.forgot-form.email-input")
+    label(for="forgot-email") Email
+    input#forgot-email(type="email", name="email", data-testid="auth.forgot-form.email-input")
     input(type="text", name="commandant")
     input.button(type="submit", value="Send a Reset", data-testid="auth.forgot-form.submit-btn")

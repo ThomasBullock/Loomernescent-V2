@@ -54,12 +54,14 @@
   z-index: 400;
   border-radius: $base-border-radius;
   display: flex;
-  animation: slideIn forwards 0.1s ease-in-out 2;
-  animation-timing-function: cubic-bezier(0.01, 1.68, 0.58, 1);
-  & + .flash {
-    animation-delay: 0.55s;
+  @media (prefers-reduced-motion: no-preference) {
+    animation: slideIn forwards 0.1s ease-in-out 2;
+    animation-timing-function: cubic-bezier(0.01, 1.68, 0.58, 1);
     & + .flash {
-      animation-delay: 0.6s;
+      animation-delay: 0.55s;
+      & + .flash {
+        animation-delay: 0.6s;
+      }
     }
   }
   @include elem("text") {
@@ -70,6 +72,10 @@
     border: 0;
     &:hover {
       color: $yellow;
+    }
+    &:focus-visible {
+      outline: $focus-outline;
+      outline-offset: $focus-outline-offset;
     }
   }
   &:after {

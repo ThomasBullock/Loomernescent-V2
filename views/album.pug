@@ -65,13 +65,23 @@ block content
             .album-info__link
               span
                 strong Stream It
-              a.album-info__spotify(href=`${album.spotifyUrl}`, target="_blank")
+              a.album-info__spotify(
+                href=`${album.spotifyUrl}`,
+                target="_blank",
+                rel="noopener noreferrer",
+                aria-label="Stream on Spotify (opens in new tab)"
+              )
                 +spotify
           if album.bandcampUrl
             .album-info__link
               span
                 strong Buy It
-              a.album-info__spotify(href=`${album.bandcampUrl}`, target="_blank")
+              a.album-info__spotify(
+                href=`${album.bandcampUrl}`,
+                target="_blank",
+                rel="noopener noreferrer",
+                aria-label="Buy on Bandcamp (opens in new tab)"
+              )
                 +bandcamp
   if album.comments
     - const commentParagraphs = album.comments.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean)

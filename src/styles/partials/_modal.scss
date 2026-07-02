@@ -50,14 +50,22 @@
   }
 
   @include elem("close") {
+    background: none;
+    border: none;
+    padding: 0;
     cursor: pointer;
     line-height: 20px;
     position: absolute;
     top: 2px;
     right: 2px;
-    color: $base;
+    color: $white;
     float: right;
     font-size: 28px;
     font-weight: bold;
+
+    &:focus-visible {
+      outline: $focus-outline;
+      outline-offset: $focus-outline-offset;
+    }
   }
 }

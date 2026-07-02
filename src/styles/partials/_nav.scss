@@ -19,11 +19,20 @@
     z-index: -250;
   }
 
-  h1 {
+  .nav__link--logo span {
     font-size: modular-scale(3);
     font-family: "nexarust", sans-serif;
     font-weight: normal;
     text-shadow: 0 2px 2px rgba($black, 0.8);
+  }
+
+  @include elem("list") {
+    display: flex;
+    flex-wrap: inherit;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1 1 auto;
   }
 
   @include elem("section") {
@@ -119,7 +128,7 @@
   .nav {
     flex-wrap: nowrap;
 
-    h1 {
+    .nav__link--logo span {
       font-size: modular-scale(3);
     }
 
@@ -166,7 +175,7 @@
   .nav {
     flex-wrap: wrap;
 
-    h1 {
+    .nav__link--logo span {
       font-size: modular-scale(2);
     }
 
