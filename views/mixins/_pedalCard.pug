@@ -7,16 +7,19 @@ mixin pedalCard(pedal = {})
             form.heart(method="POST", action=`/api/v1/pedals/${pedal.id}/loves`)
               - const heartStrings = user.favourites ? user.favourites.map((obj) => obj.pedalId) : [];
               - const heartClass = heartStrings.includes(pedal.id) ? "heart__button--hearted" : "";
+              - const hearted = heartStrings.includes(pedal.id);
               button.heart__button(
                 type="submit",
                 name="heart",
                 class=heartClass,
+                aria-label=`${hearted ? 'Remove' : 'Add'} ${pedal.name} from favourites`,
+                aria-pressed=hearted,
                 data-testid="pedals.list.heart-btn"
               )
                 != h.icon("heart")
         if user && user.admin
           .pedal__action.pedal__action--edit
-            a(href=`/pedals/${pedal.id}/edit`, data-testid="pedals.list.edit-link")
+            a(href=`/pedals/${pedal.id}/edit`, aria-label=`Edit ${pedal.name}`, data-testid="pedals.list.edit-link")
               != h.icon("pencil")
       img(
         src=pedal.imagePath ? imageUrl(pedal.imagePath, { w: 400, h: 400, fo: "auto" }) : imageUrl("/pedals/Pedal.jpg"),

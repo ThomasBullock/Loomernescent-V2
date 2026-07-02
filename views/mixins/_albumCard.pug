@@ -12,14 +12,17 @@ mixin albumCard(album = {})
             form.heart(method="POST", action=`/api/v1/albums/${album.id}/loves`)
               - const heartStrings = user.favourites ? user.favourites.map((obj) => obj.albumId) : [];
               - const heartClass = heartStrings.includes(album.id) ? "heart__button--hearted" : "";
+              - const hearted = heartStrings.includes(album.id);
               button.heart__button(
                 type="submit",
                 name="heart",
                 class=heartClass,
+                aria-label=`${hearted ? 'Remove' : 'Add'} ${album.title} from favourites`,
+                aria-pressed=hearted,
                 data-testid="albums.list.heart-btn"
               )
                 != h.icon("heart")
         if user && user.admin
           .album__action.album__action--edit
-            a(href=`/albums/${album.id}/edit`, data-testid="albums.list.edit-link")
+            a(href=`/albums/${album.id}/edit`, aria-label=`Edit ${album.title}`, data-testid="albums.list.edit-link")
               != h.icon("pencil")

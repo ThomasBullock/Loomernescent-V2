@@ -26,7 +26,7 @@ block content
     ul.tags.tags--list
       each t in tags
         li.tag
-          a.tag__link(href=`/tags/${t._id}`, class=t._id === tag ? "tag__link--active" : "")
+          a.tag__link(href=`/tags/${t._id}`, class=t._id === tag ? "tag__link--active" : "", aria-current=t._id === tag ? "page" : false)
             +pick(t._id, t.count)
     .bands
       each band in bands

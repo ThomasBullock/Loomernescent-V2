@@ -2,9 +2,13 @@
   @include elem("button") {
     background: none;
     border: 0;
-    outline: 0;
 
     top: $small-spacing;
+
+    &:focus-visible {
+      outline: $focus-outline;
+      outline-offset: $focus-outline-offset;
+    }
 
     &:hover {
       cursor: pointer;
@@ -30,8 +34,10 @@
       }
     }
     @include mod("float") {
-      &:after {
-        animation: fly 2.5s 1 ease-out;
+      @media (prefers-reduced-motion: no-preference) {
+        &:after {
+          animation: fly 2.5s 1 ease-out;
+        }
       }
     }
 

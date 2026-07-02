@@ -14,16 +14,26 @@
     font-size: 30px;
     background: $jet;
     color: $white;
-    outline: 0;
     border: 0;
+
+    &:focus-visible {
+      outline: $focus-outline;
+      outline-offset: $focus-outline-offset;
+    }
   }
   @include elem("result") {
     padding: 10px;
     display: block;
     border-bottom: 1px solid $smoke;
 
-    &:hover {
+    &:hover,
+    &:focus-visible {
       background: $white-smoke;
+    }
+
+    &:focus-visible {
+      outline: $focus-outline;
+      outline-offset: $focus-outline-offset;
     }
 
     @include mod("active") {

@@ -2,6 +2,36 @@ html {
   font-size: 10px;
 }
 
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  padding: 1rem 2rem;
+  background: $jet;
+  color: $white;
+  z-index: 10000;
+  text-decoration: none;
+
+  &:focus {
+    top: 0;
+  }
+}
+
+main {
+  display: block;
+}
+
+:focus-visible {
+  outline: $focus-outline;
+  outline-offset: $focus-outline-offset;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  video#bgvid {
+    display: none;
+  }
+}
+
 body {
   background: $purple;
   background: $silver;
