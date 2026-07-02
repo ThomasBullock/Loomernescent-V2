@@ -1,24 +1,3 @@
-$width: 800px;
-$purple: #363171;
-$facebook-blue: #3b5998;
-$flickr: #f40083;
-$bandcamp-blue: #629aa9;
-$twitter-blue: #1da1f2;
-$skype-blue: #00aff0;
-$soundcloud-orange: #ff8800;
-$spotify-green: #2ebd59;
-$vimeo: #45bbff;
-$youtube: #b31217;
-$redNeon: #ff1177;
-$yellow: #ffc40e;
-$magenta: #ff33cc;
-$pink: #ee7297;
-$green: #93ff00;
-$red: #e50714;
-$grey: lighten(grey, 40%);
-$grad: linear-gradient(90deg, #48ded4 0%, #a026bf 20%, #e82c75 60%, $yellow 85%, #48ded4 95%);
-$verticalGrad: linear-gradient(#a026bf 20%, #e82c75 60%, $magenta 85%, #a026bf 99%);
-
 // Colors
 $white: #fefefe !default;
 $ghost: #fafafa !default;
@@ -41,8 +20,30 @@ $jet: #222222 !default;
 $ebony: #111111 !default;
 $black: #000000 !default;
 
-// Drop shadows
+$purple: #363171;
+$facebook-blue: #3b5998;
+$bandcamp-blue: #629aa9;
+$twitter-blue: #1da1f2;
+$soundcloud-orange: #ff8800;
+$spotify-green: #2ebd59;
+$vimeo: #45bbff;
+$blue: #1565c0;
+$youtube: #b31217;
+$redNeon: #ff1177;
+$yellow: #ffc40e;
+$magenta: #ff33cc;
+$pink: #ee7297;
+$green: #93ff00;
+$red: #e50714;
+$grad: linear-gradient(90deg, #48ded4 0%, #a026bf 20%, #e82c75 60%, $yellow 85%, #48ded4 95%);
+$verticalGrad: linear-gradient(#a026bf 20%, #e82c75 60%, $magenta 85%, #a026bf 99%);
 
+// Greys (TODO clean up)
+$dark-gray: $oil;
+$medium-gray: $aluminum;
+$light-gray: $gainsboro;
+
+// Drop shadows
 $shad:
   0 0 10px rgba($black, 0.1),
   0 5px 10px rgba($black, 0.05);
@@ -62,6 +63,8 @@ $base-line-height: 1.5;
 $heading-line-height: 1.2;
 
 // Other Sizes
+$width: 800px;
+
 $base-border-radius: 3px;
 $base-spacing: $base-line-height * 1em;
 $large-spacing: $base-spacing * 2;
@@ -72,12 +75,6 @@ $x-small-spacing: $base-spacing / 4;
 // on headings whose font-size itself changes across breakpoints).
 $base-spacing-rem: $base-line-height * 1rem;
 $base-z-index: 0;
-
-// Colors
-$blue: #1565c0;
-$dark-gray: $oil;
-$medium-gray: $aluminum;
-$light-gray: $gainsboro;
 
 // Font Colors
 $base-font-color: $dark-gray;
