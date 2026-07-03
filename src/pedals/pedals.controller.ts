@@ -49,6 +49,7 @@ interface PedalFormBody {
   yearsManufactured?: string;
   comments?: string;
   youtube?: string;
+  associatedArtists?: string;
 }
 
 @Controller()
@@ -115,8 +116,10 @@ export class PedalsController {
     }
 
     try {
+      const usedBy = await this.pedalsService.resolveUsedBy(body.associatedArtists ?? "");
       const pedal = await this.pedalsService.create({
         ...(body as CreatePedalInput),
+        usedBy,
         ...image,
       });
       req.session["flash"] = {
@@ -177,8 +180,10 @@ export class PedalsController {
     const image = file ? await this.uploadPedalImage(file, body.brand!, body.name!) : {};
 
     try {
+      const usedBy = await this.pedalsService.resolveUsedBy(body.associatedArtists ?? "");
       const pedal = await this.pedalsService.update(id, {
         ...(body as CreatePedalInput),
+        usedBy,
         ...image,
       });
       if (!pedal) {
@@ -263,6 +268,7 @@ export class PedalsController {
 function pedalForForm(pedal: Pedal): Record<string, unknown> {
   return {
     ...pedal,
+    associatedArtists: (pedal.usedBy ?? []).map((u) => u.artist).join(", "),
     yearsManufactured:
       pedal.yearsManufactured?.map((d) => new Date(d).getUTCFullYear()).join(", ") ?? "",
   };

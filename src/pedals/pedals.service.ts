@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import slugify from "slugify";
 import { Pedal } from "../entities/pedal.entity";
+import { Band } from "../entities/band.entity";
 
 export interface CreatePedalInput {
   brand: string;
@@ -14,6 +15,7 @@ export interface CreatePedalInput {
   youtube?: string;
   imageFileId?: string | null;
   imagePath?: string | null;
+  usedBy: { artist: string; band: string; slug: string }[];
 }
 
 @Injectable()
@@ -21,6 +23,8 @@ export class PedalsService {
   constructor(
     @InjectRepository(Pedal)
     private readonly pedalRepo: Repository<Pedal>,
+    @InjectRepository(Band)
+    private readonly bandRepo: Repository<Band>,
   ) {}
 
   async getPedals(
@@ -79,6 +83,7 @@ export class PedalsService {
     if (input.imagePath !== undefined) {
       pedal.imagePath = input.imagePath;
     }
+    pedal.usedBy = input.usedBy ?? pedal.usedBy;
 
     return this.pedalRepo.save(pedal);
   }
@@ -88,6 +93,7 @@ export class PedalsService {
       lower: true,
       strict: true,
     });
+
     // TODO: replace Partial<Pedal> + `as Pedal` cast with repo.create(data) which
     // accepts DeepPartial<Pedal> natively — no cast needed, types stay honest.
     // `Partial<Pedal>` is used here because the object literal can't satisfy all
@@ -109,6 +115,7 @@ export class PedalsService {
       youtube: input.youtube || undefined,
       imageFileId: input.imageFileId ?? undefined,
       imagePath: input.imagePath ?? undefined,
+      usedBy: input.usedBy ?? [],
     };
     return this.pedalRepo.save(data as Pedal);
   }
@@ -120,6 +127,34 @@ export class PedalsService {
     } catch {
       return false;
     }
+  }
+
+  async resolveUsedBy(csv: string): Promise<{ artist: string; band: string; slug: string }[]> {
+    const artists = csv
+      .split(",")
+      .map((s) => s.trim())
+      .filter(Boolean);
+    if (!artists.length) {
+      return [];
+    }
+    const bands = await this.bandRepo
+      .createQueryBuilder("band")
+      // `SELECT name, slug, personnel FROM bands WHERE personnel && $1::text[]`,
+      // So if you pass ["Rachel Goswell", "Neil Halstead"], Postgres treats it as:
+      // ARRAY['Rachel Goswell', 'Neil Halstead']::text[]
+      // same idea as the legacy Mongo query Band.find({ personnel: { $in: artists } })
+      .where("band.personnel && ARRAY[:...artists]::text[]", { artists })
+      .select(["band.name", "band.slug", "band.personnel"])
+      .getMany();
+    const result: { artist: string; band: string; slug: string }[] = [];
+    for (const band of bands) {
+      for (const person of band.personnel) {
+        if (artists.includes(person)) {
+          result.push({ artist: person, band: band.name, slug: band.slug });
+        }
+      }
+    }
+    return result;
   }
 }
 

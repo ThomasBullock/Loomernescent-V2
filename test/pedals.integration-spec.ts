@@ -3,6 +3,7 @@ import sharp from "sharp";
 import { createTestApp, truncate, TestAppHandle } from "./helpers/test-app";
 import { createUser, loginAs } from "./helpers/auth";
 import { Pedal } from "../src/entities/pedal.entity";
+import { Band } from "../src/entities/band.entity";
 
 const jpegFixture = (): Promise<Buffer> =>
   sharp({
@@ -496,6 +497,195 @@ describe("Pedals CRUD (integration)", () => {
       const res = await agent.post(`/pedals/${pedal.id}/delete`);
       expect(res.status).toBe(302);
       expect(handle.imageKit.delete).toHaveBeenCalledWith("del-file-id");
+    });
+  });
+
+  describe("associatedArtists → usedBy", () => {
+    async function seedBand(authorId: string, overrides: Partial<Band> = {}): Promise<Band> {
+      return handle.dataSource.getRepository(Band).save({
+        name: "Slowdive",
+        slug: "slowdive",
+        personnel: ["Rachel Goswell", "Neil Halstead", "Nick Chaplin"],
+        authorId,
+        ...overrides,
+      });
+    }
+
+    beforeEach(async () => {
+      await truncate(handle.dataSource, "pedals", "bands", "users");
+      handle.imageKit.upload.mockClear();
+      handle.imageKit.delete.mockClear();
+    });
+
+    it("populates usedBy when a posted artist matches band personnel", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      await seedBand(user.id);
+      const agent = await loginAs(handle.app, user.email, password);
+
+      const res = await agent.post("/pedals").type("form").send({
+        brand: "Big Muff",
+        name: "Pi",
+        associatedArtists: "Rachel Goswell",
+      });
+      expect(res.status).toBe(302);
+
+      const row = await handle.dataSource
+        .getRepository(Pedal)
+        .findOne({ where: { slug: "big-muff-pi" } });
+      expect(row!.usedBy).toEqual([
+        { artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" },
+      ]);
+    });
+
+    it("populates usedBy with multiple artists from the same band", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      await seedBand(user.id);
+      const agent = await loginAs(handle.app, user.email, password);
+
+      const res = await agent.post("/pedals").type("form").send({
+        brand: "Boss",
+        name: "Delay",
+        associatedArtists: "Rachel Goswell, Neil Halstead",
+      });
+      expect(res.status).toBe(302);
+
+      const row = await handle.dataSource
+        .getRepository(Pedal)
+        .findOne({ where: { slug: "boss-delay" } });
+      expect(row!.usedBy).toHaveLength(2);
+      expect(row!.usedBy).toEqual(
+        expect.arrayContaining([
+          { artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" },
+          { artist: "Neil Halstead", band: "Slowdive", slug: "slowdive" },
+        ]),
+      );
+    });
+
+    it("stores empty usedBy when no artists match any band personnel", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      await seedBand(user.id);
+      const agent = await loginAs(handle.app, user.email, password);
+
+      const res = await agent.post("/pedals").type("form").send({
+        brand: "Fuzz",
+        name: "Box",
+        associatedArtists: "Nobody Famous",
+      });
+      expect(res.status).toBe(302);
+
+      const row = await handle.dataSource
+        .getRepository(Pedal)
+        .findOne({ where: { slug: "fuzz-box" } });
+      expect(row!.usedBy).toEqual([]);
+    });
+
+    it("stores empty usedBy when associatedArtists is omitted", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      const agent = await loginAs(handle.app, user.email, password);
+
+      const res = await agent.post("/pedals").type("form").send({
+        brand: "TC",
+        name: "Hall",
+      });
+      expect(res.status).toBe(302);
+
+      const row = await handle.dataSource
+        .getRepository(Pedal)
+        .findOne({ where: { slug: "tc-hall" } });
+      expect(row!.usedBy).toEqual([]);
+    });
+
+    it("updates usedBy when associatedArtists changes on edit", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      await seedBand(user.id);
+      const agent = await loginAs(handle.app, user.email, password);
+
+      const pedal = await handle.dataSource.getRepository(Pedal).save({
+        brand: "Big Muff",
+        name: "Pi",
+        slug: "big-muff-pi",
+        usedBy: [],
+        yearsManufactured: [],
+      });
+
+      const res = await agent.post(`/pedals/${pedal.id}`).type("form").send({
+        brand: "Big Muff",
+        name: "Pi",
+        associatedArtists: "Neil Halstead",
+      });
+      expect(res.status).toBe(302);
+
+      const updated = await handle.dataSource
+        .getRepository(Pedal)
+        .findOne({ where: { id: pedal.id } });
+      expect(updated!.usedBy).toEqual([
+        { artist: "Neil Halstead", band: "Slowdive", slug: "slowdive" },
+      ]);
+    });
+
+    it("clears usedBy when associatedArtists is empty on edit", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      const agent = await loginAs(handle.app, user.email, password);
+
+      const pedal = await handle.dataSource.getRepository(Pedal).save({
+        brand: "Big Muff",
+        name: "Pi",
+        slug: "big-muff-pi",
+        usedBy: [{ artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" }],
+        yearsManufactured: [],
+      });
+
+      const res = await agent.post(`/pedals/${pedal.id}`).type("form").send({
+        brand: "Big Muff",
+        name: "Pi",
+        associatedArtists: "",
+      });
+      expect(res.status).toBe(302);
+
+      const updated = await handle.dataSource
+        .getRepository(Pedal)
+        .findOne({ where: { id: pedal.id } });
+      expect(updated!.usedBy).toEqual([]);
+    });
+
+    it("GET /pedal/:slug renders usedBy artists with links to their bands", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      const agent = await loginAs(handle.app, user.email, password);
+
+      await handle.dataSource.getRepository(Pedal).save({
+        brand: "Big Muff",
+        name: "Pi",
+        slug: "big-muff-pi",
+        usedBy: [{ artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" }],
+        yearsManufactured: [],
+      });
+
+      const res = await agent.get("/pedal/big-muff-pi");
+      expect(res.status).toBe(200);
+      expect(res.text).toContain("Rachel Goswell");
+      expect(res.text).toContain("Slowdive");
+      expect(res.text).toContain('href="/band/slowdive"');
+    });
+
+    it("GET /pedals/:id/edit repopulates associatedArtists from usedBy", async () => {
+      const { user, password } = await createUser(handle.dataSource, { admin: true });
+      const agent = await loginAs(handle.app, user.email, password);
+
+      const pedal = await handle.dataSource.getRepository(Pedal).save({
+        brand: "Big Muff",
+        name: "Pi",
+        slug: "big-muff-pi",
+        usedBy: [
+          { artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" },
+          { artist: "Neil Halstead", band: "Slowdive", slug: "slowdive" },
+        ],
+        yearsManufactured: [],
+      });
+
+      const res = await agent.get(`/pedals/${pedal.id}/edit`);
+      expect(res.status).toBe(200);
+      expect(res.text).toContain("Rachel Goswell");
+      expect(res.text).toContain("Neil Halstead");
     });
   });
 });

@@ -21,6 +21,7 @@ const mockService = () => ({
   create: jest.fn().mockResolvedValue({ ...mockPedal }),
   update: jest.fn().mockResolvedValue({ ...mockPedal }),
   delete: jest.fn().mockResolvedValue(undefined),
+  resolveUsedBy: jest.fn().mockResolvedValue([]),
 });
 
 const mockAdminGuard = { canActivate: () => true };
