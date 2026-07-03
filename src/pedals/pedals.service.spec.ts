@@ -11,6 +11,27 @@ type BandRepoMock = {
   createQueryBuilder: jest.Mock;
 };
 
+const mockPedal = (overrides: Partial<Pedal> = {}): Pedal =>
+  ({
+    id: "pedal-uuid",
+    brand: "Big Muff",
+    name: "Pi",
+    slug: "big-muff-pi",
+    pedalType: null as unknown as string,
+    pedalType2: null as unknown as string,
+    usedBy: [],
+    associatedBand: null as unknown as Band,
+    associatedBandId: null as unknown as string,
+    yearsManufactured: [],
+    imageFileId: null,
+    imagePath: null,
+    comments: null as unknown as string,
+    youtube: null as unknown as string,
+    createdAt: new Date("2020-01-01T00:00:00Z"),
+    favourites: [],
+    ...overrides,
+  }) as Pedal;
+
 function makeQb(bands: Partial<Band>[]) {
   return {
     where: jest.fn().mockReturnThis(),
@@ -136,7 +157,7 @@ describe("PedalsService", () => {
 
   describe("getPedalById", () => {
     it("queries by id", async () => {
-      const pedal = { id: "abc", brand: "X" } as Pedal;
+      const pedal = mockPedal({ id: "abc", brand: "X" });
       repo.findOne.mockResolvedValue(pedal);
       const result = await service.getPedalById("abc");
       expect(result).toBe(pedal);
@@ -151,7 +172,7 @@ describe("PedalsService", () => {
   });
 
   describe("update", () => {
-    const existing = {
+    const existing = mockPedal({
       id: "pedal-1",
       brand: "Big Muff",
       name: "Pi",
@@ -159,7 +180,7 @@ describe("PedalsService", () => {
       comments: "original",
       usedBy: [],
       yearsManufactured: [new Date("1969-01-01T00:00:00Z")],
-    } as Pedal;
+    });
 
     it("returns null when the pedal does not exist", async () => {
       repo.findOne.mockResolvedValue(null);
@@ -173,7 +194,7 @@ describe("PedalsService", () => {
     });
 
     it("keeps the slug when brand and name are unchanged", async () => {
-      repo.findOne.mockResolvedValue({ ...existing } as Pedal);
+      repo.findOne.mockResolvedValue(mockPedal(existing));
       repo.save.mockImplementation(async (e) => e as Pedal);
       await service.update("pedal-1", {
         brand: "Big Muff",
@@ -187,7 +208,7 @@ describe("PedalsService", () => {
     });
 
     it("regenerates the slug when brand changes", async () => {
-      repo.findOne.mockResolvedValue({ ...existing } as Pedal);
+      repo.findOne.mockResolvedValue(mockPedal(existing));
       repo.save.mockImplementation(async (e) => e as Pedal);
       await service.update("pedal-1", { brand: "Boss", name: "Pi", usedBy: [] });
       const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;
@@ -195,7 +216,7 @@ describe("PedalsService", () => {
     });
 
     it("regenerates the slug when name changes", async () => {
-      repo.findOne.mockResolvedValue({ ...existing } as Pedal);
+      repo.findOne.mockResolvedValue(mockPedal(existing));
       repo.save.mockImplementation(async (e) => e as Pedal);
       await service.update("pedal-1", { brand: "Big Muff", name: "Deluxe", usedBy: [] });
       const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;
@@ -203,11 +224,13 @@ describe("PedalsService", () => {
     });
 
     it("overwrites imageFileId and imagePath when supplied", async () => {
-      repo.findOne.mockResolvedValue({
-        ...existing,
-        imageFileId: "old-fid",
-        imagePath: "/pedals/old.jpg",
-      } as Pedal);
+      repo.findOne.mockResolvedValue(
+        mockPedal({
+          ...existing,
+          imageFileId: "old-fid",
+          imagePath: "/pedals/old.jpg",
+        }),
+      );
       repo.save.mockImplementation(async (e) => e as Pedal);
       await service.update("pedal-1", {
         brand: "Big Muff",
@@ -222,11 +245,13 @@ describe("PedalsService", () => {
     });
 
     it("leaves imageFileId and imagePath untouched when not supplied", async () => {
-      repo.findOne.mockResolvedValue({
-        ...existing,
-        imageFileId: "old-fid",
-        imagePath: "/pedals/old.jpg",
-      } as Pedal);
+      repo.findOne.mockResolvedValue(
+        mockPedal({
+          ...existing,
+          imageFileId: "old-fid",
+          imagePath: "/pedals/old.jpg",
+        }),
+      );
       repo.save.mockImplementation(async (e) => e as Pedal);
       await service.update("pedal-1", {
         brand: "Big Muff",
@@ -240,7 +265,7 @@ describe("PedalsService", () => {
     });
 
     it("sets usedBy from input on update", async () => {
-      repo.findOne.mockResolvedValue({ ...existing } as Pedal);
+      repo.findOne.mockResolvedValue(mockPedal(existing));
       repo.save.mockImplementation(async (e) => e as Pedal);
       const usedBy = [{ artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" }];
       await service.update("pedal-1", { brand: "Big Muff", name: "Pi", usedBy });
@@ -249,10 +274,12 @@ describe("PedalsService", () => {
     });
 
     it("clears usedBy when an empty array is provided", async () => {
-      repo.findOne.mockResolvedValue({
-        ...existing,
-        usedBy: [{ artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" }],
-      } as Pedal);
+      repo.findOne.mockResolvedValue(
+        mockPedal({
+          ...existing,
+          usedBy: [{ artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" }],
+        }),
+      );
       repo.save.mockImplementation(async (e) => e as Pedal);
       await service.update("pedal-1", { brand: "Big Muff", name: "Pi", usedBy: [] });
       const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;
