@@ -343,9 +343,25 @@ export class AlbumsController {
 
 function validateAlbumBody(body: AlbumFormBody): string[] {
   const errors: string[] = [];
-  if (!body.title?.trim()) {
+  const title = body.title?.trim() ?? "";
+  const artist = body.artist?.trim() ?? "";
+
+  if (!title) {
     errors.push("Album title is required");
   }
+  if (!artist) {
+    errors.push("Artist is required");
+  }
+
+  if (body.comments?.length ?? 0 > 1000) {
+    errors.push("Album comments must be less the 1000 characters");
+  }
+
+  if (!errors.length) {
+    body.title = title;
+    body.artist = artist;
+  }
+
   return errors;
 }
 
