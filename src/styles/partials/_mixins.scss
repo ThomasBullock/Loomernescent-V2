@@ -45,8 +45,8 @@
   box-sizing: border-box;
   cursor: pointer;
 
-  // Restores accessible focus indicators for keyboard users
   &:focus-visible {
-    outline: revert;
+    outline: $focus-outline;
+    outline-offset: -3px;
   }
 }

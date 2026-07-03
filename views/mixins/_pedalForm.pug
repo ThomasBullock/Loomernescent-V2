@@ -21,6 +21,8 @@ mixin pedalForm(pedal = {}, mode = "add")
         select#pedalType2(name="pedalType2")
           each effect in effectTypes2
             option(value=effect, selected=pedal.pedalType2 === effect)= effect
+    label(for="associatedArtists") Associated Artists
+    input#associatedArtists(type="text", name="associatedArtists", value=pedal.associatedArtists)
     label(for="yearsManufactured") Years Manufactured
     input#yearsManufactured(type="text", name="yearsManufactured", value=pedal.yearsManufactured)
     label(for="comments") Comments

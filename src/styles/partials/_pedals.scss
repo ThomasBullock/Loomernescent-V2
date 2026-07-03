@@ -121,13 +121,12 @@
   }
 
   @include elem("detail") {
-    margin-right: $base-spacing;
     span.pedal-info__user ~ span.pedal-info__user {
       margin-left: $small-spacing;
     }
 
     strong {
-      margin-right: $small-spacing;
+      margin-right: $x-small-spacing;
     }
   }
 
