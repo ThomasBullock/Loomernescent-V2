@@ -86,7 +86,7 @@ describe("PedalsController", () => {
     it("Parses :page param", async () => {
       const svc = mockService();
       const controller = await buildController(svc);
-      const result = await controller.getPedalsPaginated("2");
+      await controller.getPedalsPaginated("2");
       expect(svc.getPedals).toHaveBeenCalledWith(2);
     });
   });
