@@ -7,7 +7,7 @@ mixin bandForm(band = {}, mode = "add")
     label(for="band-name") Name
     input#band-name(type="text", name="name", data-testid=`${p}.name-input`, value=band.name)
     label(for="band-description") Description
-    textarea#band-description(name="description")= band.description
+    textarea#band-description(name="description", rows=6)= band.description
     label(for="image") Band Image
     if band.imagePath
       img.band-form__preview(

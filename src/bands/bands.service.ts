@@ -38,7 +38,6 @@ export interface HeroTile {
   name: string;
   slug: string;
   imagePath: string | null;
-  cover: string | null;
 }
 
 export interface BandMapItem {
@@ -166,14 +165,12 @@ export class BandsService {
       name: b.name,
       slug: b.slug,
       imagePath: b.imagePath,
-      cover: null,
     }));
     const albumTiles: HeroTile[] = albums.map((a) => ({
       type: "album",
       name: a.title,
       slug: a.slug,
-      imagePath: null,
-      cover: a.imagePath || null,
+      imagePath: a.imagePath,
     }));
 
     const all = [...bandTiles, ...albumTiles];
