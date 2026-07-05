@@ -265,7 +265,7 @@ describe("PedalsService", () => {
     });
 
     it("sets usedBy from input on update", async () => {
-      repo.findOne.mockResolvedValue(mockPedal(existing));
+      repo.findOne.mockResolvedValue({ ...existing } as Pedal);
       repo.save.mockImplementation(async (e) => e as Pedal);
       const usedBy = [{ artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" }];
       await service.update("pedal-1", { brand: "Big Muff", name: "Pi", usedBy });
@@ -274,12 +274,10 @@ describe("PedalsService", () => {
     });
 
     it("clears usedBy when an empty array is provided", async () => {
-      repo.findOne.mockResolvedValue(
-        mockPedal({
-          ...existing,
-          usedBy: [{ artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" }],
-        }),
-      );
+      repo.findOne.mockResolvedValue({
+        ...existing,
+        usedBy: [{ artist: "Rachel Goswell", band: "Slowdive", slug: "slowdive" }],
+      } as Pedal);
       repo.save.mockImplementation(async (e) => e as Pedal);
       await service.update("pedal-1", { brand: "Big Muff", name: "Pi", usedBy: [] });
       const arg = repo.save.mock.calls[0][0] as Partial<Pedal>;

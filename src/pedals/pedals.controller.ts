@@ -277,7 +277,7 @@ function pedalForForm(pedal: Pedal): Record<string, unknown> {
 function validatePedalBody(body: PedalFormBody): string[] {
   const errors: string[] = [];
   if (!body.brand?.trim()) {
-    errors.push("Brand is required");
+    errors.push("Pedal brand is required");
   }
   if (!body.name?.trim()) {
     errors.push("Pedal name is required");

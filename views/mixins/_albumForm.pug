@@ -9,7 +9,7 @@ mixin albumForm(album = {}, mode = "add")
     label(for="artist") Artist
     input#artist(type="text", name="artist", value=album.artist)
     label(for="album-comments") Comments
-    textarea#album-comments(name="comments")= album.comments
+    textarea#album-comments(name="comments", rows="6")= album.comments
     //- Cover image upload
     label(for="cover") Cover
     if album.imagePath

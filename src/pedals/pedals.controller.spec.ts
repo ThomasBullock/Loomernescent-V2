@@ -1,25 +1,36 @@
 import { Test } from "@nestjs/testing";
 import { NotFoundException } from "@nestjs/common";
-import type { Request, Response } from "express";
+import type { Response } from "express";
 import { PedalsService } from "./pedals.service";
 import { ImageKitService } from "../common/images/image-kit.service";
 import { PedalsController } from "./pedals.controller";
 import { AuthGuard } from "../auth/guards/auth.guard";
 import { AdminGuard } from "../auth/guards/admin.guard";
+import { makeReq, makeRes } from "../common/testing/express-mocks";
 
 jest.mock("../common/images/process-image", () => ({
   processImage: jest.fn().mockResolvedValue({ buffer: Buffer.from("processed") }),
 }));
 
-const mockPedal = { id: "p1", brand: "Boss", name: "PH-1 Phaser", slug: "boss-ph-1-phaser" };
-const mockPedals = [mockPedal];
+const mockPedals = [
+  { id: "p1", brand: "Boss", name: "PH-1 Phaser", slug: "boss-ph-1-phaser" },
+  { id: "p2", brand: "Boss", name: "DS-1 Distortion", slug: "boss-ds-1-distortion" },
+  { id: "p3", brand: "Boss", name: "SD-1 Super OverDrive", slug: "boss-sd-1-super-overdrive" },
+  { id: "p4", brand: "Boss", name: "CE-2 Chorus", slug: "boss-ce-2-chorus" },
+  { id: "p5", brand: "Boss", name: "DD-3 Digital Delay", slug: "boss-dd-3-digital-delay" },
+  { id: "p6", brand: "Ibanez", name: "TS9 Tube Screamer", slug: "ibanez-ts9-tube-screamer" },
+  { id: "p7", brand: "Ibanez", name: "TS808 Tube Screamer", slug: "ibanez-ts808-tube-screamer" },
+  { id: "p8", brand: "Ibanez", name: "SD9 Sonic Distortion", slug: "ibanez-sd9-sonic-distortion" },
+  { id: "p9", brand: "Ibanez", name: "FL9 Flanger", slug: "ibanez-fl9-flanger" },
+  { id: "p10", brand: "Ibanez", name: "CS9 Stereo Chorus", slug: "ibanez-cs9-stereo-chorus" },
+];
 
 const mockService = () => ({
   getPedals: jest.fn().mockResolvedValue({ pedals: mockPedals, page: 1, pages: 2, count: 10 }),
-  getPedalBySlug: jest.fn().mockResolvedValue({ ...mockPedal }),
-  getPedalById: jest.fn().mockResolvedValue({ ...mockPedal }),
-  create: jest.fn().mockResolvedValue({ ...mockPedal }),
-  update: jest.fn().mockResolvedValue({ ...mockPedal }),
+  getPedalBySlug: jest.fn().mockResolvedValue({ ...mockPedals[0] }),
+  getPedalById: jest.fn().mockResolvedValue({ ...mockPedals[0] }),
+  create: jest.fn().mockResolvedValue({ ...mockPedals[0] }),
+  update: jest.fn().mockResolvedValue({ ...mockPedals[0] }),
   delete: jest.fn().mockResolvedValue(undefined),
   resolveUsedBy: jest.fn().mockResolvedValue([]),
 });
@@ -44,20 +55,6 @@ async function buildController(
     .useValue(mockAdminGuard)
     .compile();
   return moduleRef.get(PedalsController);
-}
-
-function makeReq(): Request {
-  return {
-    session: {
-      save: jest.fn((cb: () => void) => cb()),
-    },
-  } as unknown as Request;
-}
-
-function makeRes(): { status: jest.Mock; render: jest.Mock; redirect: jest.Mock } {
-  const res = { render: jest.fn(), redirect: jest.fn() } as unknown as Response;
-  (res as unknown as { status: jest.Mock }).status = jest.fn().mockReturnValue(res);
-  return res as unknown as { status: jest.Mock; render: jest.Mock; redirect: jest.Mock };
 }
 
 const mockFile = {
@@ -86,7 +83,12 @@ describe("PedalsController", () => {
   });
 
   describe("getPedalsPaginated", () => {
-    // it("Parses :page param and returns title with service result")
+    it("Parses :page param", async () => {
+      const svc = mockService();
+      const controller = await buildController(svc);
+      await controller.getPedalsPaginated("2");
+      expect(svc.getPedals).toHaveBeenCalledWith(2);
+    });
   });
 
   describe("addForm", () => {
@@ -119,7 +121,7 @@ describe("PedalsController", () => {
       const result = await controller.getPedalBySlug("boss-ph-1-phaser");
       expect(result).toEqual({
         title: "Boss PH-1 Phaser",
-        pedal: mockPedal,
+        pedal: mockPedals[0],
       });
     });
   });
@@ -153,7 +155,7 @@ describe("PedalsController", () => {
       expect(res.render).toHaveBeenCalledWith(
         "addPedal",
         expect.objectContaining({
-          errors: expect.arrayContaining(["Brand is required"]),
+          errors: expect.arrayContaining(["Pedal brand is required"]),
           pedal: body,
         }),
       );
@@ -231,16 +233,64 @@ describe("PedalsController", () => {
 
   describe("update", () => {
     // @Res handler — same setup notes as create.
-    // it("Throws NotFoundException when pedal is missing")
-    // it("Re-renders editPedal when validation fails — service.update not called")
+    let controller: PedalsController;
+    let svc: ReturnType<typeof mockService>;
+    let imageKit: { upload: jest.Mock; delete: jest.Mock };
+
+    const validBody = { brand: "Boss", name: "PH-1 Phaser" };
+
+    beforeEach(async () => {
+      svc = mockService();
+      imageKit = { upload: jest.fn(), delete: jest.fn() };
+      controller = await buildController(svc, imageKit);
+    });
+
+    it("Throws NotFoundException when pedal is missing", async () => {
+      svc.getPedalById.mockResolvedValue(null);
+      const req = makeReq();
+      const res = makeRes();
+
+      await expect(
+        controller.update("pedal-id", validBody, undefined, req, res as unknown as Response),
+      ).rejects.toThrow(NotFoundException);
+    });
+    it("Re-renders editPedal when validation fails — service.update not called", async () => {
+      const body = {};
+      const req = makeReq();
+      const res = makeRes();
+
+      await controller.update("pedal-id", body, undefined, req, res as unknown as Response);
+
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.render).toHaveBeenCalledWith(
+        "editPedal",
+        expect.objectContaining({
+          errors: expect.arrayContaining(["Pedal brand is required", "Pedal name is required"]),
+        }),
+      );
+    });
     // it("Updates pedal without file — service.update called, no imageKit upload or delete")
     // it("Updates pedal with new file — service.update called, imageKit.delete on old fileId, redirects to /pedal/{slug}")
     // it("Re-renders editPedal on unique constraint violation")
   });
 
   describe("destroy", () => {
-    // @Res handler — same setup notes as create.
-    // it("Throws NotFoundException when pedal is missing")
+    let controller: PedalsController;
+    let svc: ReturnType<typeof mockService>;
+
+    beforeEach(async () => {
+      svc = mockService();
+      controller = await buildController(svc);
+    });
+
+    it("Throws NotFoundException when pedal is missing", async () => {
+      svc.getPedalById.mockResolvedValue(null);
+      const req = makeReq();
+      const res = makeRes();
+      await expect(controller.destroy("bla-bla", req, res as unknown as Response)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
     // it("Deletes pedal and imageKit asset when imageFileId is set — redirects to /pedals, flash set")
     // it("Deletes pedal only when imageFileId is null — imageKit.delete not called")
   });

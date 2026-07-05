@@ -89,7 +89,7 @@ describe("Pedals CRUD (integration)", () => {
       const agent = await loginAs(handle.app, user.email, password);
       const res = await agent.post("/pedals").type("form").send({ brand: "", name: "Pi" });
       expect(res.status).toBe(200);
-      expect(res.text).toContain("Brand is required");
+      expect(res.text).toContain("Pedal brand is required");
       expect(res.text).toContain('name="brand"');
     });
 
@@ -317,7 +317,7 @@ describe("Pedals CRUD (integration)", () => {
         .type("form")
         .send({ brand: "", name: "Pi" });
       expect(res.status).toBe(200);
-      expect(res.text).toContain("Brand is required");
+      expect(res.text).toContain("Pedal brand is required");
       expect(res.text).toMatch(new RegExp(`action="/pedals/${pedal.id}"`.replace(/\//g, "\\/")));
     });
 

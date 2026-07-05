@@ -8,12 +8,6 @@ export class TemplateLocalsMiddleware implements NestMiddleware {
   constructor(private readonly imageKit: ImageKitService) {}
 
   use(req: Request, res: Response, next: NextFunction) {
-    // console.log("[locals]", {
-    //   cookie: req.headers.cookie,
-    //   sessionId: req.sessionID,
-    //   sessionPassport: req.session.passport,
-    //   reqUser: req.user,
-    // });
     res.locals.h = helpers;
     res.locals.imageUrl = (path: string, transforms?: UrlTransforms): string =>
       this.imageKit.buildUrl(path, transforms);

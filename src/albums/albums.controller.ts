@@ -156,9 +156,15 @@ export class AlbumsController {
 
     // tracks
     if (!body.tracks) {
-      const tracks = await this.fetchAlbumTracksFromSpotify(band.spotifyId, body.title);
+      const { tracks, albumUrl } = await this.fetchAlbumTracksFromSpotify(
+        band.spotifyId,
+        body.title,
+      );
       if (tracks.length) {
         body.tracks = tracks.join(", ");
+      }
+      if (albumUrl) {
+        body.spotifyUrl = albumUrl;
       }
     }
 
@@ -323,7 +329,7 @@ export class AlbumsController {
   private async fetchAlbumTracksFromSpotify(
     artistId: string,
     albumTitle: string,
-  ): Promise<string[]> {
+  ): Promise<{ albumUrl: string; tracks: string[] }> {
     // get albums
     const albums = await this.spotify.getArtistAlbums(artistId);
 
@@ -332,20 +338,42 @@ export class AlbumsController {
     const album = albums.find((a) => normalize(a.name) === target);
 
     if (!album) {
-      return [];
+      return {
+        albumUrl: "",
+        tracks: [],
+      };
     }
-
     const tracks = await this.spotify.getAlbumTracks(album.id);
 
-    return tracks.map((track) => normalize(track, false));
+    return {
+      albumUrl: album.spotifyUrl,
+      tracks: tracks.map((track) => normalize(track, false)),
+    };
   }
 }
 
 function validateAlbumBody(body: AlbumFormBody): string[] {
   const errors: string[] = [];
-  if (!body.title?.trim()) {
+  const title = body.title?.trim() ?? "";
+  const artist = body.artist?.trim() ?? "";
+
+  if (!title) {
     errors.push("Album title is required");
   }
+  if (!artist) {
+    errors.push("Artist is required");
+  }
+
+  if ((body.comments?.length ?? 0) > 1200) {
+    //  `>` binds tighter than `??` - force: default missing length to 0
+    errors.push("Album comments must be less the 1200 characters");
+  }
+
+  if (!errors.length) {
+    body.title = title;
+    body.artist = artist;
+  }
+
   return errors;
 }
 

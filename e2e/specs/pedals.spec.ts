@@ -142,7 +142,7 @@ test.describe("create pedal", () => {
 
     // Form action is POST /pedals — browser URL follows the POST target, not /pedals/new
     await expect(page).toHaveURL("/pedals");
-    await addForm.expectError("Brand is required");
+    await addForm.expectError("Pedal brand is required");
   });
 
   test("missing name → error message, re-renders add form on POST /pedals", async ({ page }) => {
@@ -209,7 +209,7 @@ test.describe("edit pedal", () => {
 
     // Form action is POST /pedals/:id — browser URL follows the POST target, not /edit
     await expect(page).toHaveURL(/\/pedals\/[^/]+$/);
-    await editForm.expectError("Brand is required");
+    await editForm.expectError("Pedal brand is required");
   });
 });
 

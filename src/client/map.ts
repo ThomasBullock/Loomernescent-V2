@@ -15,7 +15,7 @@ async function loadBands(lat?: number, lng?: number): Promise<BandMapItem[]> {
     url.searchParams.set("location_lat", String(lat));
     url.searchParams.set("location_lng", String(lng));
   }
-  console.log(url);
+
   const res = await fetch(url.toString());
   if (!res.ok) {
     return [];

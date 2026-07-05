@@ -18,23 +18,15 @@ block meta
   meta(property="og:image", content="http://loomernescent.com/images/loomernescent_site.jpeg")
 
 block content
-  - const links = ["Art Of Fighting", "The Jesus and Mary Chain", "Lush", "Swervedriver", "Loveless", "MBV", "Lush", "Swervedriver", "Loveless", "Art Of Fighting", "The Jesus and Mary Chain", "Pychocandy"];
+  //- - const links = ["Art Of Fighting", "The Jesus and Mary Chain", "Lush", "Swervedriver", "Loveless", "MBV", "Lush", "Swervedriver", "Loveless", "Art Of Fighting", "The Jesus and Mary Chain", "Pychocandy"];
   .hero
     .hero__link-wrapper
       each link in hero
         a.hero__link(href=`${link.type}/${link.slug}`)
-          if link.type === "band"
-            img(
-              src="/images/Ripple-1s-200px.svg",
-              data-src=link.imagePath ? imageUrl(link.imagePath, { w: 400, h: 400, fo: "auto" }) : imageUrl("/bands/Band.jpg"),
-              alt=`${link.name}`
-            )
-          else
-            img(
-              src="/images/Ripple-1s-200px.svg",
-              data-src=`/uploads/covers/${link.cover || 'Band.jpg'}`,
-              alt=`${link.name}`
-            )
+          img(
+            src=link.imagePath ? imageUrl(link.imagePath, { w: 400, h: 400, fo: "auto" }) : imageUrl("/bands/Band.jpg"),
+            alt=`${link.name}`
+          )
       .hero__background
         .hero__layer--left
         .hero__layer--center
