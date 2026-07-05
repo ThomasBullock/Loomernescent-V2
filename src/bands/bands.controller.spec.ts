@@ -7,6 +7,7 @@ import { BandsService } from "./bands.service";
 import { ImageKitService } from "../common/images/image-kit.service";
 import { SpotifyService } from "../spotify/spotify.service";
 import { AdminGuard } from "../auth/guards/admin.guard";
+import { makeReq, makeRes } from "../common/testing/express-mocks";
 
 jest.mock("../common/images/process-image", () => ({
   processImage: jest.fn().mockResolvedValue({ buffer: Buffer.from("processed") }),
@@ -98,19 +99,6 @@ async function buildController(
     .useValue(mockAdminGuard)
     .compile();
   return moduleRef.get(BandsController);
-}
-
-function makeReq(userId = "user-1"): Request {
-  return {
-    user: { id: userId },
-    session: { save: jest.fn((cb: () => void) => cb()) },
-  } as unknown as Request;
-}
-
-function makeRes() {
-  const res = { render: jest.fn(), redirect: jest.fn() } as unknown as Response;
-  (res as unknown as { status: jest.Mock }).status = jest.fn().mockReturnValue(res);
-  return res as unknown as { status: jest.Mock; render: jest.Mock; redirect: jest.Mock };
 }
 
 const mockFile = {
@@ -215,7 +203,7 @@ describe("BandsController", () => {
 
     it("Re-renders editBand with errors when name is missing — service.create not called", async () => {
       const body = { name: "" };
-      const req = makeReq();
+      const req = makeReq({ userId: "user-1" });
       const res = makeRes();
 
       await controller.create(body, undefined, req, res as unknown as Response);
@@ -233,7 +221,7 @@ describe("BandsController", () => {
     });
 
     it("Creates band without files — authorId from req.user, flash set, redirects to /band/{slug}", async () => {
-      const req = makeReq("author-1");
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
 
       await controller.create(validBody, undefined, req, res as unknown as Response);
@@ -249,7 +237,7 @@ describe("BandsController", () => {
     });
 
     it("Creates band with square image + gallery — imageKit.upload called once per file, service.create receives image and gallery fields", async () => {
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
       const files = { image: [mockFile], gallery: [mockFile, mockFile] };
 
@@ -270,7 +258,7 @@ describe("BandsController", () => {
 
     it("Re-renders editBand on unique constraint violation — does not re-throw", async () => {
       svc.create.mockRejectedValue({ code: "23505" });
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
 
       await controller.create(validBody, undefined, req, res as unknown as Response);
@@ -291,7 +279,7 @@ describe("BandsController", () => {
         spotifyId: "manual-sp-id",
         spotifyUrl: "https://open.spotify.com/artist/manual-sp-id",
       };
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
 
       await controller.create(bodyWithSpotify, undefined, req, res as unknown as Response);
@@ -306,7 +294,7 @@ describe("BandsController", () => {
     });
 
     it("Calls searchArtist with band name when no manual Spotify IDs provided", async () => {
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
 
       await controller.create(validBody, undefined, req, res as unknown as Response);
@@ -333,7 +321,7 @@ describe("BandsController", () => {
 
     it("Throws NotFoundException when band is not found", async () => {
       svc.getBandById.mockResolvedValue(null);
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
       await expect(
         controller.update("missing-id", validBody, undefined, req, res as unknown as Response),
@@ -342,7 +330,7 @@ describe("BandsController", () => {
 
     it("Re-renders editBand with errors when name is missing — service.update not called", async () => {
       const body = { name: "" };
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
 
       await controller.update("b1", body, undefined, req, res as unknown as Response);
@@ -359,7 +347,7 @@ describe("BandsController", () => {
     });
 
     it("Updates band without new file — no imageKit upload or delete, redirects to /band/{slug}", async () => {
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
 
       await controller.update("b1", validBody, undefined, req, res as unknown as Response);
@@ -371,7 +359,7 @@ describe("BandsController", () => {
     });
 
     it("Updates band with new square image — old imageFileId deleted, new image fields passed to service", async () => {
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
       const files = { image: [mockFile] };
 
@@ -394,7 +382,7 @@ describe("BandsController", () => {
       };
       svc.getBandById.mockResolvedValue(bandWithSpotify);
       svc.update.mockResolvedValue({ ...bandWithSpotify });
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
 
       await controller.update("b1", validBody, undefined, req, res as unknown as Response);
@@ -412,7 +400,7 @@ describe("BandsController", () => {
       const svc = mockService();
       svc.getBandById.mockResolvedValue(null);
       const controller = await buildController(svc);
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
       await expect(
         controller.destroy("missing-id", req, res as unknown as Response),
@@ -423,7 +411,7 @@ describe("BandsController", () => {
       const svc = mockService();
       const imageKit = makeImageKit();
       const controller = await buildController(svc, imageKit);
-      const req = makeReq();
+      const req = makeReq({ userId: "author-1" });
       const res = makeRes();
 
       await controller.destroy("b1", req, res as unknown as Response);

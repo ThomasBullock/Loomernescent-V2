@@ -5,6 +5,9 @@ import { AlbumsService } from "./albums.service";
 import { BandsService } from "../bands/bands.service";
 import { ImageKitService } from "../common/images/image-kit.service";
 import { SpotifyService } from "../spotify/spotify.service";
+import { makeReq, makeRes } from "../common/testing/express-mocks";
+import type { Response } from "express";
+import { stringOfLength } from "../common/testing/strings";
 
 const mockAlbums = [
   { id: "a1", title: "Souvlaki", slug: "souvlaki" },
@@ -25,13 +28,16 @@ const mockService = () => ({
 
 const mockAuthGuard = { canActivate: () => true };
 
-async function buildController(svc: ReturnType<typeof mockService>) {
+async function buildController(
+  svc: ReturnType<typeof mockService>,
+  imageKit: { upload: jest.Mock; delete: jest.Mock } = { upload: jest.fn(), delete: jest.fn() },
+) {
   const moduleRef = await Test.createTestingModule({
     controllers: [AlbumsController],
     providers: [
       { provide: AlbumsService, useValue: svc },
       { provide: BandsService, useValue: svc },
-      { provide: ImageKitService, useValue: svc },
+      { provide: ImageKitService, useValue: imageKit },
       { provide: SpotifyService, useValue: svc },
     ],
   })
@@ -40,16 +46,6 @@ async function buildController(svc: ReturnType<typeof mockService>) {
     .compile();
   return moduleRef.get(AlbumsController);
 }
-
-// function makeReq(referer?: string): Request {
-//   return {
-//     headers: { referer },
-//   } as unknown as Request;
-// }
-
-// function makeRes(): { redirect: jest.Mock } & Partial<Response> {
-//   return { redirect: jest.fn() };
-// }
 
 describe("AlbumsController", () => {
   describe("getAlbums", () => {
@@ -80,6 +76,38 @@ describe("AlbumsController", () => {
         title: "Add Album",
         album: {},
       });
+    });
+  });
+
+  describe("create", () => {
+    let controller: AlbumsController;
+    let svc: ReturnType<typeof mockService>;
+    let imageKit: { upload: jest.Mock; delete: jest.Mock };
+
+    beforeEach(async () => {
+      svc = mockService();
+      imageKit = { upload: jest.fn(), delete: jest.fn() };
+      controller = await buildController(svc, imageKit);
+    });
+
+    it("re-renders addAlbum when validation fails — service.create not called", async () => {
+      const body = { title: "", comments: stringOfLength(1201) };
+      const req = makeReq();
+      const res = makeRes();
+
+      await controller.create(body, undefined, req, res as unknown as Response);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.render).toHaveBeenCalledWith(
+        "editAlbum",
+        expect.objectContaining({
+          errors: expect.arrayContaining([
+            "Album title is required",
+            "Artist is required",
+            "Album comments must be less the 1200 characters",
+          ]),
+          album: body,
+        }),
+      );
     });
   });
 });
